@@ -1,7 +1,62 @@
-# Go2 WebRTC Gesture Navigation | Clemson CI
+# Go2 WebRTC Gesture Navigation
 
-Two starting paths for students working with our lab's Unitree Go2 EDU.
-Choose the path that matches your project and follow its guide from the beginning.
+**Clemson Creative Inquiry · Windows 11 · MediaPipe · Unitree Go2**
+
+Steer a Go2 using hand gestures while watching its onboard camera and voxel view.
+This instructor setup brings together the Unitree web interface, extracted hand
+landmarks, supervised velocity requests, and recording/replay. Students can bring
+their gesture recognition work from the earlier simulation labs.
+
+[Get started](#clone-this-setup-from-github) · [Clemson dashboard](webrtc/clemson/README.md) ·
+[Bring your gestures](webrtc/STUDENT_INTEGRATION.md) · [Recording & replay](webrtc/RECORDING.md)
+
+![Unitree Go2 web interface showing the robot model in a colored voxel map, with the robot camera view in the upper left.](docs/assets/go2-camera-voxels.png)
+
+*Go2 camera, robot model, and voxel view in the upstream Basic interface.
+Screenshot from [legion1581/unitree_ui](https://github.com/legion1581/unitree_ui),
+used with its [MIT notice](webrtc/clemson/UPSTREAM_LICENSE). This is an upstream
+reference image; our Clemson dashboard capture and motion GIFs are on the
+[media TODO](docs/ROADMAP.md#readme-images-and-motion-gifs).*
+
+## What students build
+
+```text
+Windows webcam → MediaPipe landmarks → your gesture classifier
+                                                ↓
+                                 bounded velocity + supervision
+                                                ↓
+Go2 camera + voxels ← Clemson browser UI ← Wi-Fi / WebRTC → Go2
+```
+
+| In the dashboard | What it does |
+| --- | --- |
+| Robot view | Onboard camera and available voxel stream in the main window |
+| Hand panel | Extracted MediaPipe skeletons and gesture labels; webcam pixels stay local |
+| Velocity overlay | Requested, supervised, transmitted, and measured motion |
+| Explicit control | Enable/Stop controls, freshness checks, and bounded commands |
+| Experiment tools | Obstacle-avoidance switch, one recording toggle, and offline replay |
+
+The Windows webcam sees the student's hand. The Go2 camera sees the maze.
+For the CI activity, students navigate using the robot view while an instructor
+maintains direct sight and the paired remote.
+
+## Gesture starter
+
+<p align="center">
+  <img src="webrtc/clemson/assets/gesture-guide.png" alt="MediaPipe-style diagrams for forward, sideways left/right, turn left/right, and stop gestures." width="850">
+</p>
+
+*Programmed starter gestures, illustrated with hand landmarks. These diagrams
+explain the mapping; they are not measurements of recognition accuracy.*
+
+Start with the [illustrated gesture table](webrtc/clemson/README.md#gesture-guide-what-your-hand-commands),
+or [adapt your own earlier classifier](webrtc/STUDENT_INTEGRATION.md) while retaining
+the instructor's command limits and stop checks.
+
+## Choose your setup
+
+The CI course uses the **WebRTC + Wi-Fi** path on Windows 11. The separate
+ROS/Ethernet guide is available for research students.
 
 | Path | Intended audience | Connection and execution | What it supports |
 | --- | --- | --- | --- |

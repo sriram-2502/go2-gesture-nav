@@ -1,5 +1,21 @@
 # Lab roadmap
 
+## README images and motion GIFs
+
+- [x] Add an attributed upstream reference screenshot showing Go2 camera, robot model, and voxels to the project README.
+- [x] Show the project's MediaPipe-style gesture guide and link the student integration walkthrough.
+- [ ] Capture our Clemson dashboard with Go2 camera, voxels, extracted hands, and velocity overlay; replace the upstream reference hero with this project capture.
+- [ ] Add a clear photo of the lab Go2 in the maze and record the photo source/permission.
+- [ ] Record a short supervised forward-and-stop demo with the gesture and measured velocity visible.
+- [ ] Record brief sideways and turn-in-place demos, returning to stop between gestures.
+- [ ] Add a short recording/replay walkthrough GIF showing the overall toggle and offline playback.
+- [ ] Export selected 5–10 second, 8–12 fps GIFs at about 960 px width; target under 5 MB each. Inspect actual size and reduce resolution/frame rate as needed.
+- [ ] Store curated public GIFs in `docs/assets/`; keep source MP4/WebM, recording ZIPs, and raw telemetry local. Review each export for credentials, private browser content, and identifiable people before publishing.
+
+The current hero is an upstream reference, not evidence of a Clemson robot trial.
+Project captures should name the setup/firmware and distinguish real robot trials
+from offline or synthetic replay demos.
+
 ## Repository separation TODO
 
 - [ ] Carry out the [agreed repository split](REPOSITORY_SPLIT_TODO.md): lab onboarding,
