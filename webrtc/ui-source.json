@@ -1,0 +1,7 @@
+{
+  "repository": "https://github.com/legion1581/unitree_ui.git",
+  "revision": "590baf6ab580d27890c7a7575c138a9080d7d516",
+  "nodeVersion": "22.23.4",
+  "basicPort": 5173,
+  "clemsonPort": 5174
+}

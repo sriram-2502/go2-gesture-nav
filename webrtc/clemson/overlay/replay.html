@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clemson Go2 | Offline replay</title></head>
+<body>
+<header><div><p class="eyebrow">CLEMSON / GO2</p><h1>Replay a run</h1></div>
+  <span class="offline-badge">OFFLINE REPLAY · NO ROBOT CONTROL</span></header>
+<main>
+  <section class="load-bar"><label class="file-button">Open recording ZIP <input id="open-run" type="file" accept=".zip" hidden></label>
+    <button id="demo">Try demo</button><span id="run-name">Choose a saved run, or try the demo.</span></section>
+  <p id="notice" role="status">Files stay on this computer. This page has no robot connection.</p>
+  <section class="timeline"><button id="play" disabled>Play</button><input id="seek" type="range" min="0" max="1" step="1" value="0" disabled aria-label="Replay timeline">
+    <output id="time">0.0 / 0.0 s</output><label>Speed <select id="speed"><option>0.5</option><option selected>1</option><option>2</option></select>×</label></section>
+  <section class="replay-grid">
+    <div class="main-view"><div class="view-tabs"><button id="show-dashboard">Recorded dashboard</button><button id="show-data">Interactive data</button><a id="download-video" hidden>Download video</a></div>
+      <div id="dashboard-view"><video id="dashboard-video" playsinline muted></video><p id="dashboard-missing">No dashboard video loaded.</p></div>
+      <div id="data-view" hidden><canvas id="voxel-canvas"></canvas><p id="voxel-status">No voxel packets loaded.</p></div>
+    </div>
+    <aside><h2 id="gesture-label">No gesture data</h2><canvas id="hands" width="640" height="480" aria-label="Recorded extracted hand skeleton"></canvas>
+      <dl><dt>Requested (vx / vy / wz)</dt><dd id="requested">—</dd><dt>Supervised</dt><dd id="supervised">—</dd>
+      <dt>Measured robot velocity</dt><dd id="measured">—</dd><dt>Control status</dt><dd id="control">—</dd></dl>
+      <h3>Robot camera</h3><video id="robot-camera" playsinline muted></video><p id="camera-missing">Not recorded</p>
+    </aside>
+  </section>
+  <details><summary>Recording details and event log</summary><pre id="details">No run loaded.</pre><pre id="event-log"></pre></details>
+</main>
+<script type="module" src="/src/ui/replay.ts"></script>
+</body></html>

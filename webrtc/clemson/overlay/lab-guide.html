@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clemson Go2 Lab | Getting started</title>
+<style>
+body{font:17px/1.6 system-ui,sans-serif;margin:0;background:#17121e;color:#eee}
+main{max-width:820px;margin:60px auto;padding:28px;border-top:6px solid #f56600}
+h1{line-height:1.15}a{color:#ffb37d}li{margin:12px 0}.tag{color:#ffb37d}
+</style>
+<main>
+<p class="tag">CLEMSON UNIVERSITY / GO2 LAB</p>
+<h1>Connect first.<br>Build your experiment next.</h1>
+<p>This is the Clemson starter edition of Unitree UI. Camera, control, voxels,
+and the onboard SLAM interface come from upstream. Their operation still needs
+verification on the lab robot.</p>
+<ol>
+<li>Join the Go2 Wi-Fi hotspot on Windows 11. Close other robot clients.</li>
+<li>Set the Robot IP address (Go2 hotspot default: 192.168.12.1), enter the assigned AES key,
+and click Connect and open web view. The camera/voxel view opens after validation.</li>
+<li>First check connection, camera, status, and voxels with the robot stationary.
+Keep the paired remote ready before any supervised motion test.</li>
+</ol>
+<h2>Test the webcam panel</h2>
+<p>Run the local Python preview service in the go2wifi environment, then open
+the dashboard side panel. Tracking starts automatically. It shows extracted hand skeletons,
+gesture label, and velocity intent, without webcam video. Robot control starts disabled.
+After a supervised setup check, show a stop gesture and explicitly enable gesture control.</p>
+<h2>Creative Inquiry: next milestones</h2>
+<p>The gesture command interface is implemented with offline tests. Recognition
+with the operator and physical motion/stop behavior still need verification.
+CSV/data logs, dashboard video, and offline replay are available through Record &amp; replay.
+Try the synthetic demo on the replay page. Maze scoring remains future work.</p>
+<p><a href="/replay.html">Open offline replay</a></p>
+<p>Students will gesture toward the Windows webcam and navigate using the robot's
+camera view. All processing is planned locally on Windows, without ROS.</p>
+<p>The Basic and Clemson editions use different ports and separate browser storage.
+Connect only one edition to the robot at a time. Clemson keeps new AES entries in
+page memory; Basic retains upstream browser caching behavior.</p>
+<p><a href="/">Open Clemson dashboard</a> ·
+<a href="http://127.0.0.1:5173/">Open Basic dashboard (if running)</a> ·
+<a href="https://github.com/legion1581/unitree_ui">Upstream project / MIT license</a></p>
+</main>
+</html>

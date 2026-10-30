@@ -1,0 +1,344 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 1800" role="img" aria-labelledby="title desc">
+<title id="title">Clemson Go2 gesture and velocity guide</title>
+<desc id="desc">Eight illustrated gesture cards using hand landmark skeletons. Commands use default forward speed 0.5 metres per second and turn speed 0.8 radians per second.</desc>
+<rect width="1440" height="1800" fill="#100d16"/>
+<text x="40" y="60" fill="#ff974d" font-family="Segoe UI,Arial,sans-serif" font-size="36" font-weight="700">CLEMSON GO2  /  GESTURE NAVIGATION</text>
+<text x="40" y="102" fill="#c0b1cd" font-family="Segoe UI,Arial,sans-serif" font-size="25" font-weight="400">Match the direction in your mirrored hand panel. One gesture = one motion axis.</text>
+<rect x="40" y="135" width="660" height="374" rx="18" fill="#21172d" stroke="#513364" stroke-width="2"/>
+<text x="64" y="179" fill="#ff974d" font-family="Segoe UI,Arial,sans-serif" font-size="28" font-weight="700">FORWARD</text>
+<text x="64" y="216" fill="#c0b1cd" font-family="Segoe UI,Arial,sans-serif" font-size="23" font-weight="400">Index up; palm facing the webcam</text>
+<rect x="60" y="236" width="620" height="208" rx="12" fill="#130e1c" stroke="#130e1c" stroke-width="2"/>
+<line x1="370" y1="413" x2="341" y2="382" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="341" y1="382" x2="322" y2="363" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="322" y1="363" x2="322" y2="351" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="322" y1="351" x2="346" y2="363" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="370" y1="413" x2="344" y2="341" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="344" y1="341" x2="344" y2="316" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="344" y1="316" x2="344" y2="289" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="344" y1="289" x2="344" y2="266" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="344" y1="341" x2="372" y2="336" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="372" y1="336" x2="372" y2="320" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="372" y1="320" x2="381" y2="337" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="381" y1="337" x2="378" y2="353" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="372" y1="336" x2="399" y2="340" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="399" y1="340" x2="399" y2="324" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="399" y1="324" x2="407" y2="340" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="407" y1="340" x2="405" y2="357" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="399" y1="340" x2="425" y2="353" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="425" y1="353" x2="425" y2="338" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="425" y1="338" x2="434" y2="354" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="434" y1="354" x2="431" y2="370" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="370" y1="413" x2="425" y2="353" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<circle cx="370" cy="413" r="5" fill="#ffcd5f"/>
+<circle cx="341" cy="382" r="5" fill="#ffcd5f"/>
+<circle cx="322" cy="363" r="5" fill="#ffcd5f"/>
+<circle cx="322" cy="351" r="5" fill="#ffcd5f"/>
+<circle cx="346" cy="363" r="5" fill="#ffcd5f"/>
+<circle cx="344" cy="341" r="5" fill="#ffcd5f"/>
+<circle cx="344" cy="316" r="5" fill="#ffcd5f"/>
+<circle cx="344" cy="289" r="5" fill="#ffcd5f"/>
+<circle cx="344" cy="266" r="5" fill="#ffcd5f"/>
+<circle cx="372" cy="336" r="5" fill="#ffcd5f"/>
+<circle cx="372" cy="320" r="5" fill="#ffcd5f"/>
+<circle cx="381" cy="337" r="5" fill="#ffcd5f"/>
+<circle cx="378" cy="353" r="5" fill="#ffcd5f"/>
+<circle cx="399" cy="340" r="5" fill="#ffcd5f"/>
+<circle cx="399" cy="324" r="5" fill="#ffcd5f"/>
+<circle cx="407" cy="340" r="5" fill="#ffcd5f"/>
+<circle cx="405" cy="357" r="5" fill="#ffcd5f"/>
+<circle cx="425" cy="353" r="5" fill="#ffcd5f"/>
+<circle cx="425" cy="338" r="5" fill="#ffcd5f"/>
+<circle cx="434" cy="354" r="5" fill="#ffcd5f"/>
+<circle cx="431" cy="370" r="5" fill="#ffcd5f"/>
+<text x="64" y="483" fill="#f7f2fc" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700">vx +0.50 m/s   |   vy +0.00 m/s   |   wz +0.00 rad/s</text>
+<rect x="740" y="135" width="660" height="374" rx="18" fill="#21172d" stroke="#513364" stroke-width="2"/>
+<text x="764" y="179" fill="#ff974d" font-family="Segoe UI,Arial,sans-serif" font-size="28" font-weight="700">SIDEWAYS LEFT</text>
+<text x="764" y="216" fill="#c0b1cd" font-family="Segoe UI,Arial,sans-serif" font-size="23" font-weight="400">Index pointing left</text>
+<rect x="760" y="236" width="620" height="208" rx="12" fill="#130e1c" stroke="#130e1c" stroke-width="2"/>
+<line x1="1161" y1="340" x2="1123" y2="363" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1123" y1="363" x2="1099" y2="378" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1099" y1="378" x2="1084" y2="378" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1084" y1="378" x2="1099" y2="359" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1161" y1="340" x2="1072" y2="361" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1072" y1="361" x2="1041" y2="361" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1041" y1="361" x2="1007" y2="361" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1007" y1="361" x2="979" y2="361" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1072" y1="361" x2="1065" y2="338" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1065" y1="338" x2="1046" y2="338" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1046" y1="338" x2="1066" y2="331" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1066" y1="331" x2="1087" y2="333" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1065" y1="338" x2="1070" y2="316" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1070" y1="316" x2="1051" y2="316" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1051" y1="316" x2="1071" y2="310" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1071" y1="310" x2="1092" y2="312" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1070" y1="316" x2="1087" y2="295" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1087" y1="295" x2="1068" y2="295" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1068" y1="295" x2="1088" y2="288" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1088" y1="288" x2="1108" y2="290" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1161" y1="340" x2="1087" y2="295" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<circle cx="1161" cy="340" r="5" fill="#ffcd5f"/>
+<circle cx="1123" cy="363" r="5" fill="#ffcd5f"/>
+<circle cx="1099" cy="378" r="5" fill="#ffcd5f"/>
+<circle cx="1084" cy="378" r="5" fill="#ffcd5f"/>
+<circle cx="1099" cy="359" r="5" fill="#ffcd5f"/>
+<circle cx="1072" cy="361" r="5" fill="#ffcd5f"/>
+<circle cx="1041" cy="361" r="5" fill="#ffcd5f"/>
+<circle cx="1007" cy="361" r="5" fill="#ffcd5f"/>
+<circle cx="979" cy="361" r="5" fill="#ffcd5f"/>
+<circle cx="1065" cy="338" r="5" fill="#ffcd5f"/>
+<circle cx="1046" cy="338" r="5" fill="#ffcd5f"/>
+<circle cx="1066" cy="331" r="5" fill="#ffcd5f"/>
+<circle cx="1087" cy="333" r="5" fill="#ffcd5f"/>
+<circle cx="1070" cy="316" r="5" fill="#ffcd5f"/>
+<circle cx="1051" cy="316" r="5" fill="#ffcd5f"/>
+<circle cx="1071" cy="310" r="5" fill="#ffcd5f"/>
+<circle cx="1092" cy="312" r="5" fill="#ffcd5f"/>
+<circle cx="1087" cy="295" r="5" fill="#ffcd5f"/>
+<circle cx="1068" cy="295" r="5" fill="#ffcd5f"/>
+<circle cx="1088" cy="288" r="5" fill="#ffcd5f"/>
+<circle cx="1108" cy="290" r="5" fill="#ffcd5f"/>
+<text x="764" y="483" fill="#f7f2fc" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700">vx +0.00 m/s   |   vy +0.50 m/s   |   wz +0.00 rad/s</text>
+<rect x="40" y="535" width="660" height="374" rx="18" fill="#21172d" stroke="#513364" stroke-width="2"/>
+<text x="64" y="579" fill="#ff974d" font-family="Segoe UI,Arial,sans-serif" font-size="28" font-weight="700">SIDEWAYS RIGHT</text>
+<text x="64" y="616" fill="#c0b1cd" font-family="Segoe UI,Arial,sans-serif" font-size="23" font-weight="400">Index + middle both pointing left</text>
+<rect x="60" y="636" width="620" height="208" rx="12" fill="#130e1c" stroke="#130e1c" stroke-width="2"/>
+<line x1="461" y1="740" x2="423" y2="763" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="423" y1="763" x2="399" y2="778" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="399" y1="778" x2="384" y2="778" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="384" y1="778" x2="399" y2="759" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="461" y1="740" x2="372" y2="761" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="372" y1="761" x2="341" y2="761" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="341" y1="761" x2="307" y2="761" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="307" y1="761" x2="279" y2="761" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="372" y1="761" x2="365" y2="738" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="365" y1="738" x2="333" y2="738" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="333" y1="738" x2="298" y2="738" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="298" y1="738" x2="269" y2="738" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="365" y1="738" x2="370" y2="716" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="370" y1="716" x2="351" y2="716" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="351" y1="716" x2="371" y2="710" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="371" y1="710" x2="392" y2="712" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="370" y1="716" x2="387" y2="695" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="387" y1="695" x2="368" y2="695" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="368" y1="695" x2="388" y2="688" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="388" y1="688" x2="408" y2="690" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="461" y1="740" x2="387" y2="695" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<circle cx="461" cy="740" r="5" fill="#ffcd5f"/>
+<circle cx="423" cy="763" r="5" fill="#ffcd5f"/>
+<circle cx="399" cy="778" r="5" fill="#ffcd5f"/>
+<circle cx="384" cy="778" r="5" fill="#ffcd5f"/>
+<circle cx="399" cy="759" r="5" fill="#ffcd5f"/>
+<circle cx="372" cy="761" r="5" fill="#ffcd5f"/>
+<circle cx="341" cy="761" r="5" fill="#ffcd5f"/>
+<circle cx="307" cy="761" r="5" fill="#ffcd5f"/>
+<circle cx="279" cy="761" r="5" fill="#ffcd5f"/>
+<circle cx="365" cy="738" r="5" fill="#ffcd5f"/>
+<circle cx="333" cy="738" r="5" fill="#ffcd5f"/>
+<circle cx="298" cy="738" r="5" fill="#ffcd5f"/>
+<circle cx="269" cy="738" r="5" fill="#ffcd5f"/>
+<circle cx="370" cy="716" r="5" fill="#ffcd5f"/>
+<circle cx="351" cy="716" r="5" fill="#ffcd5f"/>
+<circle cx="371" cy="710" r="5" fill="#ffcd5f"/>
+<circle cx="392" cy="712" r="5" fill="#ffcd5f"/>
+<circle cx="387" cy="695" r="5" fill="#ffcd5f"/>
+<circle cx="368" cy="695" r="5" fill="#ffcd5f"/>
+<circle cx="388" cy="688" r="5" fill="#ffcd5f"/>
+<circle cx="408" cy="690" r="5" fill="#ffcd5f"/>
+<text x="64" y="883" fill="#f7f2fc" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700">vx +0.00 m/s   |   vy -0.50 m/s   |   wz +0.00 rad/s</text>
+<rect x="740" y="535" width="660" height="374" rx="18" fill="#21172d" stroke="#513364" stroke-width="2"/>
+<text x="764" y="579" fill="#ff974d" font-family="Segoe UI,Arial,sans-serif" font-size="28" font-weight="700">TURN LEFT IN PLACE</text>
+<text x="764" y="616" fill="#c0b1cd" font-family="Segoe UI,Arial,sans-serif" font-size="23" font-weight="400">Thumb up; other fingers curled</text>
+<rect x="760" y="636" width="620" height="208" rx="12" fill="#130e1c" stroke="#130e1c" stroke-width="2"/>
+<line x1="1070" y1="813" x2="1041" y2="782" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1041" y1="782" x2="1022" y2="763" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1022" y1="763" x2="1022" y2="724" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1022" y1="724" x2="1022" y2="689" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1070" y1="813" x2="1044" y2="741" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1044" y1="741" x2="1044" y2="726" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1044" y1="726" x2="1052" y2="742" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1052" y1="742" x2="1050" y2="759" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1044" y1="741" x2="1072" y2="736" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1072" y1="736" x2="1072" y2="720" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1072" y1="720" x2="1081" y2="737" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1081" y1="737" x2="1078" y2="753" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1072" y1="736" x2="1099" y2="740" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1099" y1="740" x2="1099" y2="724" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1099" y1="724" x2="1107" y2="740" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1107" y1="740" x2="1105" y2="757" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1099" y1="740" x2="1125" y2="753" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1125" y1="753" x2="1125" y2="738" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1125" y1="738" x2="1134" y2="754" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1134" y1="754" x2="1131" y2="770" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1070" y1="813" x2="1125" y2="753" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<circle cx="1070" cy="813" r="5" fill="#ffcd5f"/>
+<circle cx="1041" cy="782" r="5" fill="#ffcd5f"/>
+<circle cx="1022" cy="763" r="5" fill="#ffcd5f"/>
+<circle cx="1022" cy="724" r="5" fill="#ffcd5f"/>
+<circle cx="1022" cy="689" r="5" fill="#ffcd5f"/>
+<circle cx="1044" cy="741" r="5" fill="#ffcd5f"/>
+<circle cx="1044" cy="726" r="5" fill="#ffcd5f"/>
+<circle cx="1052" cy="742" r="5" fill="#ffcd5f"/>
+<circle cx="1050" cy="759" r="5" fill="#ffcd5f"/>
+<circle cx="1072" cy="736" r="5" fill="#ffcd5f"/>
+<circle cx="1072" cy="720" r="5" fill="#ffcd5f"/>
+<circle cx="1081" cy="737" r="5" fill="#ffcd5f"/>
+<circle cx="1078" cy="753" r="5" fill="#ffcd5f"/>
+<circle cx="1099" cy="740" r="5" fill="#ffcd5f"/>
+<circle cx="1099" cy="724" r="5" fill="#ffcd5f"/>
+<circle cx="1107" cy="740" r="5" fill="#ffcd5f"/>
+<circle cx="1105" cy="757" r="5" fill="#ffcd5f"/>
+<circle cx="1125" cy="753" r="5" fill="#ffcd5f"/>
+<circle cx="1125" cy="738" r="5" fill="#ffcd5f"/>
+<circle cx="1134" cy="754" r="5" fill="#ffcd5f"/>
+<circle cx="1131" cy="770" r="5" fill="#ffcd5f"/>
+<text x="764" y="883" fill="#f7f2fc" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700">vx +0.00 m/s   |   vy +0.00 m/s   |   wz +0.80 rad/s</text>
+<rect x="40" y="935" width="660" height="374" rx="18" fill="#21172d" stroke="#513364" stroke-width="2"/>
+<text x="64" y="979" fill="#ff974d" font-family="Segoe UI,Arial,sans-serif" font-size="28" font-weight="700">TURN RIGHT IN PLACE</text>
+<text x="64" y="1016" fill="#c0b1cd" font-family="Segoe UI,Arial,sans-serif" font-size="23" font-weight="400">Thumb down; other fingers curled</text>
+<rect x="60" y="1036" width="620" height="208" rx="12" fill="#130e1c" stroke="#130e1c" stroke-width="2"/>
+<line x1="370" y1="1066" x2="399" y2="1097" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="399" y1="1097" x2="418" y2="1116" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="418" y1="1116" x2="418" y2="1155" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="418" y1="1155" x2="418" y2="1190" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="370" y1="1066" x2="396" y2="1138" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="396" y1="1138" x2="396" y2="1153" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="396" y1="1153" x2="388" y2="1137" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="388" y1="1137" x2="390" y2="1120" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="396" y1="1138" x2="368" y2="1143" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="368" y1="1143" x2="368" y2="1159" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="368" y1="1159" x2="359" y2="1142" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="359" y1="1142" x2="362" y2="1126" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="368" y1="1143" x2="341" y2="1140" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="341" y1="1140" x2="341" y2="1155" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="341" y1="1155" x2="333" y2="1139" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="333" y1="1139" x2="335" y2="1122" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="341" y1="1140" x2="315" y2="1126" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="315" y1="1126" x2="315" y2="1141" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="315" y1="1141" x2="306" y2="1125" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="306" y1="1125" x2="309" y2="1109" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="370" y1="1066" x2="315" y2="1126" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<circle cx="370" cy="1066" r="5" fill="#ffcd5f"/>
+<circle cx="399" cy="1097" r="5" fill="#ffcd5f"/>
+<circle cx="418" cy="1116" r="5" fill="#ffcd5f"/>
+<circle cx="418" cy="1155" r="5" fill="#ffcd5f"/>
+<circle cx="418" cy="1190" r="5" fill="#ffcd5f"/>
+<circle cx="396" cy="1138" r="5" fill="#ffcd5f"/>
+<circle cx="396" cy="1153" r="5" fill="#ffcd5f"/>
+<circle cx="388" cy="1137" r="5" fill="#ffcd5f"/>
+<circle cx="390" cy="1120" r="5" fill="#ffcd5f"/>
+<circle cx="368" cy="1143" r="5" fill="#ffcd5f"/>
+<circle cx="368" cy="1159" r="5" fill="#ffcd5f"/>
+<circle cx="359" cy="1142" r="5" fill="#ffcd5f"/>
+<circle cx="362" cy="1126" r="5" fill="#ffcd5f"/>
+<circle cx="341" cy="1140" r="5" fill="#ffcd5f"/>
+<circle cx="341" cy="1155" r="5" fill="#ffcd5f"/>
+<circle cx="333" cy="1139" r="5" fill="#ffcd5f"/>
+<circle cx="335" cy="1122" r="5" fill="#ffcd5f"/>
+<circle cx="315" cy="1126" r="5" fill="#ffcd5f"/>
+<circle cx="315" cy="1141" r="5" fill="#ffcd5f"/>
+<circle cx="306" cy="1125" r="5" fill="#ffcd5f"/>
+<circle cx="309" cy="1109" r="5" fill="#ffcd5f"/>
+<text x="64" y="1283" fill="#f7f2fc" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700">vx +0.00 m/s   |   vy +0.00 m/s   |   wz -0.80 rad/s</text>
+<rect x="740" y="935" width="660" height="374" rx="18" fill="#21172d" stroke="#513364" stroke-width="2"/>
+<text x="764" y="979" fill="#ff974d" font-family="Segoe UI,Arial,sans-serif" font-size="28" font-weight="700">STOP: OPEN PALM</text>
+<text x="764" y="1016" fill="#c0b1cd" font-family="Segoe UI,Arial,sans-serif" font-size="23" font-weight="400">Open all four fingers</text>
+<rect x="760" y="1036" width="620" height="208" rx="12" fill="#130e1c" stroke="#130e1c" stroke-width="2"/>
+<line x1="1070" y1="1213" x2="1041" y2="1182" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1041" y1="1182" x2="1022" y2="1163" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1022" y1="1163" x2="996" y2="1145" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="996" y1="1145" x2="969" y2="1130" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1070" y1="1213" x2="1044" y2="1141" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1044" y1="1141" x2="1044" y2="1116" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1044" y1="1116" x2="1044" y2="1089" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1044" y1="1089" x2="1044" y2="1066" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1044" y1="1141" x2="1072" y2="1136" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1072" y1="1136" x2="1072" y2="1109" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1072" y1="1109" x2="1072" y2="1082" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1072" y1="1082" x2="1072" y2="1058" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1072" y1="1136" x2="1099" y2="1140" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1099" y1="1140" x2="1099" y2="1115" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1099" y1="1115" x2="1099" y2="1090" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1099" y1="1090" x2="1099" y2="1068" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1099" y1="1140" x2="1125" y2="1153" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1125" y1="1153" x2="1125" y2="1132" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1125" y1="1132" x2="1125" y2="1110" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1125" y1="1110" x2="1125" y2="1091" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="1070" y1="1213" x2="1125" y2="1153" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<circle cx="1070" cy="1213" r="5" fill="#ffcd5f"/>
+<circle cx="1041" cy="1182" r="5" fill="#ffcd5f"/>
+<circle cx="1022" cy="1163" r="5" fill="#ffcd5f"/>
+<circle cx="996" cy="1145" r="5" fill="#ffcd5f"/>
+<circle cx="969" cy="1130" r="5" fill="#ffcd5f"/>
+<circle cx="1044" cy="1141" r="5" fill="#ffcd5f"/>
+<circle cx="1044" cy="1116" r="5" fill="#ffcd5f"/>
+<circle cx="1044" cy="1089" r="5" fill="#ffcd5f"/>
+<circle cx="1044" cy="1066" r="5" fill="#ffcd5f"/>
+<circle cx="1072" cy="1136" r="5" fill="#ffcd5f"/>
+<circle cx="1072" cy="1109" r="5" fill="#ffcd5f"/>
+<circle cx="1072" cy="1082" r="5" fill="#ffcd5f"/>
+<circle cx="1072" cy="1058" r="5" fill="#ffcd5f"/>
+<circle cx="1099" cy="1140" r="5" fill="#ffcd5f"/>
+<circle cx="1099" cy="1115" r="5" fill="#ffcd5f"/>
+<circle cx="1099" cy="1090" r="5" fill="#ffcd5f"/>
+<circle cx="1099" cy="1068" r="5" fill="#ffcd5f"/>
+<circle cx="1125" cy="1153" r="5" fill="#ffcd5f"/>
+<circle cx="1125" cy="1132" r="5" fill="#ffcd5f"/>
+<circle cx="1125" cy="1110" r="5" fill="#ffcd5f"/>
+<circle cx="1125" cy="1091" r="5" fill="#ffcd5f"/>
+<text x="764" y="1283" fill="#f7f2fc" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700">vx +0.00 m/s   |   vy +0.00 m/s   |   wz +0.00 rad/s</text>
+<rect x="40" y="1335" width="660" height="374" rx="18" fill="#21172d" stroke="#513364" stroke-width="2"/>
+<text x="64" y="1379" fill="#ff974d" font-family="Segoe UI,Arial,sans-serif" font-size="28" font-weight="700">STOP: CLOSED FIST</text>
+<text x="64" y="1416" fill="#c0b1cd" font-family="Segoe UI,Arial,sans-serif" font-size="23" font-weight="400">Curl fingers and thumb</text>
+<rect x="60" y="1436" width="620" height="208" rx="12" fill="#130e1c" stroke="#130e1c" stroke-width="2"/>
+<line x1="370" y1="1613" x2="341" y2="1582" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="341" y1="1582" x2="322" y2="1563" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="322" y1="1563" x2="322" y2="1551" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="322" y1="1551" x2="346" y2="1563" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="370" y1="1613" x2="344" y2="1541" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="344" y1="1541" x2="344" y2="1526" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="344" y1="1526" x2="352" y2="1542" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="352" y1="1542" x2="350" y2="1559" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="344" y1="1541" x2="372" y2="1536" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="372" y1="1536" x2="372" y2="1520" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="372" y1="1520" x2="381" y2="1537" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="381" y1="1537" x2="378" y2="1553" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="372" y1="1536" x2="399" y2="1540" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="399" y1="1540" x2="399" y2="1524" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="399" y1="1524" x2="407" y2="1540" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="407" y1="1540" x2="405" y2="1557" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="399" y1="1540" x2="425" y2="1553" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="425" y1="1553" x2="425" y2="1538" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="425" y1="1538" x2="434" y2="1554" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="434" y1="1554" x2="431" y2="1570" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<line x1="370" y1="1613" x2="425" y2="1553" stroke="#40debe" stroke-width="5" stroke-linecap="round"/>
+<circle cx="370" cy="1613" r="5" fill="#ffcd5f"/>
+<circle cx="341" cy="1582" r="5" fill="#ffcd5f"/>
+<circle cx="322" cy="1563" r="5" fill="#ffcd5f"/>
+<circle cx="322" cy="1551" r="5" fill="#ffcd5f"/>
+<circle cx="346" cy="1563" r="5" fill="#ffcd5f"/>
+<circle cx="344" cy="1541" r="5" fill="#ffcd5f"/>
+<circle cx="344" cy="1526" r="5" fill="#ffcd5f"/>
+<circle cx="352" cy="1542" r="5" fill="#ffcd5f"/>
+<circle cx="350" cy="1559" r="5" fill="#ffcd5f"/>
+<circle cx="372" cy="1536" r="5" fill="#ffcd5f"/>
+<circle cx="372" cy="1520" r="5" fill="#ffcd5f"/>
+<circle cx="381" cy="1537" r="5" fill="#ffcd5f"/>
+<circle cx="378" cy="1553" r="5" fill="#ffcd5f"/>
+<circle cx="399" cy="1540" r="5" fill="#ffcd5f"/>
+<circle cx="399" cy="1524" r="5" fill="#ffcd5f"/>
+<circle cx="407" cy="1540" r="5" fill="#ffcd5f"/>
+<circle cx="405" cy="1557" r="5" fill="#ffcd5f"/>
+<circle cx="425" cy="1553" r="5" fill="#ffcd5f"/>
+<circle cx="425" cy="1538" r="5" fill="#ffcd5f"/>
+<circle cx="434" cy="1554" r="5" fill="#ffcd5f"/>
+<circle cx="431" cy="1570" r="5" fill="#ffcd5f"/>
+<text x="64" y="1683" fill="#f7f2fc" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700">vx +0.00 m/s   |   vy +0.00 m/s   |   wz +0.00 rad/s</text>
+<rect x="740" y="1335" width="660" height="374" rx="18" fill="#21172d" stroke="#513364" stroke-width="2"/>
+<text x="764" y="1379" fill="#ff974d" font-family="Segoe UI,Arial,sans-serif" font-size="28" font-weight="700">STOP: UNCERTAIN INPUT</text>
+<text x="764" y="1416" fill="#c0b1cd" font-family="Segoe UI,Arial,sans-serif" font-size="23" font-weight="400">No hand, two hands, or unclear pose</text>
+<rect x="760" y="1436" width="620" height="208" rx="12" fill="#130e1c" stroke="#130e1c" stroke-width="2"/>
+<text x="810" y="1509" fill="#c0b1cd" font-family="Segoe UI,Arial,sans-serif" font-size="29" font-weight="400">No clear single-hand gesture</text>
+<text x="870" y="1565" fill="#ffcd5f" font-family="Segoe UI,Arial,sans-serif" font-size="26" font-weight="400">Zero velocity requested</text>
+<text x="764" y="1683" fill="#f7f2fc" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700">vx +0.00 m/s   |   vy +0.00 m/s   |   wz +0.00 rad/s</text>
+<text x="40" y="1772" fill="#c0b1cd" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="400">Illustrative landmarks, not camera captures. Values shown are defaults; control starts disabled.</text>
+</svg>

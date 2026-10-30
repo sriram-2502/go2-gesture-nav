@@ -1,0 +1,3 @@
+# Source revision used for the successful cloud key lookup in the lab notes.
+# Install with dependencies; this is not a complete transitive lockfile.
+unitree_webrtc_connect @ https://github.com/Scherm-AI/unitree_webrtc_connect/archive/23dd4ad2b4d14a7edbfa0ea485067f84d44cb1bc.zip

@@ -1,0 +1,52 @@
+# Original downloads and local archives
+/archived/
+*.zip
+
+# Robot credentials and local configuration
+/private/
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Python and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.conda/
+
+# Research recordings and generated output
+/data/
+/logs/
+/recordings/
+/runs/
+*.csv
+*.jsonl
+*.bag
+*.db3
+*.db3-shm
+*.db3-wal
+*.mcap
+*.mp4
+*.webm
+*.log
+
+# ROS build output
+build/
+install/
+log/
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Downloaded runtime, pinned upstream checkout, generated Clemson checkout
+/.tools/
+/webrtc/upstream/unitree_ui/
+/webrtc/clemson/unitree_ui/
+node_modules/
+dist/

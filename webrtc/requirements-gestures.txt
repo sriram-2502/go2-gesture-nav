@@ -1,0 +1,5 @@
+# Add to the same Python 3.11 go2wifi environment as requirements.txt.
+# MediaPipe version matches the working Go1 scaffold environment.
+mediapipe==1.0.1
+opencv-contrib-python==5.0.0.93
+numpy==2.4.6
