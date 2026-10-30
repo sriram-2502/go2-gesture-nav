@@ -7,7 +7,7 @@ archive, or publish any repository.
 ## Current CI access
 
 The existing setup folder is now published directly as
-[`sriram-2502/unitree-go2-setup`](https://github.com/sriram-2502/unitree-go2-setup)
+[`sriram-2502/go2-webrtc-gesture-nav`](https://github.com/sriram-2502/go2-webrtc-gesture-nav)
 so students can clone it. This publishes the current combined setup; the future
 lab/course split below remains a separate task. Students do not need a copy from
 the instructor's laptop. Private AES access still comes from the instructor.

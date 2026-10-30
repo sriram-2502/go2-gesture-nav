@@ -192,7 +192,7 @@ automatically erased by updating source; clear old site data on shared PCs.
 
 ## Course and instructor reference status
 
-This [GitHub setup repository](https://github.com/sriram-2502/unitree-go2-setup) is the current CI hardware
+This [GitHub setup repository](https://github.com/sriram-2502/go2-webrtc-gesture-nav) is the current CI hardware
 reference. Students clone it separately from the playground. A later repository
 split remains optional future work; no laptop-local bundle is required.
 
@@ -211,3 +211,10 @@ Full run ZIPs, telemetry, and videos belong in local experiment storage with a
 backup. Export only selected small, sanitized evidence into student submissions.
 
 For a fresh student checkout or instructor updates, follow the [clone and update instructions](../../README.md#clone-this-setup-from-github).
+
+## Bring your course classifier
+
+You can reuse your recognition functions from earlier weeks. See the
+[student integration guide](../STUDENT_INTEGRATION.md) for the actual Python
+integration point, explicit label mapping, and preview-first checkout. Keep the
+instructor supervision and robot connection components.

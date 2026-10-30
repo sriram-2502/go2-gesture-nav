@@ -1,4 +1,4 @@
-# Unitree Go2 Lab Setup | Clemson University
+# Go2 WebRTC Gesture Navigation | Clemson CI
 
 Two starting paths for students working with our lab's Unitree Go2 EDU.
 Choose the path that matches your project and follow its guide from the beginning.
@@ -19,8 +19,8 @@ For the CI course, keep this hardware checkout separate from
 
 ```powershell
 Set-Location "$env:USERPROFILE\Downloads"
-git clone https://github.com/sriram-2502/unitree-go2-setup.git unitree_go2_setup
-Set-Location .\unitree_go2_setup
+git clone https://github.com/sriram-2502/go2-webrtc-gesture-nav.git go2-webrtc-gesture-nav
+Set-Location .\go2-webrtc-gesture-nav
 git rev-parse --short HEAD
 ```
 
@@ -103,7 +103,7 @@ additional rights to third-party software or media.
 
 ## Course and instructor reference status
 
-This [GitHub setup repository](https://github.com/sriram-2502/unitree-go2-setup) is the current CI hardware
+This [GitHub setup repository](https://github.com/sriram-2502/go2-webrtc-gesture-nav) is the current CI hardware
 reference. Students clone it separately from the playground. A later repository
 split remains optional future work; no laptop-local bundle is required.
 
@@ -120,3 +120,13 @@ can interfere. Do not disable security controls to work around connection issues
 
 Full run ZIPs, telemetry, and videos belong in local experiment storage with a
 backup. Export only selected small, sanitized evidence into student submissions.
+
+## Reuse your earlier gesture work
+
+Students can adapt their MediaPipe/gesture functions from earlier CI weeks into
+this instructor application. Follow [the student integration guide](webrtc/STUDENT_INTEGRATION.md)
+for the exact Python integration point and label mapping; retain the supplied
+command supervision and WebRTC adapter. The ROS guide remains a separate option.
+
+The maintainer's existing checkout folder may keep its old name. New student
+clones use `go2-webrtc-gesture-nav`; no local-folder rename is required.

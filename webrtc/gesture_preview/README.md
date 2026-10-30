@@ -137,3 +137,10 @@ an in-memory fake transport and never connect to a Go2:
 
 Integrated CSV/video recording and offline replay are available in the UI:
 see [recording and replay](../RECORDING.md). Maze scoring remains future work.
+
+## Bring your course classifier
+
+You can reuse your recognition functions from earlier weeks. See the
+[student integration guide](../STUDENT_INTEGRATION.md) for the actual Python
+integration point, explicit label mapping, and preview-first checkout. Keep the
+instructor supervision and robot connection components.
