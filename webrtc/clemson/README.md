@@ -1,5 +1,8 @@
 # Clemson Go2 UI
 
+New to the hardware session? Start with the [student visual orientation](../STUDENT_ORIENTATION.md)
+for the camera/voxel reference, default hand poses, expected velocities, and common messages.
+
 This is the lab extension path for Creative Inquiry and undergraduate projects.
 Use the [Basic edition first](../UI_SETUP.md), then launch the Clemson edition:
 

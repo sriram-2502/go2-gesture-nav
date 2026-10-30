@@ -10,6 +10,8 @@ their gesture recognition work from the earlier simulation labs.
 [Get started](#clone-this-setup-from-github) · [Clemson dashboard](webrtc/clemson/README.md) ·
 [Bring your gestures](webrtc/STUDENT_INTEGRATION.md) · [Recording & replay](webrtc/RECORDING.md)
 
+**First student session:** [Visual orientation and default gestures](webrtc/STUDENT_ORIENTATION.md).
+
 ![Unitree Go2 web interface showing the robot model in a colored voxel map, with the robot camera view in the upper left.](docs/assets/go2-camera-voxels.png)
 
 *Go2 camera, robot model, and voxel view in the upstream Basic interface.
