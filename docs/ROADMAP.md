@@ -1,75 +1,48 @@
-# Lab roadmap
+# Go2 gesture-navigation roadmap
 
-Hardware validation of the existing Go2 gesture-navigation setup is complete,
-as confirmed by the maintainer. Firmware inventory and the separate ROS/G1 or
-future-feature checks remain distinct tasks. No new hardware tests were run as
-part of this documentation update.
+This roadmap covers the Windows 11 Go2 gesture-navigation application.
+Hardware validation of the existing setup is complete, as confirmed by the
+maintainer.
 
-## README images and motion GIFs
+## Delivered
 
-- [x] Add an attributed upstream reference screenshot showing Go2 camera, robot model, and voxels to the project README.
-- [x] Show the project's MediaPipe-style gesture guide and link the student integration walkthrough.
-- [x] Replace the upstream reference hero with an eight-second project dashboard GIF and still from the supplied October 30, 2026 recording; document exports in [DEMO.md](DEMO.md).
-- [ ] Optional CI media: add a Go2 maze photo if students build a maze; no student maze exists yet.
-- [ ] Record a short supervised forward-and-stop demo with the gesture and measured velocity visible.
-- [ ] Record brief sideways and turn-in-place demos, returning to stop between gestures.
-- [ ] Add a short recording/replay walkthrough GIF showing the overall toggle and offline playback.
-- [x] Export an eight-second dashboard GIF at 800 px width and a 15-second GIF at 720 px width (about 3.3 and 4.0 MiB), plus higher-quality silent release MP4s.
-- [x] Store reviewed dashboard GIF/still in `docs/assets/`; keep full source MP4/WebM, recording ZIPs, and raw telemetry local. Inspect future exports separately before publication.
+- [x] Local Windows webcam extraction with MediaPipe and a landmark-only hand panel.
+- [x] Readable gesture rules, velocity mapping, consistency hold, and freshness checks.
+- [x] Go2 Wi-Fi/WebRTC connection and camera/voxel dashboard based on pinned Unitree UI source.
+- [x] Explicit gesture enable, visible stop controls, bounded commands, and robot feedback.
+- [x] Requested, supervised, transmitted, and measured velocity overlay.
+- [x] Obstacle-avoidance switch with state readback.
+- [x] Local recording toggle, structured run data, and offline replay.
+- [x] Hardware validation of the existing Go2 gesture-navigation setup.
+- [x] Windows dependency and launch instructions, illustrated gestures, and classifier integration guide.
+- [x] Two dashboard GIFs, a readable still, and silent demo videos; see [DEMO.md](DEMO.md).
+- [x] MIT license for original project code/documentation, with third-party notices retained.
 
-The current hero comes from the supplied recorded Go2 dashboard session. It
-illustrates the integrated view; it does not qualify every gesture or stop path.
-Record firmware/setup details with future qualification captures and distinguish
-hardware recordings from offline or synthetic replay demos.
+## Documentation and onboarding
 
-## Repository separation TODO
+- [ ] Have a new user follow the Windows installation and first-session guides and record corrections.
+- [ ] Record the supported Go2 firmware and host dependency versions with future releases.
+- [ ] Add a short recording/replay walkthrough GIF.
+- [ ] Optionally add focused forward/stop, sideways, and turn-in-place demonstration clips. These are presentation improvements, not outstanding baseline hardware validation.
 
-- [x] Publish and link the separate lab handbook, Go2 ROS/Basic WebRTC starters,
-  personal simulation and gesture-navigation repos, and CI website. See the
-  [organization status](REPOSITORY_SPLIT_TODO.md) for independent-checkout
-  maintenance, remaining work, and optional refactors.
+## Private access
 
-## Student onboarding
+- [ ] Migrate Go2 credential distribution to the planned institution-approved Proton Pass arrangement; confirm sharing capacity and maintainer access.
+- [ ] Review public Git history and confirm available secret-scanning/push-protection settings.
 
-- [x] Separate the ROS/Ethernet and WebRTC/Wi-Fi paths.
-- [x] Archive original ZIP downloads and ignore local credentials and recordings.
-- [ ] Establish private key distribution for approved students.
-- [ ] Have a new student follow each guide and record corrections.
+Keys, passwords, full recordings, and raw experiment data remain outside Git.
+Until vault migration, authorized users request credentials privately from the
+maintainer. See [KEY_ACCESS.md](KEY_ACCESS.md).
 
-## ROS research path
+## Optional application improvements
 
-- [ ] Verify a short `--record-states` run on the Jetson; inspect bag metadata,
-  core topic counts, and `run.json`.
-- [ ] Verify `--record-all` with the actual active sensor publishers.
-- [ ] Add a sanitized recording example and an offline analysis workflow.
+- [ ] Evaluate maintaining the dashboard directly in an upstream fork instead of the current reproducible overlay.
+- [ ] Add further operator recognition diagnostics or configurable gesture experiments while preserving command supervision.
+- [ ] Qualify optional onboard mapping/SLAM features if a future navigation experiment needs them.
 
-## WebRTC teaching path
+## Optional CI course extension
 
-- [ ] Verify the connection-only script on the lab robot and record software versions.
-- [x] Validate the existing Go2 gesture-navigation hardware setup, including bounded motion and stopping (maintainer-confirmed).
-- [ ] Document camera streaming when implemented and tested.
-
-## Dashboard using `unitree_ui`
-
-- [x] Add the correct `unitree_ui` repository URL and integration instructions.
-- [x] Provide Windows launch options for upstream Basic and a separate Clemson starter.
-- [x] Validate the existing Go2 camera/state/voxel dashboard (maintainer-confirmed).
-- [ ] Optional mapping extension: qualify onboard SLAM separately if used for a future experiment.
-- [x] Add Windows webcam MediaPipe preview to the Clemson UI, reusing the Go1 scaffold in go2wifi.
-- [x] Validate operator gestures and the integrated Go2 camera/voxel dashboard (maintainer-confirmed).
-- [x] Add supervised gesture command routing and beginner-friendly Python examples.
-- [x] Validate the existing gesture-navigation hardware behavior (maintainer-confirmed).
-- [ ] Optional CI course extension: student-built maze layout, scoring, and repeatable trials; students have not built a maze yet. Track activity development in the student code repo and link expectations from the course website.
-- [x] Add integrated CSV/data logs, optional video recording, and offline replay.
-- [x] Capture a live Go2 run with dashboard video and data; the supplied recording supports the published demos.
-- [x] Define the local Python landmark service/browser boundary and operator-supplied key handling; shared vault migration remains pending.
-- [x] Add connection status, velocity controls, visible stop controls, and feedback.
-- [ ] Document supported firmware and supervised classroom operation.
-
-## Public release
-
-- [x] Retain the independent lab starters' selected MIT licenses and source/media attribution.
-- [x] Release original personal-project code and documentation under the [MIT License](../LICENSE); retain third-party licenses.
-- [ ] Review publishable files and any Git history for credentials.
-- [ ] Enable available GitHub secret scanning and push protection.
-- [x] Publish source and docs, keeping private access material and full recordings separate.
+Students may build a maze and define scoring and repeatable navigation trials.
+No student maze has been built yet. This is an optional course activity, not a
+required feature of the gesture-navigation application; activity instructions
+and submission expectations belong with the course materials.

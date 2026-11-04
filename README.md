@@ -188,18 +188,6 @@ a selected short export. Webcam pixels are not part of the landmark service;
 robot video and hand landmarks are still experiment data. Clear cached keys from
 the local UI on shared computers. See [private access](docs/KEY_ACCESS.md).
 
-## Related robot starters
-
-| Resource | Use it for |
-| --- | --- |
-| [DyCo-AI/go2-webRTC](https://github.com/DyCo-AI/go2-webRTC) | Independent Basic Windows UI and Python connection/velocity examples |
-| [DyCo-AI/go2-ros](https://github.com/DyCo-AI/go2-ros) | Ethernet/SSH into the onboard Jetson, ROS 2, and bags |
-| [DyCo-AI Lab Robots](https://dyco-ai.github.io/lab-robots/) | Multi-robot onboarding handbook |
-| [legion1581/unitree_ui](https://github.com/legion1581/unitree_ui) | Upstream camera/voxel UI on which this integration builds |
-
-Legacy ROS and Basic scripts remain in this checkout for continuity; the lab
-repositories own their independent onboarding paths.
-
 ## Status and attribution
 
 Developed by [Sriram Krishnamoorthy](https://github.com/sriram-2502).

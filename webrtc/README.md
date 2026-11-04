@@ -1,9 +1,9 @@
-# WebRTC + Wi-Fi: Clemson student setup
+# Go2 WebRTC and Wi-Fi setup
 
-For the independent **Basic** starter, use [DyCo-AI/go2-webRTC](https://github.com/DyCo-AI/go2-webRTC).
-It includes Windows launchers, Python connection/velocity examples, and lab demo
-media without this repository's gesture application. The Clemson edition and
-student gesture integration remain here in the personal instructor reference.
+For the gesture-navigation application, start with
+[Windows dependencies and launch instructions](DEPENDENCIES.md) and the
+[dashboard guide](clemson/README.md). This page documents the underlying Go2
+WebRTC connection and velocity utilities included in this project.
 
 ## Choose your interface
 
