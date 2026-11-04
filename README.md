@@ -13,9 +13,6 @@ webcam observes your hand; the robot camera shows where the robot is going.
 
 ![Eight-second dashboard demonstration showing the Go2 camera and voxels, extracted MediaPipe hand landmarks, gesture labels, and velocity feedback.](docs/assets/go2-gesture-dashboard-demo.gif)
 
-*Dashboard excerpt from a recorded Go2 session. Browser tabs, address bar, and
-desktop are cropped out.*
-
 [Watch the higher-quality silent MP4](https://github.com/sriram-2502/go2-gesture-nav/releases/download/v0.1.0/go2-gesture-dashboard-demo.mp4) ·
 [View the dashboard still](docs/assets/go2-gesture-dashboard.png)
 
@@ -53,7 +50,6 @@ Preview recognition with motion disabled before enabling the robot adapter.
 
 ![A fifteen-second dashboard segment showing changing camera and voxel views alongside the extracted hand gestures and velocity overlay.](docs/assets/go2-gesture-dashboard-demo-02.gif)
 
-*A longer view from the same run: source seconds 15–30, shown as a 15-second loop.*
 [Watch the second silent MP4](https://github.com/sriram-2502/go2-gesture-nav/releases/download/v0.1.0/go2-gesture-dashboard-demo-02.mp4).
 
 ## Default gestures
@@ -77,8 +73,7 @@ turn magnitude from **0.5–1.0 rad/s**, default **0.8**. Sideways magnitude sta
 fixed at **0.5 m/s**. One gesture commands one axis.
 
 A movement gesture must remain consistent for **300 ms**; input older than
-**400 ms** is rejected. Stop/unknown input bypasses the movement hold. The
-illustrations describe programmed poses, not measured recognition accuracy.
+**400 ms** is rejected. Stop/unknown input bypasses the movement hold.
 See the [detailed gesture and control guide](webrtc/clemson/README.md#gesture-guide-what-your-hand-commands).
 
 ## Quick start on Windows 11
@@ -183,8 +178,7 @@ gesture control separately. Turn **Recording OFF** to finalize the local run ZIP
 The **Replay** page opens saved runs offline; it does not replay commands to the
 robot. See [RECORDING.md](webrtc/RECORDING.md) for streams, timing, and limits.
 
-Keep complete ZIPs, videos, and telemetry outside Git. This README contains only
-a selected short export. Webcam pixels are not part of the landmark service;
+Keep complete ZIPs, videos, and telemetry outside Git. Webcam pixels are not part of the landmark service;
 robot video and hand landmarks are still experiment data. Clear cached keys from
 the local UI on shared computers. See [private access](docs/KEY_ACCESS.md).
 
