@@ -203,18 +203,13 @@ repositories own their independent onboarding paths.
 
 ## Status and attribution
 
-The supplied October 30 recording demonstrates the integrated dashboard and
-changing camera/voxel/gesture views. Offline checks and earlier local UI builds
-are documented in the detailed guides. This documentation/media update does not
-qualify every gesture, stop/focus-loss path, avoidance mode, firmware, or replay
-alignment on hardware. Outstanding checks remain on the [roadmap](docs/ROADMAP.md).
-
 Developed by [Sriram Krishnamoorthy](https://github.com/sriram-2502).
 This is an integration project with pinned upstream UI sources, not a standalone
 replacement for Unitree UI. See [NOTICE.md](NOTICE.md) for retained upstream MIT
 and perception Apache 2.0 notices. A project-wide license for the remaining
 original materials has not yet been selected. Demo provenance and export details
-are in [docs/DEMO.md](docs/DEMO.md).
+are in [docs/DEMO.md](docs/DEMO.md). See the [roadmap](docs/ROADMAP.md) for planned
+work and outstanding checks.
 
 ## Clemson Creative Inquiry reference
 
