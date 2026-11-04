@@ -4,17 +4,18 @@
 
 - [x] Add an attributed upstream reference screenshot showing Go2 camera, robot model, and voxels to the project README.
 - [x] Show the project's MediaPipe-style gesture guide and link the student integration walkthrough.
-- [ ] Capture our Clemson dashboard with Go2 camera, voxels, extracted hands, and velocity overlay; replace the upstream reference hero with this project capture.
+- [x] Replace the upstream reference hero with an eight-second project dashboard GIF and still from the supplied October 30, 2026 recording; document exports in [DEMO.md](DEMO.md).
 - [ ] Add a clear photo of the lab Go2 in the maze and record the photo source/permission.
 - [ ] Record a short supervised forward-and-stop demo with the gesture and measured velocity visible.
 - [ ] Record brief sideways and turn-in-place demos, returning to stop between gestures.
 - [ ] Add a short recording/replay walkthrough GIF showing the overall toggle and offline playback.
-- [ ] Export selected 5–10 second, 8–12 fps GIFs at about 960 px width; target under 5 MB each. Inspect actual size and reduce resolution/frame rate as needed.
-- [ ] Store curated public GIFs in `docs/assets/`; keep source MP4/WebM, recording ZIPs, and raw telemetry local. Review each export for credentials, private browser content, and identifiable people before publishing.
+- [x] Export an eight-second, 8 fps dashboard GIF at 800 px width (about 3.3 MiB), plus a higher-quality silent release MP4.
+- [x] Store reviewed dashboard GIF/still in `docs/assets/`; keep full source MP4/WebM, recording ZIPs, and raw telemetry local. Inspect future exports separately before publication.
 
-The current hero is an upstream reference, not evidence of a Clemson robot trial.
-Project captures should name the setup/firmware and distinguish real robot trials
-from offline or synthetic replay demos.
+The current hero comes from the supplied recorded Go2 dashboard session. It
+illustrates the integrated view; it does not qualify every gesture or stop path.
+Record firmware/setup details with future qualification captures and distinguish
+hardware recordings from offline or synthetic replay demos.
 
 ## Repository separation TODO
 

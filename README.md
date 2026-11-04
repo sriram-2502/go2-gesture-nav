@@ -1,234 +1,222 @@
 # Go2 WebRTC Gesture Navigation
 
-**Clemson Creative Inquiry · Windows 11 · MediaPipe · Unitree Go2**
+**Windows 11 · Python · MediaPipe · Unitree Go2 · No ROS required**
 
-Steer a Go2 using hand gestures while watching its onboard camera and voxel view.
-This instructor setup brings together the Unitree web interface, extracted hand
-landmarks, supervised velocity requests, and recording/replay. Students can bring
-their gesture recognition work from the earlier simulation labs.
+Navigate a Go2 with hand gestures while watching its onboard camera and voxel
+view. This project combines a focused Unitree UI dashboard, extracted hand
+landmarks, supervised velocity commands, and local recording/replay. The Windows
+webcam observes your hand; the robot camera shows where the robot is going.
 
-[Get started](#clone-this-setup-from-github) · [Clemson dashboard](webrtc/clemson/README.md) ·
-[Bring your gestures](webrtc/STUDENT_INTEGRATION.md) · [Recording & replay](webrtc/RECORDING.md)
+[Quick start](#quick-start-on-windows-11) · [Gesture guide](#default-gestures) ·
+[Dashboard guide](webrtc/clemson/README.md) · [Record and replay](webrtc/RECORDING.md) ·
+[Customize your gestures](webrtc/STUDENT_INTEGRATION.md)
 
-**First student session:** [Visual orientation and default gestures](webrtc/STUDENT_ORIENTATION.md).
+![Eight-second dashboard demonstration showing the Go2 camera and voxels, extracted MediaPipe hand landmarks, gesture labels, and velocity feedback.](docs/assets/go2-gesture-dashboard-demo.gif)
 
-![Unitree Go2 web interface showing the robot model in a colored voxel map, with the robot camera view in the upper left.](docs/assets/go2-camera-voxels.png)
+*Dashboard excerpt from a recorded Go2 session on October 30, 2026. Browser tabs,
+address bar, and desktop are cropped out. The clip shows the integrated interface;
+it is not a complete qualification of every gesture or stopping condition.*
 
-*Go2 camera, robot model, and voxel view in the upstream Basic interface.
-Screenshot from [legion1581/unitree_ui](https://github.com/legion1581/unitree_ui),
-used with its [MIT notice](webrtc/clemson/UPSTREAM_LICENSE). This is an upstream
-reference image; our Clemson dashboard capture and motion GIFs are on the
-[media TODO](docs/ROADMAP.md#readme-images-and-motion-gifs).*
+[Watch the higher-quality silent MP4](https://github.com/sriram-2502/go2-webrtc-gesture-nav/releases/download/v0.1.0/go2-gesture-dashboard-demo.mp4) ·
+[View the dashboard still](docs/assets/go2-gesture-dashboard.png)
 
-## Teaching vision
+## What you can build
 
-### 1. Connecting to Clemson Creative Inquiry
+- **Gesture navigation:** use simple Python rules to turn hand landmarks into forward, sideways, and turn-in-place requests.
+- **A focused robot dashboard:** camera and available voxels in the main view; extracted hands and controls in a compact side panel. Full webcam pixels are not displayed or sent to the browser.
+- **Feedback-driven experiments:** compare requested, supervised, transmitted, and measured velocities in the main-view overlay.
+- **Local recording and review:** one recording toggle saves dashboard/video and structured data; a separate replay page opens saved runs without connecting to the robot.
+- **Your own classifier:** bring gesture logic from simulation or another project while retaining the command supervisor and robot adapter.
 
-This framework supports Clemson's Creative Inquiry course,
-[**Mission Control: From Human Gestures to Intelligent Robot Motion**](https://dyco-ai.github.io/go1_gesture_tracking/).
-The [companion code and weekly labs](https://github.com/sriram-2502/go1-mujoco-playground)
-introduce Python, MediaPipe, gesture recognition, command supervision, and Go1
-simulation before supervised Go2 experiments. Students can bring their earlier
-classifiers into this Windows/WebRTC instructor setup, navigate a maze using the
-robot's camera view, and use recordings to explain recognition errors and motion
-responses. Weekly README reports and a final analysis connect building the system
-with experimental reasoning and technical communication.
+This is high-level navigation through the Go2's existing walking controller.
+It does not replace locomotion control, deploy an RL policy, or implement
+joint/torque-level MPC. Mapping and voxel availability depend on robot firmware.
 
-### 2. Extending to modeling and control courses
-
-A quadruped can make classroom models tangible: students predict a response,
-run a bounded experiment, and compare their model with measured behavior.
-The Windows 11 interface and small Python modules offer an accessible starting
-point for proposed labs such as:
-
-| Course | Possible learning activity |
-| --- | --- |
-| **ME 3050 — Modeling and Analysis of Dynamic Systems** | Identify a simple model from commanded and measured velocity; study time constants, delays, and model error |
-| **ME 4030 — Control and Integration of Multidomain Dynamic Systems** | Connect sensing, actuation, and feedback; compare simulated and measured responses and investigate sampling and communication delays |
-
-Course titles follow [Clemson's Mechanical Engineering descriptions](https://www.clemson.edu/cecas/departments/me/academics/summer.html).
-These are proposed teaching applications. The current implementation uses Python
-and browser tools; exported data can support Python or MATLAB analysis. Future
-course modules could add MATLAB/Simulink workflows and validated multibody and
-humanoid examples, building on this Go2 starting point.
-
-### 3. Teaching philosophy and future faculty work
-
-I enjoy building teaching frameworks that lower the entry barriers to advanced
-robotics and control. A student should feel invited to investigate a quadruped
-or humanoid, even without extensive programming or robotics experience. Familiar
-Windows tools, readable examples, visual feedback, and a progression from
-simulation to supervised experiments give students a place to begin while
-preserving the depth of the engineering questions. This project illustrates
-the approach I want to bring to undergraduate and graduate teaching as a faculty
-member: connect fundamentals with current robotics research, help students build
-confidence through achievable experiments, and create room for increasingly
-independent inquiry.
-
-## What students build
+## How it fits together
 
 ```text
-Windows webcam → MediaPipe landmarks → your gesture classifier
-                                                ↓
-                                 bounded velocity + supervision
-                                                ↓
-Go2 camera + voxels ← Clemson browser UI ← Wi-Fi / WebRTC → Go2
+Windows webcam → MediaPipe → gesture label → velocity mapping → freshness/hold checks
+                                                                      ↓
+Go2 camera + voxels → local browser dashboard ← explicit enable + robot checks
+                                          ↕
+                                    Wi-Fi / WebRTC
+                                          ↕
+                              Go2 onboard walking controller
+
+Dashboard video + structured logs → local recording ZIP → offline replay
 ```
 
-| In the dashboard | What it does |
+Python handles webcam extraction and gesture intent. The browser uses one
+authenticated robot connection for video, state, and high-level commands.
+Preview recognition with motion disabled before enabling the robot adapter.
+
+## Default gestures
+
+![MediaPipe-style illustrations of the programmed forward, sideways left/right, turn left/right, and stop gestures.](webrtc/clemson/assets/gesture-guide.png)
+
+Match the direction in the **mirrored hand panel**. Velocities use the robot's
+body frame: `vx` forward, `vy` left, and `wz` counterclockwise yaw.
+
+| Hand pose | Movement | Default `(vx, vy, wz)` |
+| --- | --- | --- |
+| Index up, other fingers curled, palm facing webcam | Forward | `(+0.5, 0, 0)` |
+| Index pointing left | Sideways left | `(0, +0.5, 0)` |
+| Index + middle fingers pointing left | Sideways right | `(0, -0.5, 0)` |
+| Thumb up, other fingers curled | Turn left in place | `(0, 0, +0.8)` |
+| Thumb down, other fingers curled | Turn right in place | `(0, 0, -0.8)` |
+| Open palm, closed fist, missing hand, or unclear pose | Stop request | `(0, 0, 0)` |
+
+Units are **m/s, m/s, rad/s**. Forward speed is adjustable from **0.5–1.0 m/s**;
+turn magnitude from **0.5–1.0 rad/s**, default **0.8**. Sideways magnitude stays
+fixed at **0.5 m/s**. One gesture commands one axis.
+
+A movement gesture must remain consistent for **300 ms**; input older than
+**400 ms** is rejected. Stop/unknown input bypasses the movement hold. The
+illustrations describe programmed poses, not measured recognition accuracy.
+See the [detailed gesture and control guide](webrtc/clemson/README.md#gesture-guide-what-your-hand-commands).
+
+## Quick start on Windows 11
+
+You need Windows 11 x64, Git for Windows, Conda, Chrome, a webcam, and authorized
+access to a Go2. Install dependencies while internet is available, before
+joining the robot network. ROS, WSL, Docker, and MuJoCo are not needed.
+
+### 1. Clone and install Python dependencies
+
+In **Anaconda / Miniconda Prompt**:
+
+```bat
+git clone https://github.com/sriram-2502/go2-webrtc-gesture-nav.git
+cd go2-webrtc-gesture-nav
+conda create -n go2wifi python=3.11 pip -y
+conda activate go2wifi
+python -m pip install -r webrtc\requirements.txt -r webrtc\requirements-gestures.txt
+python -m webrtc.gesture_preview.download_model
+python -m pip check
+```
+
+If the environment already exists, follow [DEPENDENCIES.md](webrtc/DEPENDENCIES.md)
+rather than recreating it. Dependency pins and the tested environment are listed there.
+
+### 2. Prepare the dashboard
+
+In **PowerShell**, from this repository's root:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\webrtc\setup-ui.ps1 -Edition clemson
+```
+
+The setup downloads a local Node runtime and the pinned upstream Unitree UI.
+`clemson` is the existing gesture-dashboard edition flag and source folder name;
+it is retained for compatibility. The Basic edition is also available; see
+[UI_SETUP.md](webrtc/UI_SETUP.md). Read the setup script before running it.
+
+### 3. Start the two local services
+
+**Terminal 1 — Anaconda / Miniconda Prompt**, from the checkout root:
+
+```bat
+conda activate go2wifi
+python -m webrtc.gesture_preview.server
+```
+
+**Terminal 2 — PowerShell**, from the checkout root:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\webrtc\start-ui.ps1 -Edition clemson
+```
+
+Open **http://127.0.0.1:5174/** in Chrome. Test the extracted hand view with robot
+control disabled. Close other webcam programs; only one process should own it.
+
+### 4. Connect to the assigned robot
+
+Join the **Go2 Wi-Fi hotspot** and use robot IP **`192.168.12.1`**. Obtain the
+Wi-Fi password and robot-specific AES key privately from the owner/instructor.
+Enter the key locally and choose **Connect and open web view**. Campus Wi-Fi is
+not this direct robot connection; the hotspot may not provide internet.
+
+Complete the [operator walkthrough](webrtc/gesture_preview/README.md) before
+enabling gesture control. Confirm normal standing, fresh robot feedback and
+video, clear space, and access to the paired remote. Run one robot controller
+at a time. A transmitted stop request is not proof of a physical stop.
+
+The dashboard has an obstacle-avoidance switch with readback. An `Unknown` value
+is not an enabled state; its firmware behavior still needs qualification. Do
+not infer obstacle protection from the visible voxels.
+
+## Learn the code without moving a robot
+
+```bat
+conda activate go2wifi
+python -m webrtc.examples.gesture_mapping
+python -m webrtc.gesture_navigation --demo
+```
+
+These examples print the velocity mapping and simulated supervised observations;
+they do not connect to the robot. Start with the small modules:
+
+| Module | Responsibility |
 | --- | --- |
-| Robot view | Onboard camera and available voxel stream in the main window |
-| Hand panel | Extracted MediaPipe skeletons and gesture labels; webcam pixels stay local |
-| Velocity overlay | Requested, supervised, transmitted, and measured motion |
-| Explicit control | Enable/Stop controls, freshness checks, and bounded commands |
-| Experiment tools | Obstacle-avoidance switch, one recording toggle, and offline replay |
+| [vision.py](webrtc/gesture_preview/vision.py) | Webcam capture, MediaPipe landmarks, and acquisition timestamps |
+| [gestures.py](webrtc/gesture_preview/gestures.py) | Geometric gesture rules and recognition hints |
+| [velocity.py](webrtc/gesture_preview/velocity.py) | Gesture-to-velocity table and speed limits |
+| [safety.py](webrtc/gesture_preview/safety.py) | Consistency hold, input freshness, and zero requests |
+| [server.py](webrtc/gesture_preview/server.py) | Local landmark/intent service for the browser |
+| [gesture-robot.ts](webrtc/clemson/overlay/gesture-robot.ts) | Explicit enable, robot feedback checks, and WebRTC command routing |
 
-The Windows webcam sees the student's hand. The Go2 camera sees the maze.
-For the CI activity, students navigate using the robot view while an instructor
-maintains direct sight and the paired remote.
+Follow [the integration guide](webrtc/STUDENT_INTEGRATION.md) to substitute your
+classifier. Keep the existing timestamps, limits, supervisor, and robot checks.
+The generated UI checkout is ignored; reproducible UI changes belong in the
+tracked overlay/setup sources, not only in generated files.
 
-## Gesture starter
+## Recording and replay
 
-<p align="center">
-  <img src="webrtc/clemson/assets/gesture-guide.png" alt="MediaPipe-style diagrams for forward, sideways left/right, turn left/right, and stop gestures." width="850">
-</p>
+Turn **Recording ON**, approve the dashboard capture in Chrome, then enable
+gesture control separately. Turn **Recording OFF** to finalize the local run ZIP.
+The **Replay** page opens saved runs offline; it does not replay commands to the
+robot. See [RECORDING.md](webrtc/RECORDING.md) for streams, timing, and limits.
 
-*Programmed starter gestures, illustrated with hand landmarks. These diagrams
-explain the mapping; they are not measurements of recognition accuracy.*
+Keep complete ZIPs, videos, and telemetry outside Git. This README contains only
+a selected short export. Webcam pixels are not part of the landmark service;
+robot video and hand landmarks are still experiment data. Clear cached keys from
+the local UI on shared computers. See [private access](docs/KEY_ACCESS.md).
 
-Start with the [illustrated gesture table](webrtc/clemson/README.md#gesture-guide-what-your-hand-commands),
-or [adapt your own earlier classifier](webrtc/STUDENT_INTEGRATION.md) while retaining
-the instructor's command limits and stop checks.
+## Related robot starters
 
-## Choose your setup
+| Resource | Use it for |
+| --- | --- |
+| [DyCo-AI/go2-webRTC](https://github.com/DyCo-AI/go2-webRTC) | Independent Basic Windows UI and Python connection/velocity examples |
+| [DyCo-AI/go2-ros](https://github.com/DyCo-AI/go2-ros) | Ethernet/SSH into the onboard Jetson, ROS 2, and bags |
+| [DyCo-AI Lab Robots](https://dyco-ai.github.io/lab-robots/) | Multi-robot onboarding handbook |
+| [legion1581/unitree_ui](https://github.com/legion1581/unitree_ui) | Upstream camera/voxel UI on which this integration builds |
 
-The CI course uses the **WebRTC + Wi-Fi** path on Windows 11. The separate
-ROS/Ethernet guide is available for research students.
+Legacy ROS and Basic scripts remain in this checkout for continuity; the lab
+repositories own their independent onboarding paths.
 
-| Path | Intended audience | Connection and execution | What it supports |
-| --- | --- | --- | --- |
-| [ROS 2 + Ethernet](https://github.com/DyCo-AI/go2-ros) | Research and PhD students | Laptop connects by Ethernet; SSH into the Go2's onboard Jetson; run Python on the Jetson | Standalone lab starter: bounded velocity commands, Jetson software inventory, and optional ROS 2 bags |
-| [Basic WebRTC + Wi-Fi](https://github.com/DyCo-AI/go2-webRTC) | High-level planning, mapping, and student experiments | Windows 11 joins the Go2 hotspot; run Basic UI or Python locally | Standalone lab starter, camera/voxel interface, bounded velocity examples, and motion demos |
+## Status and attribution
 
-The two paths use different robot interfaces. The Jetson's Ethernet address in
-this lab is `192.168.123.18`; the WebRTC hotspot endpoint is `192.168.12.1`.
-The WebRTC path requires a private, robot-specific AES key supplied by the lab.
+The supplied October 30 recording demonstrates the integrated dashboard and
+changing camera/voxel/gesture views. Offline checks and earlier local UI builds
+are documented in the detailed guides. This documentation/media update does not
+qualify every gesture, stop/focus-loss path, avoidance mode, firmware, or replay
+alignment on hardware. Outstanding checks remain on the [roadmap](docs/ROADMAP.md).
 
-## Clone this setup from GitHub
+Developed by [Sriram Krishnamoorthy](https://github.com/sriram-2502).
+This is an integration project with pinned upstream UI sources, not a standalone
+replacement for Unitree UI. See [NOTICE.md](NOTICE.md) for retained upstream MIT
+and perception Apache 2.0 notices. A project-wide license for the remaining
+original materials has not yet been selected. Demo provenance and export details
+are in [docs/DEMO.md](docs/DEMO.md).
 
-For the CI course, keep this hardware checkout separate from
-`go1-mujoco-playground`. Install Git for Windows first. In **PowerShell**:
+## Clemson Creative Inquiry reference
 
-```powershell
-Set-Location "$env:USERPROFILE\Downloads"
-git clone https://github.com/sriram-2502/go2-webrtc-gesture-nav.git go2-webrtc-gesture-nav
-Set-Location .\go2-webrtc-gesture-nav
-git rev-parse --short HEAD
-```
-
-If this folder already exists, use that checkout rather than cloning over it.
-See [WebRTC dependencies](webrtc/DEPENDENCIES.md) for the `go2wifi` environment,
-then [Basic dashboard setup](webrtc/UI_SETUP.md) and [Clemson gestures](webrtc/clemson/README.md).
-The setup script downloads the pinned upstream UI and local Node runtime;
-downloaded dependencies, model weights, keys, and recordings are not in Git.
-
-## Get instructor updates
-
-Stop the UI and webcam service with Ctrl+C and disconnect the robot first.
-With internet access, from this hardware checkout:
-
-```powershell
-git status
-git pull --ff-only
-git rev-parse --short HEAD
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\webrtc\setup-ui.ps1 -Edition all
-```
-
-Preserve local changes before pulling. If Git refuses the update, ask the
-instructor instead of resetting or force-pulling. Follow any changed Python/model
-installation steps in [DEPENDENCIES.md](webrtc/DEPENDENCIES.md). Record the commit
-in your weekly report. This setup checkout is for instructor updates; student
-reports belong on the team branch of the playground repository.
-
-Then join the assigned **Go2 Wi-Fi hotspot**, rather than Clemson campus Wi-Fi,
-and connect to **192.168.12.1**. Ask the instructor for the private AES key and
-Wi-Fi password. The robot hotspot may have no internet; install/update before
-switching networks. No credentials are included in this repository.
-
-## Repository layout
-
-```text
-ros/                    Jetson ROS 2 script, setup guide, controller photo
-webrtc/                 Laptop WebRTC scripts and setup guide
-docs/                   Credential access and project roadmap
-archived/               Original ZIP downloads (local only; ignored by Git)
-private/                Lab credentials and private notes (local only; ignored)
-```
-
-Start with [ROS instructions](ros/README.md) or [WebRTC instructions](webrtc/README.md).
-Use the checked-out source files; the original ZIP downloads are archival copies.
-Recordings belong outside version control, such as `~/go2_data` on the Jetson.
-
-## Before commanding motion
-
-Use the lab's supervised operating procedure. Confirm normal standing and remote
-control first, clear the travel area, and keep the paired remote ready. Run one
-motion controller at a time. Software stop commands depend on a working connection;
-visually confirm the robot has stopped before starting another run.
-
-## Current status
-
-- **ROS:** the existing guide records walking and stance tests on the lab robot.
-  Recording lifecycle checks used simulated interfaces; actual bag capture still
-  needs verification on the Jetson.
-- **WebRTC:** the existing notes record successful AES-key retrieval on Windows 11
-  with Go2 software v1.1.15. The scripts are included; connection and motion tests
-  are not yet documented as verified.
-- **Dashboard:** [Windows launch options](webrtc/UI_SETUP.md) now include pinned
-  upstream `unitree_ui` and a separate Clemson branded starter. Basic source builds
-  and the local server were checked; robot video, voxels, SLAM, and motion still
-  need verification. Clemson now adds a webcam/MediaPipe preview using `go2wifi`;
-  explicitly enabled gesture navigation is implemented with offline checks;
-  recording and offline replay are also implemented. Physical operation and
-  browser screen-capture verification remain outstanding.
-
-See the [roadmap](docs/ROADMAP.md) and [private-key access plan](docs/KEY_ACCESS.md).
-Never include a robot key, password, cloud token, or private configuration in a
-public issue, screenshot, commit, or dashboard bundle.
-
-## Contributing and public release
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for documentation and verification expectations.
-A project-wide license has not been selected. Existing third-party license
-notices remain in effect; see [NOTICE.md](NOTICE.md). Publication does not grant
-additional rights to third-party software or media.
-
-## Course and instructor reference status
-
-This [GitHub setup repository](https://github.com/sriram-2502/go2-webrtc-gesture-nav) is the current CI hardware
-reference. Students clone it separately from the playground. A later repository
-split remains optional future work; no laptop-local bundle is required.
-
-- [Course website](https://dyco-ai.github.io/go1_gesture_tracking/): schedule and assignment expectations; the course retains its Go1 name.
-- [Student code and weekly labs](https://github.com/sriram-2502/go1-mujoco-playground): Go1 simulation followed by Go2 hardware onboarding.
-- [Submission/data policy](https://github.com/sriram-2502/go1-mujoco-playground/blob/main/course/SUBMISSIONS.md): individual weekly README reports on team branches, optional small media, full data stored locally, and a final Markdown report.
-
-This hardware version uses Go2 WebRTC on Windows 11. Physical Go1 integration is
-under development. Ask the instructor for the AES key and Wi-Fi credentials;
-never place them in reports or Git. Install dependencies using internet first,
-then join the assigned **Go2 hotspot** at **192.168.12.1** for robot access.
-Do not use Clemson campus Wi-Fi for this connection; firewall/client isolation
-can interfere. Do not disable security controls to work around connection issues.
-
-Full run ZIPs, telemetry, and videos belong in local experiment storage with a
-backup. Export only selected small, sanitized evidence into student submissions.
-
-## Reuse your earlier gesture work
-
-Students can adapt their MediaPipe/gesture functions from earlier CI weeks into
-this instructor application. Follow [the student integration guide](webrtc/STUDENT_INTEGRATION.md)
-for the exact Python integration point and label mapping; retain the supplied
-command supervision and WebRTC adapter. The ROS guide remains a separate option.
-
-The maintainer's existing checkout folder may keep its old name. New student
-clones use `go2-webrtc-gesture-nav`; no local-folder rename is required.
+This project also serves as reference code for the **Clemson Creative Inquiry
+course I offered in Fall 2026**, [Mission Control: From Human Gestures to
+Intelligent Robot Motion](https://dyco-ai.github.io/go1_gesture_tracking/).
+The [companion simulation code and weekly labs](https://github.com/sriram-2502/go1-mujoco-playground)
+introduce Python, MediaPipe, and gesture navigation before Go2 hardware work.
+Students are encouraged to build their own GitHub projects and bring their
+earlier gesture pipelines into this reference setup. Follow the course's
+submission policy for official weekly reports; keep full run data local.
+See [the teaching vision](docs/TEACHING.md) for the broader approach.

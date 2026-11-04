@@ -10,12 +10,12 @@ This page shows what to recognize on screen; the hardware guide has the terminal
 - **Windows webcam:** observes your hand. The Clemson panel displays extracted skeletons and labels, not the full webcam image.
 - **Go2 camera:** observes the maze. Navigate from this robot view; the instructor retains direct sight and the paired remote.
 
-![Upstream Go2 Basic web view, with robot camera in the upper left, the Go2 model in the middle, and colored voxels around it.](../docs/assets/go2-camera-voxels.png)
+![Recorded project dashboard with Go2 camera and voxels, extracted hand landmarks, gesture label, recording control, and velocity overlay.](../docs/assets/go2-gesture-dashboard.png)
 
-*Reference screenshot from [Unitree UI](https://github.com/legion1581/unitree_ui),
-used with its [MIT notice](clemson/UPSTREAM_LICENSE). This is the upstream Basic
-view. Clemson adds the hand panel, velocity overlay, and experiment controls;
-its own project capture is on the [media TODO](../docs/ROADMAP.md#readme-images-and-motion-gifs).*
+*Project dashboard capture from the October 30, 2026 recording. The main view
+builds on [Unitree UI](https://github.com/legion1581/unitree_ui), with its
+[MIT notice](clemson/UPSTREAM_LICENSE) retained. See the
+[eight-second demo and export details](../docs/DEMO.md).*
 
 ## What to look for in the Clemson edition
 

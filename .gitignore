@@ -32,6 +32,7 @@ venv/
 *.mp4
 *.webm
 # Full-resolution media originals stay local; publish reviewed web exports.
+/lab-photo.jpg
 /docs/assets/*-original.jpg
 *.log
 

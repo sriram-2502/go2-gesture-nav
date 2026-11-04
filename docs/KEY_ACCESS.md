@@ -7,24 +7,25 @@ adding collaborators does not make selected files or branches private.
 ## Recommended lab arrangement
 
 1. Publish this repository with placeholders and the hidden-input setup instructions.
-2. Create a separate **private** repository, for example `go2-lab-access`, in the
-   lab's GitHub organization, or use a lab-managed password-manager group.
-3. Give approved students access to that private resource. In an organization,
-   a student team can manage membership separately from public code write access.
-4. Store the robot-to-key mapping and onboarding instructions there. Keep Unitree
-   account passwords and cloud tokens out of student onboarding material.
+2. Use an institution-approved shared password vault for active robot secrets.
+   Proton Pass migration is planned for this lab; the shared vault is not yet live.
+3. Until migration, request the assigned robot's credentials privately from the
+   instructor or maintainer. Public repository access does not grant robot access.
+4. Store the robot-to-key mapping in the private inventory, then the vault. A
+   private Git repository may hold access procedures and vault links, but keep
+   plaintext secrets out of Git history. Keep account passwords and cloud tokens
+   out of student onboarding material.
 5. Students obtain their assigned robot key and enter it into the local terminal
    as described in [the WebRTC guide](../webrtc/README.md). Neither public Python
    script contains the key.
 
-The private repository option is straightforward for a small trusted cohort, but
-clones retain the key in their history. A password manager avoids putting the key
-in Git history and is preferable if the lab already has one. Removing a student's
+Git clones retain committed keys in their history, even in a private repository.
+A password manager avoids that form of secret distribution. Removing a student's
 access cannot erase a key they previously copied. When necessary, investigate
 Unitree-supported key rotation/reprovisioning; rotation has not been verified here.
 
-No remote repository, password-manager entry, or GitHub permission has been created
-by this local reorganization. The repository name above is a suggestion.
+The present setup uses an ignored local credentials inventory. This public guide
+does not create a shared vault, distribute a key, or change GitHub permissions.
 
 ## Why not GitHub Actions secrets?
 
@@ -49,11 +50,11 @@ contact the maintainer and investigate supported replacement with Unitree.
 
 ## Dashboard boundary
 
-The `unitree_ui` integration is still being designed. Do not embed the lab key in
+The local dashboard accepts an operator-supplied key. Do not embed the lab key in
 JavaScript, static configuration, or a downloadable frontend bundle. A frontend
-user can inspect values sent to their browser. Decide whether approved operators
-will supply their own key locally or use an authenticated lab service before
-building shared dashboard access.
+user can inspect values sent to their browser. The current workflow runs locally
+on the authorized operator's computer; a shared hosted service would need a
+separate authentication/access design. Clear cached UI keys on shared computers.
 
 ## References
 
