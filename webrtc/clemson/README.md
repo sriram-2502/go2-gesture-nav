@@ -103,7 +103,7 @@ device is busy. A different webcam can be selected when launching the service:
   examples: start with the [gesture navigation walkthrough](../gesture_preview/README.md).
 - Explicitly enabled gesture navigation through the shared WebRTC connection,
   with forward/turn speed settings, fixed ±0.5 m/s lateral motion, feedback checks,
-  and guarded stopping. Starts disabled; physical operation is not yet verified.
+  and guarded stopping. Starts disabled; the existing Go2 setup has been hardware-validated, as confirmed by the maintainer.
 - An **Obstacle avoidance** ON/OFF switch with robot state readback.
 - One overall **Recording ON/OFF** switch, dashboard and available Go2 video, structured logs,
   and a separate offline replay page. See [recording and replay](../RECORDING.md).
@@ -136,8 +136,8 @@ the robot's obstacle-avoidance behavior.**
 The adapter uses the same upstream API: `rt/api/obstacles_avoid/request`, set
 `1001` with `{"enable": true/false}`, then get `1002` to confirm the actual value.
 Rejected requests and mismatched readback are shown instead of claiming success.
-Operation on the lab firmware still needs physical verification; ON is not a
-guarantee that every obstacle will be detected or avoided.
+Confirm the state reported by the assigned robot; ON is not a guarantee that
+every obstacle will be detected or avoided.
 
 Follow [dependencies and startup](../DEPENDENCIES.md) to run the service and UI.
 Hand tracking starts automatically when the panel opens. Hiding the panel stops

@@ -1,11 +1,16 @@
 # Lab roadmap
 
+Hardware validation of the existing Go2 gesture-navigation setup is complete,
+as confirmed by the maintainer. Firmware inventory and the separate ROS/G1 or
+future-feature checks remain distinct tasks. No new hardware tests were run as
+part of this documentation update.
+
 ## README images and motion GIFs
 
 - [x] Add an attributed upstream reference screenshot showing Go2 camera, robot model, and voxels to the project README.
 - [x] Show the project's MediaPipe-style gesture guide and link the student integration walkthrough.
 - [x] Replace the upstream reference hero with an eight-second project dashboard GIF and still from the supplied October 30, 2026 recording; document exports in [DEMO.md](DEMO.md).
-- [ ] Add a clear photo of the lab Go2 in the maze and record the photo source/permission.
+- [ ] Optional CI media: add a Go2 maze photo if students build a maze; no student maze exists yet.
 - [ ] Record a short supervised forward-and-stop demo with the gesture and measured velocity visible.
 - [ ] Record brief sideways and turn-in-place demos, returning to stop between gestures.
 - [ ] Add a short recording/replay walkthrough GIF showing the overall toggle and offline playback.
@@ -41,21 +46,22 @@ hardware recordings from offline or synthetic replay demos.
 ## WebRTC teaching path
 
 - [ ] Verify the connection-only script on the lab robot and record software versions.
-- [ ] Verify bounded velocity and stop behavior under lab supervision.
+- [x] Validate the existing Go2 gesture-navigation hardware setup, including bounded motion and stopping (maintainer-confirmed).
 - [ ] Document camera streaming when implemented and tested.
 
 ## Dashboard using `unitree_ui`
 
 - [x] Add the correct `unitree_ui` repository URL and integration instructions.
 - [x] Provide Windows launch options for upstream Basic and a separate Clemson starter.
-- [ ] Verify upstream camera, state, voxels, and onboard SLAM on the lab robot.
+- [x] Validate the existing Go2 camera/state/voxel dashboard (maintainer-confirmed).
+- [ ] Optional mapping extension: qualify onboard SLAM separately if used for a future experiment.
 - [x] Add Windows webcam MediaPipe preview to the Clemson UI, reusing the Go1 scaffold in go2wifi.
-- [ ] Verify operator gestures and simultaneous Go2 camera/voxels in Chrome.
+- [x] Validate operator gestures and the integrated Go2 camera/voxel dashboard (maintainer-confirmed).
 - [x] Add supervised gesture command routing and beginner-friendly Python examples.
-- [ ] Verify the new gesture vocabulary and physical Go2 motion/stop behavior.
-- [ ] Complete the maze activity layout and scoring.
+- [x] Validate the existing gesture-navigation hardware behavior (maintainer-confirmed).
+- [ ] Optional CI course extension: student-built maze layout, scoring, and repeatable trials; students have not built a maze yet. Track activity development in the student code repo and link expectations from the course website.
 - [x] Add integrated CSV/data logs, optional video recording, and offline replay.
-- [ ] Verify Chrome capture permissions, video codec, and combined live recording on the Go2.
+- [x] Capture a live Go2 run with dashboard video and data; the supplied recording supports the published demos.
 - [x] Define the local Python landmark service/browser boundary and operator-supplied key handling; shared vault migration remains pending.
 - [x] Add connection status, velocity controls, visible stop controls, and feedback.
 - [ ] Document supported firmware and supervised classroom operation.
@@ -63,7 +69,7 @@ hardware recordings from offline or synthetic replay demos.
 ## Public release
 
 - [x] Retain the independent lab starters' selected MIT licenses and source/media attribution.
-- [ ] Select a project-wide license for the remaining original personal-project materials.
+- [x] Release original personal-project code and documentation under the [MIT License](../LICENSE); retain third-party licenses.
 - [ ] Review publishable files and any Git history for credentials.
 - [ ] Enable available GitHub secret scanning and push protection.
 - [x] Publish source and docs, keeping private access material and full recordings separate.

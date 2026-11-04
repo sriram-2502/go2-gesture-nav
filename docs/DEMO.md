@@ -23,8 +23,9 @@ credential entry screens and private browser content; no connection form or key
 is shown. The embedded robot camera remains part of the dashboard scene.
 
 The recording illustrates the interface and changing views, not a comprehensive
-motion, obstacle-avoidance, or stop/fault acceptance test. Feature qualification
-and firmware evidence remain on the [roadmap](ROADMAP.md).
+motion, obstacle-avoidance, or stop/fault acceptance report. Hardware validation
+of the existing Go2 setup is complete, as confirmed by the maintainer. Future
+work and software-inventory documentation remain on the [roadmap](ROADMAP.md).
 
 ## Reproduce the GIF
 

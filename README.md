@@ -13,9 +13,8 @@ webcam observes your hand; the robot camera shows where the robot is going.
 
 ![Eight-second dashboard demonstration showing the Go2 camera and voxels, extracted MediaPipe hand landmarks, gesture labels, and velocity feedback.](docs/assets/go2-gesture-dashboard-demo.gif)
 
-*Dashboard excerpt from a recorded Go2 session on October 30, 2026. Browser tabs,
-address bar, and desktop are cropped out. The clip shows the integrated interface;
-it is not a complete qualification of every gesture or stopping condition.*
+*Dashboard excerpt from a recorded Go2 session. Browser tabs, address bar, and
+desktop are cropped out.*
 
 [Watch the higher-quality silent MP4](https://github.com/sriram-2502/go2-gesture-nav/releases/download/v0.1.0/go2-gesture-dashboard-demo.mp4) ·
 [View the dashboard still](docs/assets/go2-gesture-dashboard.png)
@@ -149,7 +148,7 @@ video, clear space, and access to the paired remote. Run one robot controller
 at a time. A transmitted stop request is not proof of a physical stop.
 
 The dashboard has an obstacle-avoidance switch with readback. An `Unknown` value
-is not an enabled state; its firmware behavior still needs qualification. Do
+is not an enabled state; confirm the reported setting on your robot. Do
 not infer obstacle protection from the visible voxels.
 
 ## Learn the code without moving a robot
@@ -206,8 +205,8 @@ repositories own their independent onboarding paths.
 Developed by [Sriram Krishnamoorthy](https://github.com/sriram-2502).
 This is an integration project with pinned upstream UI sources, not a standalone
 replacement for Unitree UI. See [NOTICE.md](NOTICE.md) for retained upstream MIT
-and perception Apache 2.0 notices. A project-wide license for the remaining
-original materials has not yet been selected. Demo provenance and export details
+and perception Apache 2.0 notices. Original project code and documentation are
+released under the [MIT License](LICENSE). Demo provenance and export details
 are in [docs/DEMO.md](docs/DEMO.md). See the [roadmap](docs/ROADMAP.md) for planned
 work and outstanding checks.
 

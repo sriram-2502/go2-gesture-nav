@@ -1,7 +1,8 @@
 # Repository organization and remaining work
 
 Reviewed November 4, 2026. The agreed public repository structure is in place.
-Hardware acceptance and future development remain separate work.
+Hardware validation of the existing Go2 gesture-navigation setup is complete,
+as confirmed by the maintainer. Future development remains separate work.
 
 ## Published repositories
 
@@ -50,9 +51,8 @@ is optional cleanup rather than a blocker to the published structure.
 
 - [ ] Have a new student follow each onboarding path and record corrections.
 - [ ] Record actual robot firmware, Jetson/JetPack/L4T versions, and hardware checkout evidence.
-- [ ] Verify gesture recognition, velocity/stop/focus-loss behavior, avoidance readback, and recording/replay on the assigned robot.
-- [ ] Complete the maze layout, scoring, and repeatable evaluation procedure.
-- [ ] Select a project-wide license for the remaining original personal-project materials. Third-party licenses remain in effect; the independent lab starters retain their selected MIT licenses.
+- [x] Complete hardware validation of the existing Go2 gesture-navigation setup (maintainer-confirmed).
+- [x] Release original personal-project code and documentation under the [MIT License](../LICENSE), preserving third-party notices.
 - [ ] Review public Git history and confirm available secret-scanning/push-protection settings; ignored files alone do not establish this.
 - [ ] Migrate the private inventory to the planned institution-approved Proton Pass arrangement; verify sharing capacity and assign primary/backup maintainers.
 - [ ] Obtain and verify the G1 Wi-Fi SSID/password and AES key privately.
@@ -61,6 +61,7 @@ is optional cleanup rather than a blocker to the published structure.
 
 These are retained ideas, not missing public repositories.
 
+- [ ] Optional CI course extension: students may design/build a maze and define scoring and repeatable trials. No student maze has been built yet. Activity design belongs in the student code repository's `course/` material, with expectations linked from the CI course website; it is not a required feature of this hardware reference.
 - [ ] Decide whether to replace the reproducible UI overlay with a maintained upstream fork. The delivered personal repo is an integration project that downloads pinned source, not a GitHub fork of Unitree UI.
 - [ ] Package shared perception/gesture/supervision code for pinned reuse by simulation and hardware, without adding Node/hardware dependencies to simulation.
 - [ ] Add a separate Go2 simulation model with a qualified controller/policy adapter while preserving Go1 simulation. Do not reuse the Go1 ONNX policy on Go2 by assumption.

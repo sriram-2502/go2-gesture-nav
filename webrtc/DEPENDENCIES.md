@@ -114,7 +114,7 @@ Two hands produce UNKNOWN. Stale frames clear the preview and velocity intent.
 The implemented adapter sends supervised gesture commands only after you connect
 the robot, show a stop gesture, and click **Enable gesture control**. Forward speed
 is 0.5–1.0 m/s; turn speed is 0.5–1.0 rad/s (default 0.8); sideways is fixed at
-±0.5 m/s. Physical operation still needs verification. Integrated recording is
+±0.5 m/s. The existing Go2 hardware setup has been validated, as confirmed by the maintainer. Integrated recording is
 available through [recording and replay](RECORDING.md). Read the
 [student walkthrough](gesture_preview/README.md) before enabling.
 
@@ -145,7 +145,8 @@ tests; real webcam capture and MediaPipe inference in `go2wifi`; landmark-only
 API responses through the Clemson proxy (with no image field);
 camera stop/release; Clemson TypeScript/Vite production build; and the preview
 route through the running UI proxy. The short webcam check returned NO_HAND;
-gesture recognition with an operator still needs testing. The later extraction-only
+that initial check did not include operator gesture recognition. The existing
+Go2 setup has since been hardware-validated, as confirmed by the maintainer. The later extraction-only
 update removes JPEG/video fields from the API and clears landmarks on stale input.
 Automated browser
 inspection was unavailable; layout and simultaneous live Go2 video/voxels need

@@ -14,5 +14,6 @@ Submit sanitized errors and reproduction steps. Never attach AES keys, passwords
 cloud tokens, private notes, or unsanitized logs. Coordinate private credential
 issues directly with the lab maintainer through the lab's established channel.
 
-Retain upstream attribution. The public license and controller-photo provenance
-must be reviewed by the lab before release.
+Retain upstream attribution and the root MIT license. Preserve the Apache 2.0
+scaffold license and other third-party notices; review the provenance of any new
+media before publication.
