@@ -6,6 +6,13 @@ archive, or publish any repository.
 
 ## Current CI access
 
+The basic Ethernet/SSH/ROS path is published as
+[`DyCo-AI/go2-ros`](https://github.com/DyCo-AI/go2-ros), with the original motion
+script, optimized lab media, a read-only Jetson software report, and standalone
+instructions. The lab's initial history and MIT license are retained, together
+with the maintainer's Git authorship. The Basic WebRTC starter and multi-robot
+Pages handbook remain separate repositories to prepare.
+
 The existing setup folder is now published directly as
 [`sriram-2502/go2-webrtc-gesture-nav`](https://github.com/sriram-2502/go2-webrtc-gesture-nav)
 so students can clone it. This publishes the current combined setup; the future

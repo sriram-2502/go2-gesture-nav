@@ -1,5 +1,10 @@
 # ROS 2 + Ethernet: Go2 research setup
 
+For new installations, use the standalone [DyCo-AI/go2-ros](https://github.com/DyCo-AI/go2-ros)
+starter and its [ROS/JetPack inventory guide](https://github.com/DyCo-AI/go2-ros/blob/main/docs/SOFTWARE.md).
+It includes the current setup walkthrough, lab photograph, velocity GIF, and the
+same motion script. This older copy remains for existing checkout links.
+
 For research and PhD students in our Clemson lab. Return to the
 [path overview](../README.md) or see the [WebRTC/Wi-Fi path](../webrtc/README.md).
 
