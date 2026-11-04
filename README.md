@@ -108,7 +108,7 @@ ROS/Ethernet guide is available for research students.
 | Path | Intended audience | Connection and execution | What it supports |
 | --- | --- | --- | --- |
 | [ROS 2 + Ethernet](https://github.com/DyCo-AI/go2-ros) | Research and PhD students | Laptop connects by Ethernet; SSH into the Go2's onboard Jetson; run Python on the Jetson | Standalone lab starter: bounded velocity commands, Jetson software inventory, and optional ROS 2 bags |
-| [WebRTC + Wi-Fi](webrtc/README.md) | Creative Inquiry and undergraduate students at Clemson | Laptop joins the Go2 Wi-Fi hotspot; run Python locally on the laptop | Connection test and bounded velocity commands, without a laptop ROS installation |
+| [Basic WebRTC + Wi-Fi](https://github.com/DyCo-AI/go2-webRTC) | High-level planning, mapping, and student experiments | Windows 11 joins the Go2 hotspot; run Basic UI or Python locally | Standalone lab starter, camera/voxel interface, bounded velocity examples, and motion demos |
 
 The two paths use different robot interfaces. The Jetson's Ethernet address in
 this lab is `192.168.123.18`; the WebRTC hotspot endpoint is `192.168.12.1`.
