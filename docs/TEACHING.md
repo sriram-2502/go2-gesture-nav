@@ -43,4 +43,3 @@ the approach I want to bring to undergraduate and graduate teaching as a faculty
 member: connect fundamentals with current robotics research, help students build
 confidence through achievable experiments, and create room for increasingly
 independent inquiry.
-
