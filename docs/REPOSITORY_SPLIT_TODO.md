@@ -1,81 +1,72 @@
-# TODO: separate lab onboarding, simulation, and CI hardware development
+# Repository organization and remaining work
 
-Agreed plan: three active repositories, with the existing Go1 hardware project
-retained as a separate reference. This document does not create, rename, move,
-archive, or publish any repository.
+Reviewed November 4, 2026. The agreed public repository structure is in place.
+Hardware acceptance and future development remain separate work.
 
-## Current CI access
+## Published repositories
 
-The basic Ethernet/SSH/ROS path is published as
-[`DyCo-AI/go2-ros`](https://github.com/DyCo-AI/go2-ros), with the original motion
-script, optimized lab media, a read-only Jetson software report, and standalone
-instructions. The lab's initial history and MIT license are retained, together
-with the maintainer's Git authorship. The independent Basic Windows WebRTC path
-is published as [`DyCo-AI/go2-webRTC`](https://github.com/DyCo-AI/go2-webRTC), with
-pinned upstream UI setup, Python examples, attributed screenshots, and silent
-lab backflip demos. The multi-robot Pages handbook remains a separate repository
-to prepare. MATLAB integration and external Jetson sensor streaming are roadmap
-items in the WebRTC starter.
-
-The existing setup folder is now published directly as
-[`sriram-2502/go2-gesture-nav`](https://github.com/sriram-2502/go2-gesture-nav)
-so students can clone it. This publishes the current combined setup; the future
-lab/course split below remains a separate task. Students do not need a copy from
-the instructor's laptop. Private AES access still comes from the instructor.
-
-| Repository | Owner | Responsibility |
+| Repository | Responsibility | Status |
 | --- | --- | --- |
-| `unitree-go2-setup` (proposed) | DyCo-AI lab | Stable ROS/Ethernet/Jetson and Windows WebRTC onboarding; pinned basic Unitree UI |
-| `go1-mujoco-playground` (existing) | sriram-2502 | First-half CI curriculum: Python, MediaPipe, gesture navigation, simulation, and evaluation |
-| `go2-gesture-nav` (proposed) | sriram-2502 | Second-half CI: Clemson Go2 UI, physical gesture navigation, recording, replay, and maze experiments |
-| `go1_gesture_tracking` (existing) | DyCo-AI | Retain the Go1/ROS Noetic/Jetson AGX/ZED hardware path; identify it separately from the current Go2 course path |
+| [DyCo-AI/lab-robots](https://github.com/DyCo-AI/lab-robots) | Multi-robot onboarding and GitHub Pages | Published; Go2/G1 guides and temporary Go1 reference |
+| [DyCo-AI/go2-ros](https://github.com/DyCo-AI/go2-ros) | Basic Ethernet/SSH/Jetson/ROS 2 starter | Published independently |
+| [DyCo-AI/go2-webRTC](https://github.com/DyCo-AI/go2-webRTC) | Basic Windows/Wi-Fi/WebRTC UI and Python examples | Published independently; excludes the gesture dashboard |
+| [DyCo-AI/g1-ros2](https://github.com/DyCo-AI/g1-ros2) | G1 ROS 2 and sensor/Rerun diagnostics | Public and linked; acceptance work remains in its roadmap |
+| [sriram-2502/go2-gesture-nav](https://github.com/sriram-2502/go2-gesture-nav) | Personal gesture dashboard, MediaPipe, supervision, recording/replay | Published; renamed from go2-webrtc-gesture-nav; demo GIFs and silent videos added |
+| [sriram-2502/go1-mujoco-playground](https://github.com/sriram-2502/go1-mujoco-playground) | Student code, simulation, weekly labs, Go2 onboarding | Published; links updated to the personal hardware reference |
+| [DyCo-AI/go1_gesture_tracking](https://github.com/DyCo-AI/go1_gesture_tracking) | CI website, schedule, concepts, assignments | Published; links to student code and the Go2 instructor reference |
 
-## Migration checklist
+The course retains its Go1 repository name. Its current hardware route uses Go2
+and WebRTC on Windows 11. Physical Go1 integration remains under development.
 
-- [ ] Preserve current working folders and reconcile unpublished local playground changes.
-- [ ] Extract ROS and basic WebRTC setup, diagnostics, networking, and credential-access docs into the lab repo.
-- [ ] Keep the lab baseline pointed at a tested, pinned upstream `unitree_ui` revision.
-- [ ] Create the personal Go2 course repo as a fork of `legion1581/unitree_ui`, not of the lab setup repo.
-- [ ] Move the Clemson application, student examples, diagrams, recording, replay, and tests into that fork.
-- [ ] Maintain UI changes directly in the fork's source, replacing the prototype overlay mechanism.
-- [ ] Retain upstream history, licenses, and copied-code attribution.
-- [ ] Package shared perception, gesture vocabulary, mapping, and supervision as a small `gesture_nav` Python package in the course repo.
-- [ ] Let the simulator install a pinned version of that Python package without requiring Node or hardware transports.
-- [ ] Preserve the working Go1 simulation while adding a separate Go2 model and validated controller/policy adapter.
-- [ ] Keep simulator and hardware limits explicit; preserve the agreed physical Go2 speed profile.
-- [ ] Keep weekly activities in the playground's `course/` tree and link to hardware instructions rather than duplicating the curriculum.
-- [ ] Add clear cross-links and deployment labels to all repository READMEs.
-- [ ] Consider renaming the playground to `quadruped-gesture-playground` after both robot backends are established.
-- [ ] Keep AES keys in the private lab access resource and recordings/archives out of public history.
+## Completed organization work
 
-## Student progression
+- [x] Publish separate lightweight lab starters for Go2 ROS and Basic WebRTC.
+- [x] Keep multi-robot onboarding in its own GitHub Pages repository.
+- [x] Publish the personal gesture project without Clemson in its repository name.
+- [x] Retain simulation/student code separately from the hardware reference.
+- [x] Cross-link the handbook, lab starters, personal projects, and CI website.
+- [x] Provide weekly README reports, team-branch conventions, local full-data guidance, and instructions for integrating earlier gesture classifiers.
+- [x] Add optimized robot/demo media, illustrated gestures, setup instructions, and attribution.
+- [x] Publish a [v0.1.0 reference snapshot and demo assets](https://github.com/sriram-2502/go2-gesture-nav/releases/tag/v0.1.0).
+- [x] Keep archived ZIPs, credentials, full recordings, and generated dependencies out of ordinary Git staging.
+- [x] Preserve the pinned upstream UI revision and applicable MIT/Apache notices.
 
-1. First half: run the playground, learn Python/MediaPipe, implement gesture rules,
-   test stop/freshness behavior, and evaluate repeatable simulated maze trials.
-2. Hardware checkout: follow the lab repo for the Go2 connection, camera, voxels,
-   basic commands, and supervised verification.
-3. Second half: use the personal Go2 course repo for physical gesture navigation,
-   recording, replay, and evaluation.
+The tagged snapshot is a reference release, not a hardware acceptance report.
+Students currently follow the maintained repository and record the approved commit.
 
-Go2 simulation is more than a robot-name change: qualify its model and locomotion
-controller separately. Do not reuse the Go1 ONNX policy on Go2 without validation.
+## How this workspace maps to GitHub
 
-## References
+The local `unitree_go2_setup` folder is the checkout of
+**sriram-2502/go2-gesture-nav**. The old local folder name can stay. The lab
+starters, handbook, simulation, and course website have independent Git checkouts
+and histories. They are not automatically synchronized copies of this folder.
 
-- [Existing simulation/course repository](https://github.com/sriram-2502/go1-mujoco-playground)
-- [Existing Go1 hardware project](https://github.com/DyCo-AI/go1_gesture_tracking)
-- [Upstream Unitree UI](https://github.com/legion1581/unitree_ui)
+Update the owning lab repository for basic onboarding and the personal repository
+for gesture-application changes. Port shared fixes deliberately and verify each
+checkout. Legacy ROS/Basic files remain here for continuity; removing duplicates
+is optional cleanup rather than a blocker to the published structure.
 
-## Course streamlining update
+## Remaining follow-through
 
-- [x] Prepare local website links and weekly schedule aligned with Go1 simulation then Go2 WebRTC hardware; retain course repository name.
-- [x] Prepare weekly README-only submission policy, student folder convention, optional small media, and local full-data storage guidance.
-- [x] Identify this local bundle as the instructor reference; require private instructor-issued AES access and the robot hotspot.
-- [x] Publish the reviewed course website and student code integration after instructor authorization: website `e9b4103`; playground `f2c0493` plus required policy-threading fix `48abe06`, pushed to `main` and `creative-inquiry-dev`.
-- [ ] Prepare the personal Go2 instructor repository, retain upstream license/history, exclude secrets and raw recordings, and pin a tested release for student links.
-- [ ] Replace the temporary instructor-bundle references with the actual repository and tested release once available.
+- [ ] Have a new student follow each onboarding path and record corrections.
+- [ ] Record actual robot firmware, Jetson/JetPack/L4T versions, and hardware checkout evidence.
+- [ ] Verify gesture recognition, velocity/stop/focus-loss behavior, avoidance readback, and recording/replay on the assigned robot.
+- [ ] Complete the maze layout, scoring, and repeatable evaluation procedure.
+- [ ] Select a project-wide license for the remaining original personal-project materials. Third-party licenses remain in effect; the independent lab starters retain their selected MIT licenses.
+- [ ] Review public Git history and confirm available secret-scanning/push-protection settings; ignored files alone do not establish this.
+- [ ] Migrate the private inventory to the planned institution-approved Proton Pass arrangement; verify sharing capacity and assign primary/backup maintainers.
+- [ ] Obtain and verify the G1 Wi-Fi SSID/password and AES key privately.
 
-The course website owns schedule and assignment expectations. The playground
-owns executable lab instructions and the detailed submission/data conventions.
-The Go2 instructor project owns the working hardware application. Public naming
-does not imply that the physical Go1 path is qualified; it is under development.
+## Optional future work from the older plan
+
+These are retained ideas, not missing public repositories.
+
+- [ ] Decide whether to replace the reproducible UI overlay with a maintained upstream fork. The delivered personal repo is an integration project that downloads pinned source, not a GitHub fork of Unitree UI.
+- [ ] Package shared perception/gesture/supervision code for pinned reuse by simulation and hardware, without adding Node/hardware dependencies to simulation.
+- [ ] Add a separate Go2 simulation model with a qualified controller/policy adapter while preserving Go1 simulation. Do not reuse the Go1 ONNX policy on Go2 by assumption.
+- [ ] Consider renaming the simulation repo only after both robot backends work.
+- [ ] Optionally remove redundant legacy ROS/Basic files after checking downstream links.
+
+MATLAB bridging, external Jetson sensor streaming, Wi-Fi SSH, and host-PC RL
+workflows remain on the owning lab starters' roadmaps. They were not implemented
+as part of the repository/documentation split.

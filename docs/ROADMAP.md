@@ -19,9 +19,10 @@ hardware recordings from offline or synthetic replay demos.
 
 ## Repository separation TODO
 
-- [ ] Carry out the [agreed repository split](REPOSITORY_SPLIT_TODO.md): lab onboarding,
-  personal simulation/course workspace, personal Go2 WebRTC gesture-navigation fork,
-  and a separately retained Go1/Jetson/ZED reference path.
+- [x] Publish and link the separate lab handbook, Go2 ROS/Basic WebRTC starters,
+  personal simulation and gesture-navigation repos, and CI website. See the
+  [organization status](REPOSITORY_SPLIT_TODO.md) for independent-checkout
+  maintenance, remaining work, and optional refactors.
 
 ## Student onboarding
 
@@ -55,13 +56,14 @@ hardware recordings from offline or synthetic replay demos.
 - [ ] Complete the maze activity layout and scoring.
 - [x] Add integrated CSV/data logs, optional video recording, and offline replay.
 - [ ] Verify Chrome capture permissions, video codec, and combined live recording on the Go2.
-- [ ] Define the local client/service boundary and private key handling.
-- [ ] Add connection status, velocity controls, visible stop controls, and feedback.
+- [x] Define the local Python landmark service/browser boundary and operator-supplied key handling; shared vault migration remains pending.
+- [x] Add connection status, velocity controls, visible stop controls, and feedback.
 - [ ] Document supported firmware and supervised classroom operation.
 
 ## Public release
 
-- [ ] Choose the lab's license and verify script/photo provenance.
+- [x] Retain the independent lab starters' selected MIT licenses and source/media attribution.
+- [ ] Select a project-wide license for the remaining original personal-project materials.
 - [ ] Review publishable files and any Git history for credentials.
 - [ ] Enable available GitHub secret scanning and push protection.
-- [ ] Publish source and docs, keeping private access material and recordings separate.
+- [x] Publish source and docs, keeping private access material and full recordings separate.
