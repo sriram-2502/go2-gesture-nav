@@ -195,7 +195,7 @@ automatically erased by updating source; clear old site data on shared PCs.
 
 ## Course and instructor reference status
 
-This [GitHub setup repository](https://github.com/sriram-2502/go2-webrtc-gesture-nav) is the current CI hardware
+This [GitHub setup repository](https://github.com/sriram-2502/go2-gesture-nav) is the current CI hardware
 reference. Students clone it separately from the playground. A later repository
 split remains optional future work; no laptop-local bundle is required.
 

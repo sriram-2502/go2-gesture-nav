@@ -1,4 +1,4 @@
-# Go2 WebRTC Gesture Navigation
+# Go2 Gesture Navigation
 
 **Windows 11 · Python · MediaPipe · Unitree Go2 · No ROS required**
 
@@ -17,7 +17,7 @@ webcam observes your hand; the robot camera shows where the robot is going.
 address bar, and desktop are cropped out. The clip shows the integrated interface;
 it is not a complete qualification of every gesture or stopping condition.*
 
-[Watch the higher-quality silent MP4](https://github.com/sriram-2502/go2-webrtc-gesture-nav/releases/download/v0.1.0/go2-gesture-dashboard-demo.mp4) ·
+[Watch the higher-quality silent MP4](https://github.com/sriram-2502/go2-gesture-nav/releases/download/v0.1.0/go2-gesture-dashboard-demo.mp4) ·
 [View the dashboard still](docs/assets/go2-gesture-dashboard.png)
 
 ## What you can build
@@ -49,6 +49,13 @@ Dashboard video + structured logs → local recording ZIP → offline replay
 Python handles webcam extraction and gesture intent. The browser uses one
 authenticated robot connection for video, state, and high-level commands.
 Preview recognition with motion disabled before enabling the robot adapter.
+
+### A second segment
+
+![A different eight-second dashboard segment showing changing camera and voxel views alongside the extracted hand gestures and velocity overlay.](docs/assets/go2-gesture-dashboard-demo-02.gif)
+
+*Another eight seconds from the same run, this time at source seconds 60–68.*
+[Watch the second silent MP4](https://github.com/sriram-2502/go2-gesture-nav/releases/download/v0.1.0/go2-gesture-dashboard-demo-02.mp4).
 
 ## Default gestures
 
@@ -86,8 +93,8 @@ joining the robot network. ROS, WSL, Docker, and MuJoCo are not needed.
 In **Anaconda / Miniconda Prompt**:
 
 ```bat
-git clone https://github.com/sriram-2502/go2-webrtc-gesture-nav.git
-cd go2-webrtc-gesture-nav
+git clone https://github.com/sriram-2502/go2-gesture-nav.git
+cd go2-gesture-nav
 conda create -n go2wifi python=3.11 pip -y
 conda activate go2wifi
 python -m pip install -r webrtc\requirements.txt -r webrtc\requirements-gestures.txt

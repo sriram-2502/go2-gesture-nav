@@ -8,7 +8,7 @@ at the Python boundary rather than rebuilding those components.
 
 ## Start with the instructor baseline
 
-Clone [go2-webrtc-gesture-nav](https://github.com/sriram-2502/go2-webrtc-gesture-nav)
+Clone [go2-gesture-nav](https://github.com/sriram-2502/go2-gesture-nav)
 and follow [the installation instructions](DEPENDENCIES.md). Preview the instructor
 gestures with robot control disabled and record the baseline Git commit. Keep
 your gesture experiment local under the existing README-only submission policy.

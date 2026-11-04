@@ -18,7 +18,7 @@ to prepare. MATLAB integration and external Jetson sensor streaming are roadmap
 items in the WebRTC starter.
 
 The existing setup folder is now published directly as
-[`sriram-2502/go2-webrtc-gesture-nav`](https://github.com/sriram-2502/go2-webrtc-gesture-nav)
+[`sriram-2502/go2-gesture-nav`](https://github.com/sriram-2502/go2-gesture-nav)
 so students can clone it. This publishes the current combined setup; the future
 lab/course split below remains a separate task. Students do not need a copy from
 the instructor's laptop. Private AES access still comes from the instructor.
@@ -27,7 +27,7 @@ the instructor's laptop. Private AES access still comes from the instructor.
 | --- | --- | --- |
 | `unitree-go2-setup` (proposed) | DyCo-AI lab | Stable ROS/Ethernet/Jetson and Windows WebRTC onboarding; pinned basic Unitree UI |
 | `go1-mujoco-playground` (existing) | sriram-2502 | First-half CI curriculum: Python, MediaPipe, gesture navigation, simulation, and evaluation |
-| `go2-webrtc-gesture-nav` (proposed) | sriram-2502 | Second-half CI: Clemson Go2 UI, physical gesture navigation, recording, replay, and maze experiments |
+| `go2-gesture-nav` (proposed) | sriram-2502 | Second-half CI: Clemson Go2 UI, physical gesture navigation, recording, replay, and maze experiments |
 | `go1_gesture_tracking` (existing) | DyCo-AI | Retain the Go1/ROS Noetic/Jetson AGX/ZED hardware path; identify it separately from the current Go2 course path |
 
 ## Migration checklist
