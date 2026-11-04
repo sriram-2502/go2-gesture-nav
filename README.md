@@ -52,9 +52,9 @@ Preview recognition with motion disabled before enabling the robot adapter.
 
 ### A second segment
 
-![A different eight-second dashboard segment showing changing camera and voxel views alongside the extracted hand gestures and velocity overlay.](docs/assets/go2-gesture-dashboard-demo-02.gif)
+![A fifteen-second dashboard segment showing changing camera and voxel views alongside the extracted hand gestures and velocity overlay.](docs/assets/go2-gesture-dashboard-demo-02.gif)
 
-*Another eight seconds from the same run, this time at source seconds 60–68.*
+*A longer view from the same run: source seconds 15–30, shown as a 15-second loop.*
 [Watch the second silent MP4](https://github.com/sriram-2502/go2-gesture-nav/releases/download/v0.1.0/go2-gesture-dashboard-demo-02.mp4).
 
 ## Default gestures

@@ -10,10 +10,10 @@ run metadata, and raw CSV/JSONL logs are not published with the demo.
 | File | Export |
 | --- | --- |
 | `assets/go2-gesture-dashboard-demo.gif` | Source seconds 30–38; 800 × 406; 8 fps; 64 palette colors; looping; about 3.3 MiB |
-| `assets/go2-gesture-dashboard-demo-02.gif` | Source seconds 60–68; same crop, dimensions, frame rate, and palette settings; about 2.9 MiB |
+| `assets/go2-gesture-dashboard-demo-02.gif` | Source seconds 15–30; 15-second loop; 720 × 366; 8 fps; 64 palette colors; about 4.0 MiB |
 | `assets/go2-gesture-dashboard.png` | Still at source second 34; 1440 × 730; readable full dashboard reference |
 | [Silent MP4](https://github.com/sriram-2502/go2-gesture-nav/releases/download/v0.1.0/go2-gesture-dashboard-demo.mp4) | Same eight-second segment; 1280 × 648; 20 fps; H.264; about 1.2 MiB; attached to the release rather than Git |
-| [Second silent MP4](https://github.com/sriram-2502/go2-gesture-nav/releases/download/v0.1.0/go2-gesture-dashboard-demo-02.mp4) | Source seconds 60–68; same video export settings; about 1.2 MiB |
+| [Second silent MP4](https://github.com/sriram-2502/go2-gesture-nav/releases/download/v0.1.0/go2-gesture-dashboard-demo-02.mp4) | Source seconds 15–30; 15 seconds; 1280 × 648; 20 fps; H.264; about 2.2 MiB |
 
 The source is 2880 × 1800. Both exports crop to `2880:1460:0:244` before scaling,
 removing browser tabs, the address/bookmarks bars, and the Windows taskbar. The
@@ -34,7 +34,8 @@ With a local FFmpeg installation and the extracted dashboard video:
 ffmpeg -ss 30 -t 8 -i dashboard.mp4 -filter_complex "[0:v]crop=2880:1460:0:244,fps=8,scale=800:-2:flags=lanczos,split[a][b];[a]palettegen=max_colors=64:stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=4" -an -map_metadata -1 -loop 0 go2-gesture-dashboard-demo.gif
 ```
 
-Use `-ss 60` and the `-02` filename to reproduce the second segment.
+For the second segment, use `-ss 15 -t 15`, `scale=720:-2`, and `-frames:v 120`
+before the output filename; save it with the `-02` filename.
 
 Do not commit source recording ZIPs, full screen recordings, keys, or raw run
 logs. The full supplied archive remains on the maintainer's computer. New public

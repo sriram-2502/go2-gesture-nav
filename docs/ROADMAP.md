@@ -9,7 +9,7 @@
 - [ ] Record a short supervised forward-and-stop demo with the gesture and measured velocity visible.
 - [ ] Record brief sideways and turn-in-place demos, returning to stop between gestures.
 - [ ] Add a short recording/replay walkthrough GIF showing the overall toggle and offline playback.
-- [x] Export two eight-second, 8 fps dashboard GIFs at 800 px width (about 3.3 and 2.9 MiB), plus higher-quality silent release MP4s.
+- [x] Export an eight-second dashboard GIF at 800 px width and a 15-second GIF at 720 px width (about 3.3 and 4.0 MiB), plus higher-quality silent release MP4s.
 - [x] Store reviewed dashboard GIF/still in `docs/assets/`; keep full source MP4/WebM, recording ZIPs, and raw telemetry local. Inspect future exports separately before publication.
 
 The current hero comes from the supplied recorded Go2 dashboard session. It
