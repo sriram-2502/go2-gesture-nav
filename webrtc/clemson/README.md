@@ -86,12 +86,19 @@ device is busy. A different webcam can be selected when launching the service:
 
 ## Available now
 
-- **Go2 battery percentage** in the camera/voxel header, including when the hand
-  panel is hidden. It uses the existing WebRTC lowstate stream and refreshes with
+- **Go2 battery percentage and graphic** directly below Stop in the top-right
+  camera/voxel controls, including when the hand panel is hidden. It uses the
+  existing WebRTC lowstate stream and refreshes with
   the 10 Hz status display. Missing, invalid, disconnected, or more than five
-  seconds old readings show **Battery: unavailable**; a valid zero shows **0%**.
+  seconds old readings show **Battery unavailable / —%**; a valid zero shows **0%**.
   This is telemetry only, not an automatic battery cutoff or a laptop/remote
   battery reading. Verify the live value against the assigned robot before lab use.
+- **Jump once**, **Bound gait**, and **Stationary look around** buttons below the
+  battery. Look-around includes hold-to-peek arrows; release returns to center.
+  These use the shared robot connection and pause gesture navigation when selected.
+- **Direct gesture enabling:** click Enable gesture control without a palm/fist
+  startup pose. Fresh perception and robot/video feedback are still required;
+  a preheld gesture cannot move the robot until new post-enable frames arrive.
 - Separate generated source copy based on the pinned upstream revision.
 - One IP/AES connection form, defaulting to **`192.168.12.1`** (Go2 Wi-Fi hotspot).
   The IP is editable. Enter the key and click **Connect and open web view**.
@@ -190,9 +197,10 @@ Maze scoring is **not implemented yet**.
 Keep gait selection, stair mode, and custom
 SLAM development outside the first classroom integration.
 
-For the next development phase, see [pose, jump, and gait extension findings](CONTROL_EXTENSIONS.md).
-That guide distinguishes upstream command availability from hardware-verified
-student controls and outlines a stationary look-around mode as the next extension.
+See [camera-view controls and upstream gait findings](CONTROL_EXTENSIONS.md)
+for behavior selection, stopping, and firmware-dependent limitations. These new
+behavior controls have offline transport tests; physical behavior needs separate
+verification on the assigned Go2.
 
 ## Credentials
 

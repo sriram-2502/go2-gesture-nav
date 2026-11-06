@@ -102,13 +102,15 @@ control and resets the recognition hold. Sideways speed is read-only.
 
 For a supervised hardware check, join Go2 Wi-Fi, leave the editable IP at
 **`192.168.12.1`**, and connect with the assigned AES key. Confirm that the robot
-is already standing normally, video is live, and feedback is arriving. Show an
-open palm/fist, then click **Enable gesture control**. Keep that stop pose until
-the motion-service check completes. Recognition testing and enabling control are
+is already standing normally, video is live, and feedback is arriving. Click
+**Enable gesture control** directly; no palm/fist startup pose is required.
+Movement requires fresh frames after the click and the normal gesture hold.
+Recognition testing and enabling control are
 separate steps; the paired remote and a supervising operator remain required.
 
 Only `normal` and `mcf` motion services are accepted. The adapter does not stand
-the robot up or switch modes. MCF Move is sent without acknowledgement, while
+the robot up. The separate scene buttons select Bound or stationary Pose modes;
+see the [camera-view controls](../clemson/CONTROL_EXTENSIONS.md). MCF Move is sent without acknowledgement, while
 normal-mode Move requires an API success reply. A sent command is never labelled
 executed. The camera/state/gesture watchdogs run in the browser and cannot guarantee
 a stop if the browser freezes, the computer loses power, or communication fails.

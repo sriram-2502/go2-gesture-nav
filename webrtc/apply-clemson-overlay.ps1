@@ -1,11 +1,12 @@
 # Apply tracked UI extensions without reinstalling dependencies or changing Basic.
+param([string]$TargetPath = '')
 $ErrorActionPreference = 'Stop'
-$appPath = Join-Path $PSScriptRoot 'clemson/unitree_ui'
+$appPath = if ($TargetPath) { [IO.Path]::GetFullPath($TargetPath) } else { Join-Path $PSScriptRoot 'clemson/unitree_ui' }
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 if (-not (Test-Path -LiteralPath (Join-Path $appPath '.clemson-base-revision'))) {
     throw 'Create the Clemson starter with setup-ui.ps1 first.'
 }
-foreach ($name in @('clemson.css', 'clemson-preview.ts', 'camera-start.ts', 'gesture-robot.ts', 'session-format.ts', 'session-recorder.ts', 'recording-ui.ts', 'replay.ts', 'replay.css')) {
+foreach ($name in @('clemson.css', 'clemson-preview.ts', 'camera-start.ts', 'gesture-robot.ts', 'scene-controls.ts', 'session-format.ts', 'session-recorder.ts', 'recording-ui.ts', 'replay.ts', 'replay.css')) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot "clemson/overlay/$name") -Destination (Join-Path $appPath "src/ui/$name") -Force
 }
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'clemson/overlay/replay.html') -Destination (Join-Path $appPath 'replay.html') -Force
@@ -16,6 +17,9 @@ $appFile = Join-Path $appPath 'src/ui/app.ts'
 $appText = [IO.File]::ReadAllText($appFile)
 if (-not $appText.Contains("import { gestureRobot } from './gesture-robot';")) {
     $appText = "import { gestureRobot } from './gesture-robot';`n" + $appText
+}
+if (-not $appText.Contains("import { mountSceneControls } from './scene-controls';")) {
+    $appText = "import { mountSceneControls } from './scene-controls';`n" + $appText
 }
 $appText = $appText.Replace("import { ConnectionPanel } from './connection-panel';", "import { ConnectionPanel, getClemsonAesKey, clearClemsonAesKey } from './connection-panel';")
 $landing = @'
@@ -44,20 +48,13 @@ $control = @'
     header.className = 'clemson-webview-header';
     const heading = document.createElement('strong');
     heading.textContent = 'Clemson Go2 / Camera + Voxels';
-    const battery = document.createElement('output');
-    battery.className = 'clemson-battery';
-    battery.setAttribute('aria-label', 'Go2 battery');
-    battery.textContent = 'Battery: unavailable';
-    const headingGroup = document.createElement('div');
-    headingGroup.className = 'clemson-header-status';
-    headingGroup.append(heading, battery);
     const disconnect = document.createElement('button');
     disconnect.textContent = 'Disconnect';
     disconnect.addEventListener('click', () => this.disconnect());
     const headerActions = document.createElement('div');
     headerActions.className = 'clemson-header-actions';
     headerActions.appendChild(disconnect);
-    header.append(headingGroup, headerActions);
+    header.append(heading, headerActions);
     this.controlUi.appendChild(header);
     this.pipCamera = new PipCamera(this.controlUi);
     if (this.videoStream) this.pipCamera.setStream(this.videoStream);
@@ -68,6 +65,7 @@ $control = @'
     stop.addEventListener('click', () => void gestureRobot.disable('Stopped by operator'));
     headerActions.appendChild(stop);
     gestureRobot.bind(message => this.webrtc?.send(message), () => this.webrtc?.getState() === 'connected');
+    mountSceneControls(headerActions);
     if (this.videoStream) gestureRobot.watchVideo(this.videoStream);
     void this.init3DScene();
   }
@@ -140,5 +138,5 @@ if (-not $text.Contains("'/gesture-api'")) {
     $text = $text.Replace($anchor, "$proxy`n$anchor")
 }
 [IO.File]::WriteAllText($config, $text, $utf8)
-& (Join-Path $PSScriptRoot 'apply-voxel-replay.ps1')
+& (Join-Path $PSScriptRoot 'apply-voxel-replay.ps1') -TargetPath $appPath
 Write-Host 'Clemson gesture navigation applied. Control starts disabled.'

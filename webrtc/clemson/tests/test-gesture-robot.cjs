@@ -26,10 +26,14 @@ const {RTC_TOPIC: T, SPORT_CMD: A, DATA_CHANNEL_TYPE: D} = topics;
 function fixture(mode = 'mcf', rejectStop = false, avoidanceOptions = {}) {
   let clock = 10000, frame = 1, height = .3;
   let avoidance = false;
+  let behavior = 'none';
   const messages = [];
   const robot = new GestureRobot(() => clock, async ms => { clock += ms; feedback(); robot.noteVideoFrame(); }, false);
   function feedback() { robot.receive({type: D.MSG, topic: T.LF_SPORT_MOD_STATE,
-    data: {velocity: [0,0,0], yaw_speed: 0, body_height: height}}); }
+    data: {velocity: [0,0,0], yaw_speed: 0, body_height: height,
+      mode: behavior === 'pose' ? 2 : behavior === 'bound' ? 15 : behavior === 'stand' ? 1 : 0,
+      error_code: behavior === 'pose' ? 1091 : behavior === 'bound' ? 2008 : 1013,
+      foot_force: avoidanceOptions.noFeet ? undefined : [30, 30, 30, 30]}}); }
   function input(label = 'STOP', velocity = [0,0,0], newFrame = true) {
     if (newFrame) frame++;
     robot.updateInput({fresh: true, label, frame_id: frame, age_ms: 0, supervised_velocity: velocity}, clock);
@@ -39,14 +43,20 @@ function fixture(mode = 'mcf', rejectStop = false, avoidanceOptions = {}) {
     if (message.type !== D.REQUEST) return;
     const api = message.data.header.identity.api_id;
     const avoidRequest = message.topic === T.OBSTACLES_AVOID;
+    if (!avoidanceOptions.ignoreBehavior && api !== avoidanceOptions.rejectApi) {
+      if (api === A.Pose) behavior = JSON.parse(message.data.parameter).data ? 'pose' : 'none';
+      if (api === A.FreeBound) behavior = JSON.parse(message.data.parameter).data ? 'bound' : 'none';
+      if (api === A.BalanceStand) behavior = 'stand';
+    }
     if (avoidRequest && api === 1001 && !avoidanceOptions.rejectSet && !avoidanceOptions.ignoreSet)
       avoidance = JSON.parse(message.data.parameter).enable;
     robot.receive({type: D.RESPONSE, topic: message.topic.replace(/request$/, 'response'),
-      data: {header: {identity: message.data.header.identity, status: {code: (rejectStop && api === A.StopMove) || (avoidRequest && api === 1001 && avoidanceOptions.rejectSet) ? 1 : 0}},
+      data: {header: {identity: message.data.header.identity, status: {code: api === avoidanceOptions.rejectApi || (rejectStop && api === A.StopMove) || (avoidRequest && api === 1001 && avoidanceOptions.rejectSet) ? 1 : 0}},
         data: JSON.stringify(avoidRequest ? {enable: avoidance} : {name: mode})}});
   }, () => true);
   feedback(); robot.noteVideoFrame(); input();
   return {robot, messages, input, feedback, setHeight: v => {height = v; feedback();},
+    setBehavior: value => {behavior = value; feedback();},
     advance: ms => {clock += ms;}, now: () => clock};
 }
 function apiMessages(f, api) { return f.messages.filter(x => x.message.data.header.identity.api_id === api); }
@@ -58,7 +68,7 @@ test('transport rejects mixed axes and speeds outside the agreed contract', () =
 test('preview sends no robot requests until explicitly enabled', async () => {
   const f = fixture(); f.input('FORWARD', [.5,0,0]); await f.robot.tick();
   assert.equal(f.messages.length, 0);
-  await f.robot.enable(); assert.equal(f.robot.status().enabled, false);
+  await f.robot.enable(); assert.equal(f.robot.status().enabled, true);
 });
 test('MCF sends bounded no-reply Move through the shared connection', async () => {
   const f = fixture(); await f.robot.enable(); f.input('STRAFE_RIGHT', [0,-.5,0]); await f.robot.tick();
@@ -188,4 +198,138 @@ test('battery is unavailable when transport disconnects and is cleared on a new 
   battery(f, 60);
   f.robot.detach();
   assert.equal(f.robot.status().batteryPercent, null);
+});
+
+test('Enable accepts missing-hand input and a preheld movement requires new post-enable frames', async () => {
+  const f = fixture(); f.input('NO_HAND'); await f.robot.enable();
+  assert.equal(f.robot.status().enabled, true);
+  await f.robot.disable();
+  f.input('FORWARD', [.5,0,0]); await f.robot.enable();
+  await f.robot.tick();
+  assert.equal(apiMessages(f, A.Move).length, 0);
+  f.input('FORWARD', [.5,0,0], false); await f.robot.tick();
+  assert.equal(apiMessages(f, A.Move).length, 0);
+  f.input('FORWARD', [.5,0,0]); await f.robot.tick();
+  assert.equal(apiMessages(f, A.Move).length, 1);
+});
+
+test('stale state or camera prevents scene actions independently of hand recognition', async () => {
+  for (const behavior of ['jump', 'bound', 'pose']) {
+    const f = fixture(); f.advance(1100);
+    await f.robot.selectBehavior(behavior);
+    assert.equal(f.messages.length, 0);
+    assert.match(f.robot.status().actionMessage, /expired/);
+  }
+});
+
+test('Bound selection pauses navigation, verifies mode feedback, and lets gestures use the selected gait', async () => {
+  const f = fixture(); await f.robot.enable(); f.input('FORWARD', [.5,0,0]); await f.robot.tick();
+  await f.robot.selectBehavior('bound');
+  assert.equal(f.robot.status().enabled, false);
+  assert.equal(f.robot.status().behavior, 'bound');
+  assert.equal(f.robot.status().behaviorConfirmed, true);
+  assert.deepEqual(JSON.parse(apiMessages(f, A.FreeBound)[0].message.data.parameter), {data:true});
+  f.input(); await f.robot.enable(); f.input('FORWARD', [.5,0,0]); await f.robot.tick();
+  assert.equal(f.robot.status().enabled, true);
+  assert.equal(f.robot.status().sent[0], .5);
+  await f.robot.disable();
+  assert.deepEqual(JSON.parse(apiMessages(f, A.FreeBound).at(-1).message.data.parameter), {data:false});
+  assert.equal(f.robot.status().behavior, 'none');
+});
+
+test('Pose works without gesture input, streams bounded Euler targets only, and centers after a lost release', async () => {
+  const f = fixture('normal'); f.robot.input = null;
+  await f.robot.selectBehavior('pose');
+  assert.equal(f.robot.status().behaviorConfirmed, true);
+  await f.robot.enable(); assert.equal(f.robot.status().enabled, false);
+  f.robot.peek(.12, -.15); await f.robot.tick();
+  assert.deepEqual(JSON.parse(apiMessages(f, A.Euler).at(-1).message.data.parameter), {x:0,y:.12,z:-.15});
+  f.robot.peek(1,0); await f.robot.tick();
+  assert.equal(JSON.parse(apiMessages(f, A.Euler).at(-1).message.data.parameter).y, .12);
+  assert.equal(apiMessages(f, A.Move).length, 0);
+  f.advance(251); f.feedback(); f.robot.noteVideoFrame(); await f.robot.tick();
+  assert.deepEqual(JSON.parse(apiMessages(f, A.Euler).at(-1).message.data.parameter), {x:0,y:0,z:0});
+  await f.robot.disable();
+  assert.equal(apiMessages(f, A.Pose).length, 0);
+  assert.ok(apiMessages(f, A.BalanceStand).length >= 2);
+  assert.equal(f.robot.status().behavior, 'none');
+});
+
+test('selecting a second behavior exits the previous persistent mode first', async () => {
+  const f = fixture(); await f.robot.selectBehavior('pose');
+  await f.robot.selectBehavior('bound');
+  const poseExit = apiMessages(f, A.Euler).at(-1);
+  const boundEnter = apiMessages(f, A.FreeBound)[0];
+  assert.deepEqual(JSON.parse(poseExit.message.data.parameter), {x:0,y:0,z:0});
+  assert.ok(f.messages.indexOf(poseExit) < f.messages.indexOf(boundEnter));
+  assert.equal(f.robot.status().behavior, 'bound');
+  await f.robot.selectBehavior('bound');
+  assert.equal(f.robot.status().behavior, 'none');
+});
+
+test('rejected or unconfirmed behavior entry is never highlighted as active', async () => {
+  for (const options of [{rejectApi:A.BalanceStand}, {ignoreBehavior:true}]) {
+    const f = fixture('normal', false, options); await f.robot.selectBehavior('pose');
+    assert.equal(f.robot.status().behaviorConfirmed, false);
+    assert.equal(f.robot.status().enabled, false);
+    assert.match(f.robot.status().actionMessage, /rejected|not confirmed/);
+    f.robot.peek(.12,0); const before = apiMessages(f, A.Euler).length; await f.robot.tick();
+    assert.equal(apiMessages(f, A.Euler).length, before);
+  }
+});
+
+test('Jump sends one action, latches against repeats, and Stop waits for grounded recovery', async () => {
+  const f = fixture(); await f.robot.selectBehavior('jump');
+  assert.equal(apiMessages(f, A.FrontJump).length, 1);
+  assert.deepEqual(JSON.parse(apiMessages(f, A.FrontJump)[0].message.data.parameter), {});
+  const jumped = f.now();
+  await f.robot.selectBehavior('jump'); await f.robot.selectBehavior('bound'); await f.robot.enable();
+  assert.equal(apiMessages(f, A.FrontJump).length, 1);
+  assert.equal(apiMessages(f, A.FreeBound).length, 0);
+  assert.equal(f.robot.status().enabled, false);
+  await f.robot.disable();
+  assert.ok(apiMessages(f, A.BalanceStand)[0].time - jumped >= 3300);
+  assert.equal(f.robot.status().behavior, 'none');
+});
+
+test('missing foot-contact telemetry cannot qualify jump recovery as landed', async () => {
+  const f = fixture('mcf', false, {noFeet:true}); await f.robot.selectBehavior('jump');
+  await f.robot.disable();
+  assert.equal(apiMessages(f, A.BalanceStand).length, 0);
+  assert.equal(f.robot.status().behavior, 'jump');
+  assert.match(f.robot.status().stopResult, /not confirmed/);
+});
+
+test('external mode change during Pose stops posture streaming', async () => {
+  const f = fixture('normal'); await f.robot.selectBehavior('pose'); f.setBehavior('none');
+  await f.robot.tick();
+  assert.equal(f.robot.status().behavior, 'none');
+  assert.equal(f.robot.status().enabled, false);
+});
+
+test('Stop during an asynchronous mode check cancels the pending action', async () => {
+  const f = fixture();
+  const transport = f.robot.send;
+  let held;
+  f.robot.send = message => {
+    if (message.topic === T.MOTION_SWITCHER) held = message;
+    else transport(message);
+  };
+  const selection = f.robot.selectBehavior('jump');
+  for (let i = 0; i < 5 && !held; i++) await Promise.resolve();
+  assert.ok(held);
+  await f.robot.disable();
+  transport(held); await selection;
+  assert.equal(apiMessages(f, A.FrontJump).length, 0);
+  assert.equal(f.robot.status().behavior, 'none');
+});
+
+test('a previously active robot pose is stopped before any navigation can be enabled', async () => {
+  const f = fixture(); f.setBehavior('pose'); await f.robot.enable();
+  assert.equal(f.robot.status().enabled, false);
+  assert.equal(f.robot.status().behavior, 'pose');
+  assert.equal(f.robot.status().behaviorConfirmed, false);
+  assert.equal(apiMessages(f, A.Move).length, 0);
+  await f.robot.disable();
+  assert.equal(f.robot.status().behavior, 'none');
 });

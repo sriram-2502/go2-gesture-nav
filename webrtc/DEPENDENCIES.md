@@ -112,7 +112,7 @@ Two hands produce UNKNOWN. Stale frames clear the preview and velocity intent.
 
 **Control starts disabled.** Recognition can be tested without moving the robot.
 The implemented adapter sends supervised gesture commands only after you connect
-the robot, show a stop gesture, and click **Enable gesture control**. Forward speed
+the robot and click **Enable gesture control**; no startup hand pose is required. Forward speed
 is 0.5–1.0 m/s; turn speed is 0.5–1.0 rad/s (default 0.8); sideways is fixed at
 ±0.5 m/s. The existing Go2 hardware setup has been validated, as confirmed by the maintainer. Integrated recording is
 available through [recording and replay](RECORDING.md). Read the

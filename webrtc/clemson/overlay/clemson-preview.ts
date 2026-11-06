@@ -208,16 +208,9 @@ setInterval(() => void poll(), 150);
 setInterval(() => {
   const state = gestureRobot.status();
   sessionRecorder.recordControl(state);
-  const battery = app.querySelector<HTMLOutputElement>('.clemson-battery');
-  if (battery) {
-    battery.textContent = state.batteryFresh ? `Battery: ${Math.round(state.batteryPercent!)}%` : 'Battery: unavailable';
-    battery.classList.toggle('clemson-battery-fresh', state.batteryFresh);
-    battery.title = state.batteryFresh ? 'Go2 battery state of charge reported by the robot'
-      : 'No valid Go2 battery reading received within the last 5 seconds';
-  }
   avoidanceSwitch.checked = state.avoidanceFresh && state.avoidance === true;
   avoidanceSwitch.indeterminate = !state.avoidanceFresh;
-  avoidanceSwitch.disabled = !state.connected || !state.avoidanceFresh || state.avoidanceBusy || state.stopping || state.enabling;
+  avoidanceSwitch.disabled = !state.connected || !state.avoidanceFresh || state.avoidanceBusy || state.stopping || state.enabling || state.actionBusy;
   avoidanceSwitch.setAttribute('aria-checked', !state.avoidanceFresh ? 'mixed' : String(state.avoidance));
   avoidanceRefresh.disabled = !state.connected || state.avoidanceBusy;
   panel.querySelector('.clemson-switch-state')!.textContent = state.avoidanceBusy ? 'Pending…'
@@ -232,11 +225,11 @@ setInterval(() => {
   telemetry.querySelector('.clemson-measured')!.textContent = state.feedbackFresh && state.measured ? format(state.measured) : 'Not available / stale';
   const stopResult=telemetry.querySelector<HTMLElement>('.clemson-stop-result')!;
   stopResult.textContent=state.stopResult;stopResult.hidden=state.stopResult==='Not requested';
-  panel.querySelector<HTMLButtonElement>('.clemson-enable')!.disabled = !state.connected || !serviceFresh || state.enabled || state.enabling || state.stopping || state.avoidanceBusy;
+  panel.querySelector<HTMLButtonElement>('.clemson-enable')!.disabled = !state.connected || !serviceFresh || state.enabled || state.enabling || state.stopping || state.avoidanceBusy || state.actionBusy || state.behavior === 'jump' || state.behavior === 'pose';
 }, 100);
 setInterval(() => {
   const state = gestureRobot.status();
-  if (state.connected && !state.enabled && !state.enabling && !state.stopping && !state.avoidanceBusy)
+  if (state.connected && !state.enabled && !state.enabling && !state.stopping && !state.avoidanceBusy && !state.actionBusy && state.behavior === 'none')
     void gestureRobot.refreshObstacleAvoidance();
 }, 3000);
 setOpen(true);

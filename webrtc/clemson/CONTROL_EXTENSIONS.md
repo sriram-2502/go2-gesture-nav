@@ -1,29 +1,90 @@
-# Clemson control extensions
+# Clemson camera-view controls
 
-Battery display is implemented. Pose, jump, and gait controls below are a
-development plan, not enabled student controls. Findings refer to the upstream
-UI revision pinned in [ui-source.json](../ui-source.json), checked November 6, 2026.
+The top-right control stack is **Disconnect ? Stop ? battery ? behavior buttons**.
+It stays on the camera/voxel view, separate from the hand sidebar. Battery refresh
+and behavior status are independent of the webcam service.
 
-## Battery: available in the Clemson dashboard
+## Start the updated UI
 
-The camera/voxel header displays `Battery: 82%` from
-`rt/lf/lowstate → bms_state.soc` through the existing authenticated connection.
-The adapter accepts finite numeric values from 0 through 100. It clears the
-display on disconnect, and readings older than five seconds become unavailable.
-Malformed packets cannot refresh that timer. The 10 Hz status timer updates the
-display; battery telemetry itself arrives asynchronously. Recording already saves
-lowstate, and control-status events now also include battery availability/value.
-
-This is the **robot battery**, with no added battery-based motion interlock.
-The Go1 MuJoCo playground's `course/GO2_HARDWARE.md` asks students to check real
-battery/state feedback and links to this hardware application. Its simulation
-does not supply a live Go2 battery; the Clemson implementation belongs here.
-
-Apply tracked changes to an existing generated checkout, then reload the browser:
+Disconnect the robot and stop the previous UI server with Ctrl+C. Then run:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\webrtc\apply-clemson-overlay.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\webrtc\start-ui.ps1 -Edition clemson
 ```
+
+Startup applies tracked overlays before launching Vite. Open
+**http://127.0.0.1:5174/** and use Ctrl+Shift+R to reload the page. Do not apply
+source changes into a connected live dashboard; test new controls in a clear,
+supervised robot session. Development builds can target an isolated checkout
+using `apply-clemson-overlay.ps1 -TargetPath PATH`.
+
+## Battery
+
+A filled battery graphic and numeric percentage appear directly under Stop.
+Telemetry comes from `rt/lf/lowstate ? bms_state.soc` through the existing
+connection; finite numeric values from 0 through 100 are accepted. A valid zero
+shows **0%**. Missing, invalid, disconnected, or more than five seconds old data
+shows **Battery unavailable / ?%**. Yellow at 20% or below is a display cue,
+not a firmware limit or an automatic motion cutoff.
+
+The status display refreshes at 10 Hz; actual battery packets are stream-driven.
+The existing recorder saves lowstate and control-status battery fields. The Go1
+MuJoCo playground links to this hardware application; live Go2 battery telemetry
+is implemented here, not simulated in MuJoCo.
+
+## Gesture navigation
+
+Click **Enable gesture control** directly. There is no palm/fist startup ritual;
+fresh webcam predictions (including NO_HAND), robot state, and camera frames are
+still required. New frames spanning at least 300 ms after enabling are required
+before sending a nonzero velocity, alongside Python's consistency hold.
+
+## Behavior buttons
+
+These controls are implemented with offline tests; they are not hardware-qualified
+for every Go2/firmware combination. No robot actions are sent on page load. Select
+behaviors while the robot is standing still. Entry pauses gesture navigation,
+checks fresh robot/video feedback and the active motion service, and uses the
+existing authenticated connection.
+
+| Button | Command / behavior | How to use |
+| --- | --- | --- |
+| **Jump once** | `FrontJump` 1031, one request | Requests one forward jump. Further behavior selections and gesture enabling stay locked until Stop completes recovery. This is distinct from the upstream persistent FreeJump mode. |
+| **Bound gait** | `FreeBound` 2046 with `{data:true}` | Requires a successful API reply and new mode feedback. Then click Enable gesture control to navigate. Click Bound again or Stop to leave it. A stop/zero gesture while moving in Bound ends that gait and disarms navigation. |
+| **Stationary look around** | `BalanceStand` 1002, then `Euler` 1007 | Requires new balance-stand feedback. Hold an arrow to change body pitch/yaw; release to center. Click the mode again or Stop to exit before enabling navigation. |
+
+Only one behavior owns the command path at a time. Entry into Pose or Bound is
+highlighted only after new robot feedback reports the requested mode. Rejection,
+timeout, or mismatched mode is shown in the control stack; an uncertain mode must
+be stopped before gesture navigation can resume. The adapter accepts the same
+`normal` and `mcf` motion services as the original navigation path.
+
+### Look-around details
+
+The peek pad sets roll to zero, pitch to ?0.12 rad, and yaw to ?0.15 rad. It sends
+orientation targets, not walking velocities. Pointer capture, keyboard release,
+focus loss, and a 250 ms input watchdog handle release/centering. The adapter's
+nominal 20 Hz timer checks and sends posture targets; acknowledgement latency
+can reduce that cadence. Stationary means no commanded walking; the body moves
+and the robot may adjust its feet to balance. Hardware testing must establish
+the axis signs and achieved body motion on the assigned firmware. This follows
+Unitree's [BalanceStand/Euler example](https://github.com/unitreerobotics/unitree_sdk2/blob/main/example/go2/go2_sport_client.cpp),
+rather than sending unbounded wireless-controller joystick axes.
+
+### Stop and recovery
+
+Stop disarms gesture navigation. For look-around it centers Euler targets;
+for Bound it requests the gait off. If reconnecting to a robot already in its
+separate firmware Pose mode, Stop also requests `Pose(false)`. The guarded stop sequence
+uses fresh low-speed upright feedback before BalanceStand. Persistent-mode exit
+also requires feedback outside the selected mode.
+
+After a jump, BalanceStand is withheld until at least three seconds have elapsed
+and new low-speed upright feedback with four positive foot-force readings spans
+300 ms. Missing foot-contact telemetry or failure to recover leaves the behavior
+locked and reports a remote-intervention message. These are conservative software
+checks, not a guarantee of landing or an airborne emergency-stop mechanism. A
+jump API acknowledgement confirms a request, not successful execution.
 
 ## What the pinned Unitree UI exposes
 
@@ -34,7 +95,7 @@ SDK; do not treat its action grid as a verified classroom command contract.
 
 | Capability | Pinned UI / protocol | Meaning for Clemson development |
 | --- | --- | --- |
-| Stationary body pose | `Pose` 1028 with `{data:true}`; protocol also defines `Euler` 1007 | Best next prototype: explicit look-around control, separate from navigation. |
+| Stationary body pose | `Pose` 1028 with `{data:true}`; protocol also defines `Euler` 1007 | Clemson uses BalanceStand + bounded Euler for hold-to-peek; firmware Pose joystick mode is separate. |
 | Forward jump | `FrontJump` 1031 | A one-shot action, not a velocity or a stream of jump requests. |
 | Jump mode | `FreeJump` 2047 with `{data:true}` | A persistent behavior; distinct from the one-shot forward jump. |
 | Stair walking | `WalkStair` 1049 with `{data:true}` | Present upstream; verify the exact firmware route and supported stairs before exposing it. Not a terrain planner. |
@@ -48,37 +109,3 @@ Its [client implementation](https://github.com/unitreerobotics/unitree_sdk2_pyth
 provides separate calls for `Pose`, `Euler`, `FrontJump`, and `FreeJump`.
 The pinned UI's `WalkStair` 1049 is absent from that Go2 Python API list;
 verify it on the assigned firmware rather than substituting another robot's API.
-
-## Recommended next step: stationary look-around
-
-Use two mutually exclusive controls: **Navigate** and **Look around**. Entering
-look-around should stop/disarm gesture navigation, confirm fresh low-speed upright
-feedback, and establish a supported posture-control mode before accepting input.
-
-Unitree's [balance-stand example](https://github.com/unitreerobotics/unitree_sdk2/blob/main/example/go2/go2_sport_client.cpp)
-shows body roll/pitch/yaw orientation control through `Euler`. A proposed Clemson
-control can use small, bounded roll/pitch/yaw targets with a center button and
-hold-to-operate input. Body yaw orientation is an angle, distinct from navigation's
-`wz` yaw rate. Stationary means no requested walking; the body still moves and the
-robot may adjust its feet to balance.
-
-The upstream UI sends its joystick axes over `rt/wirelesscontroller` at 20 Hz and
-lets robot firmware interpret them in the selected mode. It does not implement a
-separate bounded Euler joystick. For Clemson, select and verify one posture-input
-route on the assigned robot; do not mix raw remote axes with the gesture Move
-loop. On release, focus loss, stale input, or exit, use the validated posture
-neutralization/exit sequence. Returning to navigation requires explicit enabling.
-
-## Then expose gait selection and jumping deliberately
-
-Keep all behavior changes in the existing robot adapter and shared connection.
-Pause/disarm navigation before mode changes, check replies, and decode the robot's
-actual state using its motion-service-specific fields. Test returning to normal
-navigation as well as entry into the new mode.
-
-For jump controls, use an explicit one-shot trigger with a held-button/repeated-
-gesture latch, an in-progress state, and landing/recovery feedback before allowing
-another jump or navigation. `FreeJump` needs its own entry/exit state machine.
-The current zero-velocity/StopMove walking sequence does not establish how to
-interrupt an airborne action; validate behavior-specific recovery separately.
-No jump commands or new mode changes are sent by the battery implementation.
