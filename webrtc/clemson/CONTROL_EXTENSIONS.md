@@ -13,7 +13,11 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\webrtc\start-ui.ps1 -E
 ```
 
 Startup applies tracked overlays before launching Vite. Open
-**http://127.0.0.1:5174/** and use Ctrl+Shift+R to reload the page. Do not apply
+**http://127.0.0.1:5174/** and use Ctrl+Shift+R to reload the page. The camera-view
+title shows **Gesture pose | UI build ID**; startup prints the same ID. The local
+`/clemson-build.json` endpoint also reports it without connecting to a robot.
+Matching IDs confirm the loaded code includes gesture pose and the FPV tint fix.
+Do not apply
 source changes into a connected live dashboard; test new controls in a clear,
 supervised robot session. Development builds can target an isolated checkout
 using `apply-clemson-overlay.ps1 -TargetPath PATH`.
@@ -56,7 +60,7 @@ existing authenticated connection.
 | --- | --- | --- |
 | **Jump once** | `FrontJump` 1031, one request | Requests one forward jump. Further behavior selections and gesture enabling stay locked until Stop completes recovery. This is distinct from the upstream persistent FreeJump mode. |
 | **Bound gait** | `FreeBound` 2046 with `{data:true}` | Requires a successful API reply and new mode feedback. Then click Enable gesture control to navigate. Click Bound again or Stop to leave it. A stop/zero gesture while moving in Bound ends that gait and disarms navigation. |
-| **Stationary look around** | `BalanceStand` 1002, then `Euler` 1007 | Requires new balance-stand feedback. Hold an arrow to change body pitch/yaw; release to center. Click the mode again or Stop to exit before enabling navigation. |
+| **Stationary look around** | `BalanceStand` 1002, then `Euler` 1007 | Uses the webcam gestures for bounded body roll/pitch/yaw. Requires fresh tracking and new supported standing feedback. Click the mode again or Stop to exit before enabling walking navigation. |
 
 Only one behavior owns the command path at a time. Entry into Pose or Bound is
 highlighted only after new robot feedback reports the requested mode. Rejection,
@@ -64,15 +68,31 @@ timeout, or mismatched mode is shown in the control stack; an uncertain mode mus
 be stopped before gesture navigation can resume. The adapter accepts the same
 `normal` and `mcf` motion services as the original navigation path.
 
-### Look-around details
+### Stationary gesture mapping
 
-The peek pad sets roll to zero, pitch to ?0.12 rad, and yaw to ?0.15 rad. It sends
-orientation targets, not walking velocities. Pointer capture, keyboard release,
-focus loss, and a 250 ms input watchdog handle release/centering. The adapter's
-nominal 20 Hz timer checks and sends posture targets; acknowledgement latency
-can reduce that cadence. Stationary means no commanded walking; the body moves
-and the robot may adjust its feet to balance. Hardware testing must establish
-the axis signs and achieved body motion on the assigned firmware. This follows
+Selecting Stationary Look Around starts the gesture-to-pose mode directly. The
+hand panel changes to **Stationary gestures**. No joystick or arrow pad is needed.
+
+| Gesture label | Requested `(roll, pitch, yaw)` in radians |
+| --- | --- |
+| `FORWARD` | `(0, +0.12, 0)` |
+| `STRAFE_LEFT` | `(+0.12, 0, 0)` |
+| `STRAFE_RIGHT` | `(-0.12, 0, 0)` |
+| `TURN_LEFT` | `(0, 0, +0.15)` |
+| `TURN_RIGHT` | `(0, 0, -0.15)` |
+| Stop, unknown, missing hand, or stale input | `(0, 0, 0)` — center |
+
+Targets use one axis at a time and the existing Python gesture hold. New frames
+spanning 300 ms after mode entry are required before tilting. Input age above
+400 ms returns the target to zero while leaving stationary mode selected.
+The robot-state, camera-freshness, and focus-loss checks remain active. Supported
+idle/standing feedback variants are accepted after BalanceStand acknowledgement.
+
+The nominal 20 Hz loop sends orientation targets, never walking Move requests
+while stationary gestures are active. Requested roll/pitch/yaw is displayed
+separately, and the walking-velocity readout shows zero. Actual body response and
+angle signs need verification on the assigned robot. The body moves and feet may
+adjust for balance. This follows
 Unitree's [BalanceStand/Euler example](https://github.com/unitreerobotics/unitree_sdk2/blob/main/example/go2/go2_sport_client.cpp),
 rather than sending unbounded wireless-controller joystick axes.
 
@@ -124,7 +144,7 @@ SDK; do not treat its action grid as a verified classroom command contract.
 
 | Capability | Pinned UI / protocol | Meaning for Clemson development |
 | --- | --- | --- |
-| Stationary body pose | `Pose` 1028 with `{data:true}`; protocol also defines `Euler` 1007 | Clemson uses BalanceStand + bounded Euler for hold-to-peek; firmware Pose joystick mode is separate. |
+| Stationary body pose | `Pose` 1028 with `{data:true}`; protocol also defines `Euler` 1007 | Clemson uses BalanceStand + gesture-driven Euler targets; firmware Pose joystick mode is separate. |
 | Forward jump | `FrontJump` 1031 | A one-shot action, not a velocity or a stream of jump requests. |
 | Jump mode | `FreeJump` 2047 with `{data:true}` | A persistent behavior; distinct from the one-shot forward jump. |
 | Stair walking | `WalkStair` 1049 with `{data:true}` | Present upstream; verify the exact firmware route and supported stairs before exposing it. Not a terrain planner. |

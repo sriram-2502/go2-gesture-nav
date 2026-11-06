@@ -58,13 +58,14 @@ html[data-theme="light"] .clemson-lab-guide { color: #522d80; }
 .clemson-behavior-status { font-size: 11px; line-height: 1.4; color: #c4b6cf; margin: 0; overflow-wrap: anywhere; }
 .clemson-recovery[hidden] { display: none; }
 .clemson-webview-header .clemson-recovery { font-size: 11px; line-height: 1.4; border-color: #ffcd5f; color: #ffcd5f; text-align: left; }
-.clemson-peek[hidden] { display: none; }
-.clemson-peek p { font-size: 10px; color: #c4b6cf; margin: 0 0 6px; }
-.clemson-peek-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
-.clemson-peek-pad button { padding: 6px 0; touch-action: none; user-select: none; }
-.clemson-peek-pad [data-peek="up"] { grid-column: 2; }
-.clemson-peek-pad [data-peek="left"] { grid-column: 1; }
-.clemson-peek-pad [data-peek="down"] { grid-column: 2; }
+.clemson-gesture-pose[hidden] { display: none; }
+.clemson-gesture-pose p { font-size: 11px; color: #c4b6cf; line-height: 1.5; margin: 0 0 6px; }
+.clemson-pose-values { font: 11px Consolas, monospace; color: #71e4c6; }
+/* Preserve the original FPV pixels; no full-width tint or image filtering. */
+#app.control-screen .clemson-webview-header { background: none !important; }
+#app.control-screen .pip-camera video,
+#app.control-screen .video-wrapper video { filter: none; opacity: 1; mix-blend-mode: normal; }
+.clemson-ui-build { display: block; font: 10px Consolas, monospace; color: #baabc6; margin-top: 4px; }
 @media(max-width:600px) {
   .clemson-webview-header { padding: 12px; }
   .clemson-webview-header > strong { max-width: 40%; font-size: 13px; }

@@ -17,7 +17,7 @@ function load(filename, imports = {}, globals = {}) {
   return exports;
 }
 const topics = load(path.join(ui, 'src/protocol/topics.ts'));
-const {GestureRobot, validVelocity} = load(path.resolve(__dirname, '../overlay/gesture-robot.ts'), {
+const {GestureRobot, validVelocity, gestureToPose} = load(path.resolve(__dirname, '../overlay/gesture-robot.ts'), {
   '../protocol/topics': topics,
   './session-recorder': {sessionRecorder:{robotMessage(){},attachCamera(){},detachCamera(){}}}
 });
@@ -31,8 +31,8 @@ function fixture(mode = 'mcf', rejectStop = false, avoidanceOptions = {}) {
   const robot = new GestureRobot(() => clock, async ms => { clock += ms; feedback(); robot.noteVideoFrame(); }, false);
   function feedback() { robot.receive({type: D.MSG, topic: T.LF_SPORT_MOD_STATE,
     data: {velocity: [0,0,0], yaw_speed: 0, body_height: height,
-      mode: behavior === 'pose' ? 2 : behavior === 'bound' ? 15 : behavior === 'stand' ? 1 : 0,
-      error_code: behavior === 'pose' ? 1091 : behavior === 'bound' ? 2008 : 1013,
+      mode: avoidanceOptions.missingMode ? undefined : behavior === 'pose' ? 2 : behavior === 'bound' ? 15 : behavior === 'stand' ? 1 : 0,
+      error_code: avoidanceOptions.missingMode ? undefined : behavior === 'pose' ? 1091 : behavior === 'bound' ? 2008 : 1013,
       foot_force: avoidanceOptions.noFeet ? undefined : [30, 30, 30, 30]}}); }
   function input(label = 'STOP', velocity = [0,0,0], newFrame = true) {
     if (newFrame) frame++;
@@ -237,17 +237,19 @@ test('Bound selection pauses navigation, verifies mode feedback, and lets gestur
   assert.equal(f.robot.status().behavior, 'none');
 });
 
-test('Pose works without gesture input, streams bounded Euler targets only, and centers after a lost release', async () => {
-  const f = fixture('normal'); f.robot.input = null;
+test('stationary gestures send roll/pitch/yaw targets without walking and center on stale hand input', async () => {
+  const f = fixture('normal');
   await f.robot.selectBehavior('pose');
   assert.equal(f.robot.status().behaviorConfirmed, true);
   await f.robot.enable(); assert.equal(f.robot.status().enabled, false);
-  f.robot.peek(.12, -.15); await f.robot.tick();
-  assert.deepEqual(JSON.parse(apiMessages(f, A.Euler).at(-1).message.data.parameter), {x:0,y:.12,z:-.15});
-  f.robot.peek(1,0); await f.robot.tick();
-  assert.equal(JSON.parse(apiMessages(f, A.Euler).at(-1).message.data.parameter).y, .12);
+  f.input('FORWARD', [.5,0,0]); await f.robot.tick();
+  assert.deepEqual(JSON.parse(apiMessages(f, A.Euler).at(-1).message.data.parameter), {x:0,y:.12,z:0});
+  f.input('STRAFE_LEFT', [0,.5,0]); await f.robot.tick();
+  assert.deepEqual(JSON.parse(apiMessages(f, A.Euler).at(-1).message.data.parameter), {x:.12,y:0,z:0});
+  f.input('TURN_RIGHT', [0,0,-.8]); await f.robot.tick();
+  assert.deepEqual(JSON.parse(apiMessages(f, A.Euler).at(-1).message.data.parameter), {x:0,y:0,z:-.15});
   assert.equal(apiMessages(f, A.Move).length, 0);
-  f.advance(251); f.feedback(); f.robot.noteVideoFrame(); await f.robot.tick();
+  f.advance(401); f.feedback(); f.robot.noteVideoFrame(); await f.robot.tick();
   assert.deepEqual(JSON.parse(apiMessages(f, A.Euler).at(-1).message.data.parameter), {x:0,y:0,z:0});
   await f.robot.disable();
   assert.equal(apiMessages(f, A.Pose).length, 0);
@@ -268,12 +270,12 @@ test('selecting a second behavior exits the previous persistent mode first', asy
 });
 
 test('rejected or unconfirmed behavior entry is never highlighted as active', async () => {
-  for (const options of [{rejectApi:A.BalanceStand}, {ignoreBehavior:true}]) {
+  for (const options of [{rejectApi:A.BalanceStand}, {ignoreBehavior:true, missingMode:true}]) {
     const f = fixture('normal', false, options); await f.robot.selectBehavior('pose');
     assert.equal(f.robot.status().behaviorConfirmed, false);
     assert.equal(f.robot.status().enabled, false);
     assert.match(f.robot.status().actionMessage, /rejected|not confirmed/);
-    f.robot.peek(.12,0); const before = apiMessages(f, A.Euler).length; await f.robot.tick();
+    f.input('FORWARD', [.5,0,0]); const before = apiMessages(f, A.Euler).length; await f.robot.tick();
     assert.equal(apiMessages(f, A.Euler).length, before);
   }
 });
@@ -301,10 +303,36 @@ test('missing foot-contact telemetry cannot qualify jump recovery as landed', as
 });
 
 test('external mode change during Pose stops posture streaming', async () => {
-  const f = fixture('normal'); await f.robot.selectBehavior('pose'); f.setBehavior('none');
+  const f = fixture('normal'); await f.robot.selectBehavior('pose'); f.setBehavior('pose');
   await f.robot.tick();
-  assert.equal(f.robot.status().behavior, 'none');
+  assert.equal(f.robot.status().behaviorConfirmed, false);
   assert.equal(f.robot.status().enabled, false);
+});
+
+test('pose mapping is bounded, single-axis, and centers for all stop/unknown labels', () => {
+  for (const [label, expected] of Object.entries({FORWARD:[0,.12,0], STRAFE_LEFT:[.12,0,0],
+    STRAFE_RIGHT:[-.12,0,0], TURN_LEFT:[0,0,.15], TURN_RIGHT:[0,0,-.15],
+    STOP:[0,0,0], UNKNOWN:[0,0,0], NO_HAND:[0,0,0], INVALID:[0,0,0]})) {
+    assert.deepEqual(Array.from(gestureToPose(label)), expected);
+  }
+});
+
+test('gesture pose respects post-enable hold and centers immediately on missing hand', async () => {
+  const f = fixture(); f.input('FORWARD', [.5,0,0]); await f.robot.selectBehavior('pose');
+  await f.robot.tick();
+  assert.deepEqual(JSON.parse(apiMessages(f, A.Euler).at(-1).message.data.parameter), {x:0,y:0,z:0});
+  f.input('FORWARD', [.5,0,0]); await f.robot.tick();
+  f.input('NO_HAND'); await f.robot.tick();
+  assert.deepEqual(JSON.parse(apiMessages(f, A.Euler).at(-1).message.data.parameter), {x:0,y:0,z:0});
+  assert.equal(f.robot.status().poseReady, true);
+  assert.equal(apiMessages(f, A.Move).length, 0);
+});
+
+test('gesture pose cannot be entered without fresh hand tracking', async () => {
+  const f = fixture(); f.robot.input = null; await f.robot.selectBehavior('pose');
+  assert.equal(apiMessages(f, A.BalanceStand).length, 0);
+  assert.equal(f.robot.status().poseReady, false);
+  assert.match(f.robot.status().actionMessage, /fresh hand tracking/);
 });
 
 test('Stop during an asynchronous mode check cancels the pending action', async () => {

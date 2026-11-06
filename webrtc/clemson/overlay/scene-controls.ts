@@ -20,15 +20,10 @@ export function mountSceneControls(parent: HTMLElement): void {
       <button type="button" data-behavior="bound" aria-pressed="false"><span aria-hidden="true">⇢</span> Bound gait</button>
       <button type="button" data-behavior="pose" aria-pressed="false"><span aria-hidden="true">◎</span> Stationary look around</button>
     </div>
-    <div class="clemson-peek" hidden>
-      <p>Hold to peek · release to center</p>
-      <div class="clemson-peek-pad">
-        <button type="button" data-peek="up" aria-label="Peek up">↑</button>
-        <button type="button" data-peek="left" aria-label="Peek left">←</button>
-        <button type="button" data-peek="center" aria-label="Center body pose">●</button>
-        <button type="button" data-peek="right" aria-label="Peek right">→</button>
-        <button type="button" data-peek="down" aria-label="Peek down">↓</button>
-      </div>
+    <div class="clemson-gesture-pose" hidden>
+      <p>Use your hand gestures</p>
+      <p>Forward → pitch<br>Sideways left / right → roll<br>Turn left / right → body yaw<br>Stop / no hand → center</p>
+      <output class="clemson-pose-values" aria-label="Requested roll pitch yaw">0.00 / 0.00 / 0.00 rad</output>
     </div>
     <p class="clemson-action-status clemson-behavior-status" role="status">Select a behavior</p>
     <button type="button" class="clemson-recovery" hidden title="First restore normal standing with the paired remote and check all four feet on the ground. This checks telemetry and clears the local lock; it sends no motion command.">I restored standing with the remote</button>`;
@@ -40,35 +35,13 @@ export function mountSceneControls(parent: HTMLElement): void {
     });
   }
 
-  let held: string | null = null;
-  const stopPeek = () => { held = null; gestureRobot.peek(0, 0); };
-  const sendPeek = () => {
-    if (held) gestureRobot.peek(held === 'up' ? -.12 : held === 'down' ? .12 : 0,
-      held === 'left' ? .15 : held === 'right' ? -.15 : 0);
-  };
-  for (const button of controls.querySelectorAll<HTMLButtonElement>('[data-peek]')) {
-    button.addEventListener('pointerdown', event => {
-      if (event.button !== 0) return;
-      button.setPointerCapture(event.pointerId);
-      held = button.dataset.peek!; sendPeek();
-    });
-    for (const event of ['pointerup', 'pointercancel', 'lostpointercapture', 'blur']) button.addEventListener(event, stopPeek);
-    button.addEventListener('keydown', event => {
-      if (event.key === ' ' || event.key === 'Enter') {
-        event.preventDefault(); held = button.dataset.peek!; sendPeek();
-      }
-    });
-    button.addEventListener('keyup', stopPeek);
-    button.addEventListener('click', event => { if (event.detail === 0) stopPeek(); });
-  }
-
   const render = () => {
     const state = gestureRobot.status();
     const percent = state.batteryFresh ? Math.round(state.batteryPercent!) : null;
     const battery = controls.querySelector<HTMLElement>('.clemson-battery')!;
     battery.classList.toggle('clemson-battery-fresh', percent !== null);
     battery.classList.toggle('clemson-battery-low', percent !== null && percent <= 20);
-    controls.querySelector('output')!.textContent = percent === null ? '—%' : `${percent}%`;
+    controls.querySelector('.clemson-battery-value')!.textContent = percent === null ? '—%' : `${percent}%`;
     controls.querySelector('.clemson-battery-label')!.textContent = percent === null ? 'Battery unavailable' : 'Robot battery';
     controls.querySelector('.clemson-battery-fill')!.setAttribute('width', String(23 * (percent ?? 0) / 100));
     battery.title = percent === null ? 'No valid battery telemetry within 5 seconds' : `Go2 battery: ${percent}%`;
@@ -78,16 +51,12 @@ export function mountSceneControls(parent: HTMLElement): void {
       button.disabled = locked || !state.actionReady;
       if (button.dataset.behavior !== 'jump') button.setAttribute('aria-pressed', String(state.behaviorConfirmed && state.behavior === button.dataset.behavior));
     }
-    const peek = controls.querySelector<HTMLElement>('.clemson-peek')!;
-    peek.hidden = !state.poseReady || locked;
-    if (peek.hidden) held = null;
-    for (const button of controls.querySelectorAll<HTMLButtonElement>('[data-peek]')) button.disabled = peek.hidden;
+    controls.querySelector<HTMLElement>('.clemson-gesture-pose')!.hidden = !state.poseReady || locked;
+    controls.querySelector('.clemson-pose-values')!.textContent = `${state.poseTarget.map(v => v.toFixed(2)).join(' / ')} rad`;
     controls.querySelector('.clemson-action-status')!.textContent = state.stopping ? state.stopResult : state.actionMessage;
     const recovery = controls.querySelector<HTMLButtonElement>('.clemson-recovery')!;
     recovery.hidden = !state.recoveryRequired;
     recovery.disabled = !state.connected || state.stopping || state.actionBusy || !state.feedbackFresh || !state.videoFresh;
-    if (document.hidden || !document.hasFocus()) held = null;
-    if (held) sendPeek();
   };
   render();
   const timer = setInterval(() => {

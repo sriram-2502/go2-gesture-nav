@@ -3,6 +3,12 @@ param([string]$TargetPath = '')
 $ErrorActionPreference = 'Stop'
 $appPath = if ($TargetPath) { [IO.Path]::GetFullPath($TargetPath) } else { Join-Path $PSScriptRoot 'clemson/unitree_ui' }
 $utf8 = New-Object System.Text.UTF8Encoding($false)
+$overlayFiles = Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'clemson/overlay') -File | Sort-Object Name
+$buildMaterial = ($overlayFiles | ForEach-Object { $_.Name + ':' + (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash }) -join "`n"
+$buildMaterial += "`napply-overlay:" + (Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash
+$buildHasher = [Security.Cryptography.SHA256]::Create()
+try { $buildId = ([BitConverter]::ToString($buildHasher.ComputeHash($utf8.GetBytes($buildMaterial)))).Replace('-', '').Substring(0, 8).ToLowerInvariant() }
+finally { $buildHasher.Dispose() }
 if (-not (Test-Path -LiteralPath (Join-Path $appPath '.clemson-base-revision'))) {
     throw 'Create the Clemson starter with setup-ui.ps1 first.'
 }
@@ -49,6 +55,10 @@ $control = @'
     header.className = 'clemson-webview-header';
     const heading = document.createElement('strong');
     heading.textContent = 'Clemson Go2 / Camera + Voxels';
+    const buildLabel = document.createElement('small');
+    buildLabel.className = 'clemson-ui-build';
+    buildLabel.textContent = 'Gesture pose | UI __CLEMSON_BUILD__';
+    heading.appendChild(buildLabel);
     const disconnect = document.createElement('button');
     disconnect.textContent = 'Disconnect';
     disconnect.addEventListener('click', () => this.disconnect());
@@ -71,6 +81,7 @@ $control = @'
     void this.init3DScene();
   }
 '@
+$control = $control.Replace('__CLEMSON_BUILD__', $buildId)
 foreach ($patch in @(@('showLandingScreen', $landing), @('showHubScreen', $hub), @('showControlUi', $control))) {
     $pattern = '(?ms)^  private ' + $patch[0] + '\(\): void \{.*?^  \}\r?\n'
     if (-not [regex]::IsMatch($appText, $pattern)) { throw "Web view patch no longer matches: $($patch[0])" }
@@ -142,4 +153,6 @@ if (-not $text.Contains("'/gesture-api'")) {
 $text = [regex]::Replace($text, "(?ms)^      '/ble-api/ws': \{.*?^      \},\r?\n", '')
 [IO.File]::WriteAllText($config, $text, $utf8)
 & (Join-Path $PSScriptRoot 'apply-voxel-replay.ps1') -TargetPath $appPath
-Write-Host 'Clemson gesture navigation applied. Control starts disabled.'
+$buildManifest = @{ui_build=$buildId; gesture_pose=$true; camera_tint=$false} | ConvertTo-Json -Compress
+[IO.File]::WriteAllText((Join-Path $appPath 'public/clemson-build.json'), $buildManifest, $utf8)
+Write-Host "Clemson UI build $buildId applied. Stationary pose uses hand gestures. Control starts disabled."

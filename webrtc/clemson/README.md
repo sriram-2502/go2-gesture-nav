@@ -94,7 +94,9 @@ device is busy. A different webcam can be selected when launching the service:
   This is telemetry only, not an automatic battery cutoff or a laptop/remote
   battery reading. Verify the live value against the assigned robot before lab use.
 - **Jump once**, **Bound gait**, and **Stationary look around** buttons below the
-  battery. Look-around includes hold-to-peek arrows; release returns to center.
+  battery. Look-around reuses hand gestures: forward sets pitch, sideways sets
+  roll, and turn gestures set body yaw. Stop, unknown, missing, or stale hand
+  input centers the pose. The scene displays requested roll/pitch/yaw in radians.
   These use the shared robot connection and pause gesture navigation when selected.
   A failed stop reports its recovery stage and provides an explicit remote-recovery
   acknowledgement; it never silently re-enables motion. See [recovery instructions](CONTROL_EXTENSIONS.md#stop-and-recovery).
@@ -104,6 +106,9 @@ device is busy. A different webcam can be selected when launching the service:
 - **Direct gesture enabling:** click Enable gesture control without a palm/fist
   startup pose. Fresh perception and robot/video feedback are still required;
   a preheld gesture cannot move the robot until new post-enable frames arrive.
+- A small **Gesture pose | UI build ID** below the camera-view title confirms
+  which UI code is loaded. Startup prints the same build ID; if it differs, close
+  the old tab and reopen the displayed local URL after restarting the UI server.
 - Separate generated source copy based on the pinned upstream revision.
 - One IP/AES connection form, defaulting to **`192.168.12.1`** (Go2 Wi-Fi hotspot).
   The IP is editable. Enter the key and click **Connect and open web view**.

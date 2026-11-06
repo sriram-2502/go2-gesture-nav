@@ -36,6 +36,17 @@ function matchesGesture(input: GestureInput): boolean {
     || (input.label === 'TURN_RIGHT' && wz < 0);
 }
 
+export function gestureToPose(label: string): Velocity {
+  switch (label) {
+    case 'FORWARD': return [0, .12, 0];
+    case 'STRAFE_LEFT': return [.12, 0, 0];
+    case 'STRAFE_RIGHT': return [-.12, 0, 0];
+    case 'TURN_LEFT': return [0, 0, .15];
+    case 'TURN_RIGHT': return [0, 0, -.15];
+    default: return zero();
+  }
+}
+
 export class GestureRobot {
   private send: ((message: DataChannelMessage) => void) | null = null;
   private connected: () => boolean = () => false;
@@ -62,7 +73,7 @@ export class GestureRobot {
   private stateSerial = 0;
   private jumpAt = -Infinity;
   private poseTarget: Velocity = zero();
-  private poseInputAt = -Infinity;
+  private poseEnabledFrame = 0;
   private poseDirty = false;
   private firmwarePose = false;
   private enabling = false;
@@ -352,9 +363,14 @@ export class GestureRobot {
     if (this.behavior === 'pose' && this.behaviorConfirmed && !this.actionBusy && !this.busy && !this.stopping) {
       const problem = this.problem(false);
       if (problem || !this.reportedBehavior('pose')) { await this.disable(problem || 'Pose mode feedback changed'); return; }
-      if (this.now() - this.poseInputAt > 250 && nonzero(this.poseTarget)) {
-        this.poseTarget = zero(); this.poseDirty = true;
-      }
+      const freshGesture = !this.problem();
+      const ready = freshGesture && this.input!.frame_id - this.poseEnabledFrame >= .3
+        && nonzero(this.input!.supervised_velocity);
+      const target = ready ? gestureToPose(this.input!.label) : zero();
+      if (target.some((v, i) => v !== this.poseTarget[i])) this.poseDirty = true;
+      this.poseTarget = target;
+      this.actionMessage = ready ? `Stationary gestures · ${this.input!.label.replace(/_/g, ' ')}`
+        : freshGesture ? 'Pose centered · show a movement gesture' : 'Pose centered · waiting for fresh hand tracking';
       if (!this.poseDirty && !nonzero(this.poseTarget)) return;
       this.busy = true;
       const [x, y, z] = this.poseTarget;
@@ -497,8 +513,11 @@ export class GestureRobot {
   private reportedBehavior(behavior: 'pose' | 'bound'): boolean {
     // Bounded look-around uses the SDK's BalanceStand + Euler route, not raw
     // wireless-controller axes or the separate firmware Pose joystick mode.
-    return this.mode === 'mcf' ? this.state?.error_code === (behavior === 'pose' ? 1013 : 2008)
-      : this.state?.mode === (behavior === 'pose' ? 1 : 15);
+    if (behavior === 'bound') return this.mode === 'mcf' ? this.state?.error_code === 2008 : this.state?.mode === 15;
+    // Standing feedback codes vary by firmware; idle/joint-lock frames are also
+    // permitted after the explicit BalanceStand acknowledgement, not other gaits.
+    return this.mode === 'mcf' ? [0, 1002, 1013].includes(this.state?.error_code ?? -1)
+      : [0, 1, 6].includes(this.state?.mode ?? -1);
   }
 
   private reportedOutside(behavior: 'pose' | 'bound'): boolean {
@@ -527,6 +546,7 @@ export class GestureRobot {
       const problem = this.problem(false);
       if (problem) throw new Error(problem);
       if (!this.slowUpright()) throw new Error('Wait for stationary upright robot feedback');
+      if (behavior === 'pose' && this.problem()) throw new Error('Start fresh hand tracking before selecting stationary gestures');
       await this.refreshMode();
       if (!current()) return;
       if (this.behavior !== 'none') throw new Error('Robot reports an existing behavior; press Stop first');
@@ -549,9 +569,10 @@ export class GestureRobot {
           throw new Error('Mode not confirmed by robot feedback; press Stop before retrying');
       }
       this.poseTarget = zero(); this.poseDirty = behavior === 'pose';
+      this.poseEnabledFrame = this.input?.frame_id ?? 0;
       this.behaviorConfirmed = true;
       this.actionMessage = behavior === 'jump' ? 'Jump requested; press Stop after landing'
-        : behavior === 'bound' ? 'Bound confirmed · enable gestures to navigate' : 'Pose confirmed · hold an arrow to peek';
+        : behavior === 'bound' ? 'Bound confirmed · enable gestures to navigate' : 'Stationary gestures active · show a movement gesture';
     } catch (error) {
       if (current()) {
         const message = String(error);
@@ -564,13 +585,6 @@ export class GestureRobot {
         }
       }
     } finally { if (connection === this.connectionEpoch) this.actionBusy = false; }
-  }
-
-  peek(pitch: number, yaw: number): void {
-    if (this.behavior !== 'pose' || !this.behaviorConfirmed || this.actionBusy || this.stopping || this.problem(false)) return;
-    if (![pitch, yaw].every(v => Number.isFinite(v) && Math.abs(v) <= .15)) return;
-    this.poseTarget = [0, pitch, yaw];
-    this.poseInputAt = this.now(); this.poseDirty = true;
   }
 
   async confirmRemoteRecovery(): Promise<void> {
@@ -619,6 +633,7 @@ export class GestureRobot {
       recoveryRequired: this.recoveryRequired,
       actionReady: !this.recoveryRequired && !this.problem(false) && this.slowUpright(),
       poseReady: this.behavior === 'pose' && this.behaviorConfirmed && !this.problem(false),
+      poseTarget: [...this.poseTarget],
       batteryPercent: batteryFresh ? this.batteryPercent : null, batteryFresh,
       stopping: !!this.stopping, reason: this.reason, stopResult: this.stopResult,
       sent: this.sent, measured: this.state ? [...this.state.velocity.slice(0, 2), this.state.yaw_speed] : null,
