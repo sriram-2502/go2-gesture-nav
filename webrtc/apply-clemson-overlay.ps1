@@ -11,6 +11,7 @@ foreach ($name in @('clemson.css', 'clemson-preview.ts', 'camera-start.ts', 'ges
 }
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'clemson/overlay/replay.html') -Destination (Join-Path $appPath 'replay.html') -Force
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'clemson/overlay/connection-panel.ts') -Destination (Join-Path $appPath 'src/ui/connection-panel.ts') -Force
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'clemson/overlay/bt-backend.ts') -Destination (Join-Path $appPath 'src/api/bt-backend.ts') -Force
 
 # Restrict Clemson navigation at the rendering layer, rather than merely hiding menus.
 $appFile = Join-Path $appPath 'src/ui/app.ts'
@@ -137,6 +138,8 @@ if (-not $text.Contains("'/gesture-api'")) {
 "@
     $text = $text.Replace($anchor, "$proxy`n$anchor")
 }
+# Clemson never connects to the optional Python BLE relay on port 5051.
+$text = [regex]::Replace($text, "(?ms)^      '/ble-api/ws': \{.*?^      \},\r?\n", '')
 [IO.File]::WriteAllText($config, $text, $utf8)
 & (Join-Path $PSScriptRoot 'apply-voxel-replay.ps1') -TargetPath $appPath
 Write-Host 'Clemson gesture navigation applied. Control starts disabled.'

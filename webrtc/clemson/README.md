@@ -96,6 +96,11 @@ device is busy. A different webcam can be selected when launching the service:
 - **Jump once**, **Bound gait**, and **Stationary look around** buttons below the
   battery. Look-around includes hold-to-peek arrows; release returns to center.
   These use the shared robot connection and pause gesture navigation when selected.
+  A failed stop reports its recovery stage and provides an explicit remote-recovery
+  acknowledgement; it never silently re-enables motion. See [recovery instructions](CONTROL_EXTENSIONS.md#stop-and-recovery).
+- Clemson does not use the optional Bluetooth server on port **5051**. The
+  [local services guide](CONTROL_EXTENSIONS.md#local-services-and-port-5051)
+  explains stale-server Bluetooth proxy errors and the restart procedure.
 - **Direct gesture enabling:** click Enable gesture control without a palm/fist
   startup pose. Fresh perception and robot/video feedback are still required;
   a preheld gesture cannot move the robot until new post-enable frames arrive.

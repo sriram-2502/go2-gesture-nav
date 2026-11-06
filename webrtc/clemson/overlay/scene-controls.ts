@@ -14,6 +14,7 @@ export function mountSceneControls(parent: HTMLElement): void {
       </svg>
       <div><span class="clemson-battery-label">Robot battery</span><output class="clemson-battery-value">—%</output></div>
     </div>
+    <p class="clemson-stream-status clemson-behavior-status">Checking video and robot feedback…</p>
     <div class="clemson-behavior-buttons">
       <button type="button" data-behavior="jump" title="Request one forward jump; pauses gesture navigation"><span aria-hidden="true">↗</span> Jump once</button>
       <button type="button" data-behavior="bound" aria-pressed="false"><span aria-hidden="true">⇢</span> Bound gait</button>
@@ -29,8 +30,10 @@ export function mountSceneControls(parent: HTMLElement): void {
         <button type="button" data-peek="down" aria-label="Peek down">↓</button>
       </div>
     </div>
-    <p class="clemson-behavior-status" role="status">Select a behavior</p>`;
+    <p class="clemson-action-status clemson-behavior-status" role="status">Select a behavior</p>
+    <button type="button" class="clemson-recovery" hidden title="First restore normal standing with the paired remote and check all four feet on the ground. This checks telemetry and clears the local lock; it sends no motion command.">I restored standing with the remote</button>`;
   parent.appendChild(controls);
+  controls.querySelector('.clemson-recovery')!.addEventListener('click', () => void gestureRobot.confirmRemoteRecovery());
   for (const button of controls.querySelectorAll<HTMLButtonElement>('[data-behavior]')) {
     button.addEventListener('click', () => {
       void gestureRobot.selectBehavior(button.dataset.behavior as 'jump' | 'bound' | 'pose');
@@ -69,6 +72,7 @@ export function mountSceneControls(parent: HTMLElement): void {
     controls.querySelector('.clemson-battery-label')!.textContent = percent === null ? 'Battery unavailable' : 'Robot battery';
     controls.querySelector('.clemson-battery-fill')!.setAttribute('width', String(23 * (percent ?? 0) / 100));
     battery.title = percent === null ? 'No valid battery telemetry within 5 seconds' : `Go2 battery: ${percent}%`;
+    controls.querySelector('.clemson-stream-status')!.textContent = `${state.videoFresh ? 'Video live' : 'Video stale'} · ${state.feedbackFresh ? 'Robot feedback live' : 'Robot feedback stale'}`;
     const locked = state.actionBusy || state.enabling || state.stopping || state.avoidanceBusy || state.behavior === 'jump';
     for (const button of controls.querySelectorAll<HTMLButtonElement>('[data-behavior]')) {
       button.disabled = locked || !state.actionReady;
@@ -78,7 +82,10 @@ export function mountSceneControls(parent: HTMLElement): void {
     peek.hidden = !state.poseReady || locked;
     if (peek.hidden) held = null;
     for (const button of controls.querySelectorAll<HTMLButtonElement>('[data-peek]')) button.disabled = peek.hidden;
-    controls.querySelector('.clemson-behavior-status')!.textContent = state.stopping ? state.stopResult : state.actionMessage;
+    controls.querySelector('.clemson-action-status')!.textContent = state.stopping ? state.stopResult : state.actionMessage;
+    const recovery = controls.querySelector<HTMLButtonElement>('.clemson-recovery')!;
+    recovery.hidden = !state.recoveryRequired;
+    recovery.disabled = !state.connected || state.stopping || state.actionBusy || !state.feedbackFresh || !state.videoFresh;
     if (document.hidden || !document.hasFocus()) held = null;
     if (held) sendPeek();
   };

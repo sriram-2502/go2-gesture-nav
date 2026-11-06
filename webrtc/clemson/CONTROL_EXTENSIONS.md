@@ -32,6 +32,11 @@ The existing recorder saves lowstate and control-status battery fields. The Go1
 MuJoCo playground links to this hardware application; live Go2 battery telemetry
 is implemented here, not simulated in MuJoCo.
 
+The header background is transparent so the taller behavior stack does not dim
+the FPV inset. Video freshness and robot-feedback freshness are shown separately.
+The hand panel also reports live tracking rate, detected-hand count, and frame
+age. `UNKNOWN` and `NO_HAND` include recognition hints even when navigation is off.
+
 ## Gesture navigation
 
 Click **Enable gesture control** directly. There is no palm/fist startup ritual;
@@ -85,6 +90,30 @@ and new low-speed upright feedback with four positive foot-force readings spans
 locked and reports a remote-intervention message. These are conservative software
 checks, not a guarantee of landing or an airborne emergency-stop mechanism. A
 jump API acknowledgement confirms a request, not successful execution.
+
+If foot-contact telemetry is absent, recovery reports that limitation immediately
+instead of remaining on a generic "Requesting stop" message. Stop still sends
+zero/StopMove, but it does not infer landing or send BalanceStand without the
+required feedback. A failed stop disables navigation and requires remote recovery.
+
+Use the paired remote to restore normal standing and visually check all four feet
+on the ground. Then press **I restored standing with the remote**. That explicit
+operator acknowledgement checks supported standing/walking-mode feedback,
+low measured speed, fresh video, and new upright state samples spanning 500 ms.
+It sends **no robot commands** and leaves gesture navigation disabled. If checks
+fail, the lock remains. This is manual recovery acknowledgement, not software
+proof of landing. Repeated webcam failures or focus changes do not automatically
+restart a failed recovery. Pressing Stop deliberately still retries stopping.
+
+## Local services and port 5051
+
+Clemson uses Vite on **5174** and the Python gesture service on **8766**. The Go2
+video/state link is the existing WebRTC connection. The optional upstream BLE
+backend on **5051** is disabled in the Clemson edition, including its WebSocket
+proxy. `ECONNREFUSED 127.0.0.1:5051` in an older running server is Bluetooth retry
+traffic, not proof that robot video or MediaPipe has failed. Disconnect, stop the
+old UI server, and restart through `start-ui.ps1 -Edition clemson` to apply this
+update. Basic retains its upstream Bluetooth behavior.
 
 ## What the pinned Unitree UI exposes
 

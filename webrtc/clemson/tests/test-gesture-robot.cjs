@@ -6,14 +6,14 @@ const path = require('node:path');
 const vm = require('node:vm');
 const ui = path.resolve(__dirname, '../unitree_ui');
 const ts = require(path.join(ui, 'node_modules/typescript'));
-function load(filename, imports = {}) {
+function load(filename, imports = {}, globals = {}) {
   const code = ts.transpileModule(fs.readFileSync(filename, 'utf8'), {
     compilerOptions: {module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020}
   }).outputText;
   const exports = {};
   vm.runInNewContext(code, {exports, require: name => imports[name],
     setTimeout, clearTimeout, setInterval: () => 0, performance,
-    document: {hidden: false, addEventListener() {}}, window: {addEventListener() {}}});
+    document: {hidden: false, addEventListener() {}}, window: {addEventListener() {}}, ...globals});
   return exports;
 }
 const topics = load(path.join(ui, 'src/protocol/topics.ts'));
@@ -332,4 +332,67 @@ test('a previously active robot pose is stopped before any navigation can be ena
   assert.equal(apiMessages(f, A.Move).length, 0);
   await f.robot.disable();
   assert.equal(f.robot.status().behavior, 'none');
+});
+
+test('missing jump contacts ends stopping with an explicit recovery lock, without repeated stop traffic', async () => {
+  const f = fixture('mcf', false, {noFeet:true}); await f.robot.selectBehavior('jump');
+  const beforeWebcamLoss = f.messages.length;
+  await f.robot.disableGestures('Webcam offline');
+  assert.equal(f.messages.length, beforeWebcamLoss);
+  await f.robot.disable();
+  assert.equal(f.robot.status().stopping, false);
+  assert.equal(f.robot.status().recoveryRequired, true);
+  assert.match(f.robot.status().actionMessage, /foot-contact telemetry unavailable/);
+  const before = f.messages.length;
+  await f.robot.focusLost('Browser lost focus');
+  await f.robot.disableGestures('Webcam offline');
+  await f.robot.enable(); await f.robot.selectBehavior('bound');
+  assert.equal(f.messages.length, before);
+  assert.equal(f.robot.status().enabled, false);
+});
+
+test('operator-confirmed remote recovery checks new standing feedback without sending robot commands or enabling motion', async () => {
+  const f = fixture('mcf', false, {noFeet:true}); await f.robot.selectBehavior('jump'); await f.robot.disable();
+  const before = f.messages.length;
+  await f.robot.confirmRemoteRecovery();
+  assert.equal(f.messages.length, before);
+  assert.equal(f.robot.status().recoveryRequired, false);
+  assert.equal(f.robot.status().behavior, 'none');
+  assert.equal(f.robot.status().enabled, false);
+  assert.match(f.robot.status().actionMessage, /gesture control remains disabled/);
+});
+
+test('manual recovery cannot clear the lock with stale video or unchanged state samples', async () => {
+  for (const staleVideo of [true, false]) {
+    const f = fixture('mcf', false, {noFeet:true}); await f.robot.selectBehavior('jump'); await f.robot.disable();
+    if (staleVideo) { f.advance(1100); f.feedback(); }
+    else f.robot.sleep = async ms => f.advance(ms);
+    const before = f.messages.length;
+    await f.robot.confirmRemoteRecovery();
+    assert.equal(f.messages.length, before);
+    assert.equal(f.robot.status().recoveryRequired, true);
+    assert.equal(f.robot.status().enabled, false);
+    assert.match(f.robot.status().actionMessage, /not confirmed/);
+  }
+});
+
+test('video and robot feedback freshness are reported independently', () => {
+  const f = fixture(); f.advance(1001); f.feedback();
+  assert.equal(f.robot.status().videoFresh, false);
+  assert.equal(f.robot.status().feedbackFresh, true);
+  f.robot.noteVideoFrame(); assert.equal(f.robot.status().videoFresh, true);
+});
+
+test('the Clemson BLE replacement opens no WebSockets and schedules no reconnects', () => {
+  let sockets = 0, timers = 0;
+  const {btBackend} = load(path.resolve(__dirname, '../overlay/bt-backend.ts'), {}, {
+    WebSocket: class { constructor() { sockets++; } },
+    location: {protocol:'http:', host:'127.0.0.1:5174'},
+    setTimeout() { timers++; return 0; },
+  });
+  for (const topic of ['status','adapters','remote_state']) {
+    const unsubscribe = btBackend().subscribe(topic, () => assert.fail('Unexpected Bluetooth data'));
+    unsubscribe(); unsubscribe();
+  }
+  assert.equal(sockets, 0); assert.equal(timers, 0);
 });

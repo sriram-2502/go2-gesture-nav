@@ -76,6 +76,7 @@ export class GestureRobot {
   private reason = 'Preview only';
   private stopResult = 'Not requested';
   private stopConfirmed = false;
+  private recoveryRequired = false;
   private avoidance: boolean | null = null;
   private avoidanceAt = -Infinity;
   private avoidanceBusy = false;
@@ -89,9 +90,9 @@ export class GestureRobot {
     if (timers) {
       setInterval(() => void this.tick(), 50);
       document.addEventListener('visibilitychange', () => {
-        if (document.hidden) void this.disable('Browser hidden');
+        if (document.hidden) void this.focusLost('Browser hidden');
       });
-      window.addEventListener('blur', () => void this.disable('Browser lost focus'));
+      window.addEventListener('blur', () => void this.focusLost('Browser lost focus'));
     }
   }
 
@@ -115,6 +116,7 @@ export class GestureRobot {
     this.poseDirty = false;
     this.firmwarePose = false;
     this.jumpAt = -Infinity;
+    this.recoveryRequired = false;
     this.epoch++;
     this.connectionEpoch++;
     this.send = null;
@@ -184,7 +186,7 @@ export class GestureRobot {
   }
 
   async setObstacleAvoidance(enabled: boolean): Promise<void> {
-    if (!this.connected() || this.avoidanceBusy || this.actionBusy || typeof enabled !== 'boolean') return;
+    if (!this.connected() || this.avoidanceBusy || this.actionBusy || this.recoveryRequired || typeof enabled !== 'boolean') return;
     const connection = this.connectionEpoch;
     const neededStop = this.moving || !!this.stopping || this.behavior !== 'none';
     this.avoidanceBusy = true;
@@ -266,6 +268,7 @@ export class GestureRobot {
 
   async enable(): Promise<void> {
     if (this.enabled || this.enabling || this.stopping || this.avoidanceBusy || this.actionBusy) return;
+    if (this.recoveryRequired) { this.reason = 'Restore standing with the remote, then confirm remote recovery'; return; }
     if (this.behavior === 'pose' || this.behavior === 'jump') {
       this.reason = 'Press Stop to leave the current behavior before enabling gestures'; return;
     }
@@ -313,7 +316,7 @@ export class GestureRobot {
   }
 
   private navigationBehaviorReady(): boolean {
-    return this.behavior === 'none' || (this.behavior === 'bound' && this.behaviorConfirmed);
+    return !this.recoveryRequired && (this.behavior === 'none' || (this.behavior === 'bound' && this.behaviorConfirmed));
   }
 
   private raw(topic: string, api: number, parameter: unknown, noreply = false): number {
@@ -396,6 +399,17 @@ export class GestureRobot {
     await this.stopControls(reason);
   }
 
+  async disableGestures(reason: string): Promise<void> {
+    // Webcam loss must not repeatedly restart a failed jump recovery or affect
+    // the separate camera/scene controls when gesture navigation is already off.
+    if (this.enabled || this.enabling) await this.disable(reason);
+  }
+
+  private async focusLost(reason: string): Promise<void> {
+    if (this.enabled || this.enabling || (this.actionBusy && !this.recoveryRequired) || this.behaviorConfirmed)
+      await this.disable(reason);
+  }
+
   private async stopControls(reason: string): Promise<void> {
     this.behaviorConfirmed = false;
     this.epoch++;
@@ -425,6 +439,7 @@ export class GestureRobot {
         try { await this.request(RTC_TOPIC.SPORT_MOD, SPORT_CMD.StopMove); accepted = true; } catch { }
       }
       if (!accepted) throw new Error('StopMove not acknowledged; USE THE REMOTE');
+      this.stopResult = 'Stop acknowledged; checking robot feedback';
       if (connection !== this.connectionEpoch) throw new Error('Robot connection changed');
       if (behavior === 'pose') {
         await this.request(RTC_TOPIC.SPORT_MOD, SPORT_CMD.Euler, {x: 0, y: 0, z: 0});
@@ -434,6 +449,10 @@ export class GestureRobot {
         await this.request(RTC_TOPIC.SPORT_MOD, SPORT_CMD.FreeBound, {data: false});
       }
       let slowSince: number | null = null;
+      if (behavior === 'jump' && (!Array.isArray(this.state?.foot_force) || this.state.foot_force.length !== 4
+          || !this.state.foot_force.every(Number.isFinite))) {
+        throw new Error('Landing not confirmed: foot-contact telemetry unavailable. Restore standing with the remote, then confirm remote recovery.');
+      }
       const deadline = Math.max(this.now() + 3000, behavior === 'jump' ? this.jumpAt + 6000 : 0);
       while (this.now() < deadline) {
         if (connection !== this.connectionEpoch || !this.connected()) throw new Error('Connection lost during stop; USE THE REMOTE');
@@ -441,6 +460,9 @@ export class GestureRobot {
         const landed = behavior !== 'jump' || (this.now() - this.jumpAt >= 3000
           && this.state?.foot_force?.length === 4 && this.state.foot_force.every(f => Number.isFinite(f) && f > 0));
         const modeExited = (behavior !== 'pose' && behavior !== 'bound') || this.reportedOutside(behavior);
+        this.stopResult = behavior === 'jump' && !landed ? 'Stop acknowledged; waiting for landing / foot-contact feedback'
+          : !modeExited ? 'Stop acknowledged; waiting for the selected mode to exit'
+          : 'Stop acknowledged; verifying fresh low-speed upright feedback';
         if (this.slowUpright() && landed && modeExited) {
           slowSince ??= this.stateAt;
           // Require new low-speed feedback spanning the interval, not re-reading one sample.
@@ -448,7 +470,8 @@ export class GestureRobot {
         } else slowSince = null;
         await this.sleep(50);
       }
-      if (slowSince === null || this.stateAt - slowSince < 300) throw new Error('Stopped upright state not confirmed; stance skipped; USE THE REMOTE');
+      if (slowSince === null || this.stateAt - slowSince < 300) throw new Error('Stopped upright state not confirmed; stance skipped. Restore standing with the remote, then confirm remote recovery.');
+      this.stopResult = 'Stationary feedback received; checking balance stand';
       await this.request(RTC_TOPIC.SPORT_MOD, SPORT_CMD.BalanceStand);
       for (let count = 0; count < 20; count++) {
         await this.sleep(50);
@@ -456,6 +479,7 @@ export class GestureRobot {
       }
       this.stopResult = 'Stop acknowledged; low-speed upright feedback confirmed';
       this.stopConfirmed = true;
+      this.recoveryRequired = false;
       this.behavior = 'none';
       this.behaviorConfirmed = false;
       this.poseTarget = zero(); this.poseDirty = false;
@@ -464,7 +488,8 @@ export class GestureRobot {
     })().catch(error => {
       if (connection !== this.connectionEpoch) return;
       this.enabled = false; this.epoch++;
-      this.reason = this.stopResult = String(error);
+      this.recoveryRequired = true;
+      this.reason = this.stopResult = this.actionMessage = String(error);
     }).finally(() => { if (connection === this.connectionEpoch) { this.stopping = null; this.sent = zero(); } });
     return this.stopping;
   }
@@ -486,6 +511,7 @@ export class GestureRobot {
   async selectBehavior(behavior: Exclude<RobotBehavior, 'none'>): Promise<void> {
     if (!['jump', 'bound', 'pose'].includes(behavior)) return;
     if (this.actionBusy || this.busy || this.enabling || this.stopping || this.avoidanceBusy) return;
+    if (this.recoveryRequired) { this.actionMessage = 'Restore standing with the remote, then confirm remote recovery'; return; }
     if (this.behavior === 'jump') { this.actionMessage = 'Jump requested; press Stop to confirm recovery first'; return; }
     const toggleOff = this.behavior === behavior;
     const generation = ++this.actionGeneration;
@@ -547,6 +573,42 @@ export class GestureRobot {
     this.poseInputAt = this.now(); this.poseDirty = true;
   }
 
+  async confirmRemoteRecovery(): Promise<void> {
+    if (!this.recoveryRequired || this.stopping || this.actionBusy || this.enabled || this.enabling || this.moving) return;
+    const connection = this.connectionEpoch;
+    const generation = ++this.actionGeneration;
+    const current = () => connection === this.connectionEpoch && generation === this.actionGeneration;
+    this.actionBusy = true;
+    this.actionMessage = 'Checking fresh standing feedback after remote recovery…';
+    try {
+      const serial = this.stateSerial;
+      let since: number | null = null;
+      const deadline = this.now() + 1500;
+      let confirmed = false;
+      while (this.now() < deadline) {
+        if (!current()) return;
+        const problem = this.problem(false);
+        if (problem) throw new Error(problem);
+        if ((this.mode !== 'normal' && this.mode !== 'mcf') || !this.reportedOutside('bound') || !this.slowUpright())
+          throw new Error('Robot must report normal, low-speed upright standing after remote recovery');
+        since ??= this.stateAt;
+        if (this.stateSerial > serial && this.stateAt - since >= 500) { confirmed = true; break; }
+        await this.sleep(50);
+      }
+      if (!current()) return;
+      if (!confirmed) throw new Error('Fresh standing feedback did not span 500 ms');
+      // The operator attests that the remote restored standing. This only clears
+      // local control ownership; it sends no robot command and does not arm motion.
+      this.recoveryRequired = false;
+      this.behavior = 'none'; this.behaviorConfirmed = false;
+      this.poseTarget = zero(); this.poseDirty = false; this.firmwarePose = false;
+      this.jumpAt = -Infinity; this.sent = zero(); this.stopConfirmed = false;
+      this.reason = this.actionMessage = this.stopResult = 'Remote recovery acknowledged · gesture control remains disabled';
+    } catch (error) {
+      if (current()) this.reason = this.actionMessage = `Remote recovery not confirmed: ${String(error)}`;
+    } finally { if (connection === this.connectionEpoch) this.actionBusy = false; }
+  }
+
   status() {
     const batteryAge = this.now() - this.batteryAt;
     const batteryFresh = this.connected() && this.batteryPercent !== null
@@ -554,12 +616,14 @@ export class GestureRobot {
     return {connected: this.connected(), enabled: this.enabled, enabling: this.enabling,
       behavior: this.behavior, behaviorConfirmed: this.behaviorConfirmed,
       actionBusy: this.actionBusy, actionMessage: this.actionMessage,
-      actionReady: !this.problem(false) && this.slowUpright(),
+      recoveryRequired: this.recoveryRequired,
+      actionReady: !this.recoveryRequired && !this.problem(false) && this.slowUpright(),
       poseReady: this.behavior === 'pose' && this.behaviorConfirmed && !this.problem(false),
       batteryPercent: batteryFresh ? this.batteryPercent : null, batteryFresh,
       stopping: !!this.stopping, reason: this.reason, stopResult: this.stopResult,
       sent: this.sent, measured: this.state ? [...this.state.velocity.slice(0, 2), this.state.yaw_speed] : null,
       feedbackFresh: this.now() - this.stateAt <= 1000,
+      videoFresh: this.connected() && this.now() - this.videoAt <= 1000,
       awaitingMoveAck: this.mode !== 'mcf' && this.busy, mcf: this.mode === 'mcf',
       avoidance: this.avoidance,
       avoidanceFresh: this.connected() && this.avoidance !== null && this.now() - this.avoidanceAt <= 10000,

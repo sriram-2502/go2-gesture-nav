@@ -153,12 +153,14 @@ async function poll(): Promise<void> {
     label.textContent = value.fresh ? value.label.replace(/_/g, ' ') : cameraStartup.pending||value.active ? 'Starting hand tracking' : 'Webcam unavailable';
     const hint=panel.querySelector<HTMLElement>('.clemson-recognition-hint')!;
     hint.textContent=value.recognition_hint||'';
-    hint.hidden=!value.fresh||value.label!=='UNKNOWN';
+    hint.hidden=!value.fresh||!['UNKNOWN','NO_HAND'].includes(value.label);
     const recognition=value.recognition;
     panel.querySelector('.clemson-recognition-values')!.textContent = recognition?.extended_fingers
       ? `Extended: ${recognition.extended_fingers.join(', ') || 'none'}. Index: ${recognition.index_direction}. Palm facing camera: ${recognition.palm_facing ? 'yes' : 'not confirmed'}. Hand: ${recognition.handedness}.`
       : 'Waiting for one clearly tracked hand.';
-    status.textContent = cameraStartup.error || value.error || (value.fresh ? `${value.fps.toFixed(0)} FPS` : 'Retrying hand tracking automatically…');
+    status.textContent = cameraStartup.error || value.error || (value.fresh
+      ? `Tracking live · ${value.fps.toFixed(0)} FPS · ${value.landmarks.length} hand(s) · frame age ${value.age_ms ?? '—'} ms`
+      : 'Retrying hand tracking automatically…');
     const velocities = value.fresh ? value.proposed_velocity : [0, 0, 0];
     output.textContent = format(velocities);
     approved.textContent = `${format(value.supervised_velocity)} · ${value.navigation_status}`;
@@ -169,9 +171,9 @@ async function poll(): Promise<void> {
     serviceFresh = false;
     settingsLoaded = false;
     cameraStartup.reset();
-    void gestureRobot.disable('Python gesture service unavailable');
+    void gestureRobot.disableGestures('Python gesture service unavailable');
     output.textContent = approved.textContent = format([0, 0, 0]);
-    status.textContent = 'Start or restart the local Python gesture service.';
+    status.textContent = 'Webcam service unavailable; check the Python terminal. Robot video uses a separate connection.';
   } finally { busy = false; }
 }
 
@@ -200,7 +202,7 @@ avoidanceSwitch.addEventListener('change', () => {
 avoidanceRefresh.addEventListener('click', () => void gestureRobot.refreshObstacleAvoidance());
 panel.querySelector('.clemson-hide')!.addEventListener('click', () => {
   void action('stop');
-  void gestureRobot.disable('Gesture panel hidden');
+  void gestureRobot.disableGestures('Gesture panel hidden');
   setOpen(false);
 });
 toggle.addEventListener('click', () => setOpen(true));
@@ -210,7 +212,7 @@ setInterval(() => {
   sessionRecorder.recordControl(state);
   avoidanceSwitch.checked = state.avoidanceFresh && state.avoidance === true;
   avoidanceSwitch.indeterminate = !state.avoidanceFresh;
-  avoidanceSwitch.disabled = !state.connected || !state.avoidanceFresh || state.avoidanceBusy || state.stopping || state.enabling || state.actionBusy;
+  avoidanceSwitch.disabled = !state.connected || !state.avoidanceFresh || state.avoidanceBusy || state.stopping || state.enabling || state.actionBusy || state.recoveryRequired;
   avoidanceSwitch.setAttribute('aria-checked', !state.avoidanceFresh ? 'mixed' : String(state.avoidance));
   avoidanceRefresh.disabled = !state.connected || state.avoidanceBusy;
   panel.querySelector('.clemson-switch-state')!.textContent = state.avoidanceBusy ? 'Pending…'
@@ -220,12 +222,12 @@ setInterval(() => {
   avoidanceStatus.hidden=!state.connected||/^Robot (reports|confirms) (ON|OFF)$/.test(state.avoidanceMessage);
   avoidanceSwitch.title=state.avoidanceMessage;
   panel.querySelector('.clemson-preview-badge')!.textContent = state.enabled ? 'ROBOT CONTROL ENABLED' : 'Preview mode';
-  panel.querySelector('.clemson-control-status')!.textContent = state.stopping ? 'Stopping…' : state.reason;
+  panel.querySelector('.clemson-control-status')!.textContent = state.stopping ? state.stopResult : state.reason;
   telemetry.querySelector('.clemson-transmitted')!.textContent = format(state.sent);
   telemetry.querySelector('.clemson-measured')!.textContent = state.feedbackFresh && state.measured ? format(state.measured) : 'Not available / stale';
   const stopResult=telemetry.querySelector<HTMLElement>('.clemson-stop-result')!;
   stopResult.textContent=state.stopResult;stopResult.hidden=state.stopResult==='Not requested';
-  panel.querySelector<HTMLButtonElement>('.clemson-enable')!.disabled = !state.connected || !serviceFresh || state.enabled || state.enabling || state.stopping || state.avoidanceBusy || state.actionBusy || state.behavior === 'jump' || state.behavior === 'pose';
+  panel.querySelector<HTMLButtonElement>('.clemson-enable')!.disabled = !state.connected || !serviceFresh || state.enabled || state.enabling || state.stopping || state.avoidanceBusy || state.actionBusy || state.recoveryRequired || state.behavior === 'jump' || state.behavior === 'pose';
 }, 100);
 setInterval(() => {
   const state = gestureRobot.status();
