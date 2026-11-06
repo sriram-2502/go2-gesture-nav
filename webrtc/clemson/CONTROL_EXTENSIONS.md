@@ -1,6 +1,6 @@
 # Clemson camera-view controls
 
-The top-right control stack is **Disconnect ? Stop ? battery ? behavior buttons**.
+The top-right control stack is **Disconnect → Stop → battery → Jump / Bound**.
 It stays on the camera/voxel view, separate from the hand sidebar. Battery refresh
 and behavior status are independent of the webcam service.
 
@@ -25,10 +25,10 @@ using `apply-clemson-overlay.ps1 -TargetPath PATH`.
 ## Battery
 
 A filled battery graphic and numeric percentage appear directly under Stop.
-Telemetry comes from `rt/lf/lowstate ? bms_state.soc` through the existing
+Telemetry comes from `rt/lf/lowstate → bms_state.soc` through the existing
 connection; finite numeric values from 0 through 100 are accepted. A valid zero
 shows **0%**. Missing, invalid, disconnected, or more than five seconds old data
-shows **Battery unavailable / ?%**. Yellow at 20% or below is a display cue,
+shows **Battery unavailable / —%**. Yellow at 20% or below is a display cue,
 not a firmware limit or an automatic motion cutoff.
 
 The status display refreshes at 10 Hz; actual battery packets are stream-driven.
@@ -61,8 +61,8 @@ existing authenticated connection.
 | **Jump once** | `FrontJump` 1031, one request | Requests one forward jump. Further behavior selections and gesture enabling stay locked until Stop completes recovery. This is distinct from the upstream persistent FreeJump mode. |
 | **Bound gait** | `FreeBound` 2046 with `{data:true}` | Requires a successful API reply and new mode feedback. Then click Enable gesture control to navigate. Click Bound again or Stop to leave it. A stop/zero gesture while moving in Bound ends that gait and disarms navigation. |
 
-Only one behavior owns the command path at a time. Entry into Pose or Bound is
-highlighted only after new robot feedback reports the requested mode. Rejection,
+Only one behavior owns the command path at a time. Bound is highlighted only
+after new robot feedback reports that mode. Rejection,
 timeout, or mismatched mode is shown in the control stack; an uncertain mode must
 be stopped before gesture navigation can resume. The adapter accepts the same
 `normal` and `mcf` motion services as the original navigation path.

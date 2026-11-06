@@ -11,7 +11,9 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\webrtc\start-ui.ps1 -E
 ```
 
 Open <http://127.0.0.1:5174/>. Run the command from the repository root, after
-`setup-ui.ps1 -Edition all` completes. Only one dashboard or Python script should
+`setup-ui.ps1 -Edition clemson` (or `-Edition all`) completes. Run the Python
+gesture service in a separate terminal as shown in the [root quick start](../../README.md#quick-start-on-windows-11).
+Only one dashboard or Python robot client should
 connect to the robot at a time.
 
 ## Gesture guide: what your hand commands
@@ -172,7 +174,7 @@ The generated `unitree_ui/` directory is ignored to avoid vendoring another Git
 repository and accidentally staging generated files. Preserve edits there before
 recreating it. A separately published lab fork can replace this mechanism later.
 
-## Creative Inquiry integration plan
+## Creative Inquiry workflow and extension ideas
 
 All processing runs locally on Windows 11. Students gesture toward the **Windows
 webcam** and steer using the **Go2 camera view**, without seeing the robot directly.
@@ -181,30 +183,31 @@ An instructor keeps direct sight of the robot and the paired remote.
 1. **Verify the baseline:** camera, telemetry, voxels; use Basic for onboard mapping/localization,
    then short supervised motion and stopping. Do not assume the upstream joystick
    has the same limits or stop sequence as our standalone velocity script.
-2. **Shared command interface:** one local service receives student requests and
-   forwards them through the browser's existing WebRTC connection. Every motion
-   source must pass through one supervisor; manual and student control are exclusive.
+2. **Shared command path:** Python publishes supervised gesture intent. The
+   browser adapter checks robot eligibility and sends commands through the
+   existing WebRTC connection. Keep one command owner; preserve these checks
+   when substituting student gesture logic.
 3. **MediaPipe preview:** Python owns the webcam and publishes frame IDs, extracted
    landmarks, gesture labels, and proposed/supervised velocities. These geometric
    rules do not provide classifier confidence scores. Control starts disabled.
 4. **Gesture control:** instructor enable, command expiry, fresh tracking/state
    checks, camera-staleness stopping, explicit re-enable after reconnection, and
-   a validated classroom speed profile. Never repeat an old gesture indefinitely.
-5. **Recording:** CSVs for gestures, commands, feedback, and events; metadata JSON;
-   optional robot and webcam video with timestamp indexes. Label absent streams
-   and dropped samples; alignment is approximate until measured.
-6. **Maze layout:** large Go2 camera plus webcam/landmark panel; gesture and
-   requested/transmitted/measured velocity; timer and recording status. Instructor
-   view includes telemetry and maps. Student view can toggle camera-only versus
-   map-assisted navigation according to the activity.
+   instructor-approved speeds. Never repeat an old gesture indefinitely.
+5. **Recording:** use the implemented recording/replay workflow for dashboard and
+   available robot video, structured events, and CSV export. Webcam pixels are
+   not recorded. Keep full run ZIPs local; alignment is approximate until measured.
+6. **Maze experiments:** large Go2 camera plus landmark panel; gesture and
+   requested/transmitted/measured velocity and recording status. Compare recorded
+   runs on a student-built maze. Timers, scoring, and dedicated instructor/student
+   view modes are extension ideas, not implemented controls.
 
-The gesture-to-robot adapter is implemented and tested with simulated transport;
-recognition with the operator and physical motion/stopping still need verification.
-Recording and offline replay are implemented with offline tests; the browser
-capture chooser and live recording performance still need hands-on verification.
-Maze scoring is **not implemented yet**.
-Keep gait selection, stair mode, and custom
-SLAM development outside the first classroom integration.
+The navigation baseline has been hardware-validated, as confirmed by the
+maintainer. The maintainer also reported a successful forward jump and landing;
+this does not establish a complete fault/recovery qualification. Bound and other
+firmware-specific behaviors require their own supervised checks. Recording and
+replay have offline tests; verify browser capture and timing for each experiment.
+Maze scoring is **not implemented**. Stationary control is deferred. Stair modes
+and custom SLAM remain future extensions.
 
 See [camera-view controls and upstream gait findings](CONTROL_EXTENSIONS.md)
 for behavior selection, stopping, and firmware-dependent limitations. These new
@@ -240,7 +243,8 @@ can interfere. Do not disable security controls to work around connection issues
 Full run ZIPs, telemetry, and videos belong in local experiment storage with a
 backup. Export only selected small, sanitized evidence into student submissions.
 
-For a fresh student checkout or instructor updates, follow the [clone and update instructions](../../README.md#clone-this-setup-from-github).
+For a fresh checkout, follow the [quick start](../../README.md#quick-start-on-windows-11).
+For an existing checkout, use [update and restart](../../README.md#update-and-restart).
 
 ## Bring your course classifier
 

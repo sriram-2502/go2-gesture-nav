@@ -10,7 +10,7 @@ WebRTC connection and velocity utilities included in this project.
 | Option | Start here | Status |
 | --- | --- | --- |
 | Basic `unitree_ui` | [Windows dashboard setup](UI_SETUP.md) | Pinned upstream UI: camera, controls, voxels, onboard SLAM interface |
-| Clemson UI | [Clemson edition](clemson/README.md) | Camera/voxel view, extracted MediaPipe hands, and explicitly enabled gesture navigation; hardware verification pending |
+| Clemson UI | [Clemson edition](clemson/README.md) | Current gesture dashboard: camera/voxels, battery, supervised navigation, Jump/Bound buttons, recording/replay; stationary control deferred |
 | Standalone Python scripts | Continue below | Connection and bounded velocity diagnostics |
 
 Use the **Basic dashboard first**. All three options run on Windows 11 without
@@ -28,8 +28,10 @@ not required for this path. For research recordings, use the [ROS path](../ros/R
 
 The original lab notes record successful key retrieval on **2026-10-28**, using
 Windows 11, Python 3.11 in Conda, Go2 EDU software v1.1.15, and a North America
-Unitree account. Connection, camera streaming, and motion are not yet documented
-as verified. Do not treat the included velocity script as a completed hardware test.
+Unitree account. Those notes predate the current dashboard. The maintainer has
+since confirmed hardware validation of the navigation baseline; optional behavior
+and recovery qualification is separate. These historical notes alone do not
+establish a completed hardware test of the standalone velocity script.
 
 ## 1. Install while connected to the internet
 
@@ -133,7 +135,8 @@ MCF Move commands have no acknowledgement; fresh state is still required.
 | `--stop` | Off | Zero velocity and guarded stop/stance only |
 
 These are script limits, not recommended classroom operating speeds. This path
-does not record ROS bags. Camera and dashboard support remain [roadmap items](../docs/ROADMAP.md).
+does not record ROS bags. The current camera dashboard and recording/replay
+workflow are documented in the [Clemson guide](clemson/README.md).
 
 ## Maintainer: retrieve a key if needed
 

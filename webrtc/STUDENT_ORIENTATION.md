@@ -17,6 +17,9 @@ builds on [Unitree UI](https://github.com/legion1581/unitree_ui), with its
 [MIT notice](clemson/UPSTREAM_LICENSE) retained. See the
 [eight-second demo and export details](../docs/DEMO.md).*
 
+This capture predates the battery and behavior-button additions; use the table
+below for the current layout.
+
 ## What to look for in the Clemson edition
 
 | Item | Expected observation |
@@ -26,11 +29,15 @@ builds on [Unitree UI](https://github.com/legion1581/unitree_ui), with its
 | Hand panel | One extracted skeleton following your hand and a matching gesture label; use preview before enabling robot control |
 | Recognition details | For the instructor classifier, finger/direction/palm hints help explain an `UNKNOWN` pose |
 | Velocity overlay | Requested, supervised, transmitted, and measured velocities have separate meanings; sending a command does not prove movement |
-| Enable / Stop | Gesture control begins disabled. Enable is below the hand view; Stop is there and below Disconnect |
+| Enable / Stop | Gesture control begins disabled. Click Enable directly, without a startup hand pose; Stop is there and below Disconnect |
+| Robot battery | Graphic and numeric percentage below the top-right Stop; unavailable/stale data is labeled, never assumed to be zero |
+| Jump once / Bound gait | Buttons below battery; these pause navigation on selection and have separate recovery checks |
+| UI build ID | Navigation title includes the same ID printed by the PowerShell launcher; use it to identify stale UI code |
 | Recording / avoidance | One overall recording toggle; record the actual avoidance state used for each trial |
 
 You can preview hand recognition before connecting the robot. Motion requires
 the instructor-approved connection and checkout, followed by explicit enabling.
+Stationary Look Around is removed and tracked as a [TODO](../docs/ROADMAP.md#optional-application-improvements).
 
 ## Default instructor gestures
 
@@ -69,6 +76,9 @@ picture still describes your custom classifier.
 | `HOLD GESTURE` | Keep one clear pose steady; the hold is based on new frames, not repeated copies of a frozen image |
 | Zero transmitted velocity despite a requested value | Control may still be disabled or a supervision gate may be active; read its reason rather than changing speed to force motion |
 | Browser lost focus / gesture input expired | Return to the dashboard and check fresh input. Re-enable explicitly only after resolving the cause |
+| Stop / landing not confirmed | Restore normal standing with the paired remote and visually check all four feet before using the explicit remote-recovery acknowledgement |
+| `5051` connection refused in Clemson | Restart the UI through the launcher and reload the tab; Clemson does not need the optional Bluetooth server |
+| MediaPipe feedback-tensor / projection warnings in Anaconda | These originate in hand inference, not robot-mode control. Check live FPS, frame age, skeletons, and recognition hints; a Python traceback or unavailable service needs separate diagnosis |
 | Robot feedback expired / missing or stale camera | Stop the trial and restore the connection/live streams with the instructor; do not bypass the checks |
 | Software Stop is unconfirmed | Follow the instructor's paired-remote intervention procedure and visually check the robot before another trial |
 

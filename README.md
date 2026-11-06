@@ -8,7 +8,7 @@ landmarks, supervised velocity commands, and local recording/replay. The Windows
 webcam observes your hand; the robot camera shows where the robot is going.
 
 [System design](#system-design) · [Quick start](#quick-start-on-windows-11) ·
-[Gesture guide](#default-gestures) ·
+[Gesture guide](#default-gestures) · [Repository layout](#repository-layout) ·
 [Dashboard guide](webrtc/clemson/README.md) · [Record and replay](webrtc/RECORDING.md) ·
 [Customize your gestures](webrtc/STUDENT_INTEGRATION.md)
 
@@ -28,6 +28,28 @@ webcam observes your hand; the robot camera shows where the robot is going.
 This is high-level navigation through the Go2's existing walking controller.
 It does not replace locomotion control, deploy an RL policy, or implement
 joint/torque-level MPC. Mapping and voxel availability depend on robot firmware.
+
+## Current dashboard controls
+
+| Location | Available controls / feedback |
+| --- | --- |
+| Camera/voxel view, top right | Disconnect, Stop, robot battery graphic and percentage, Jump once, and Bound gait |
+| Hand sidebar | Extracted landmarks, recognition hints, Enable gesture control / Stop, recording, obstacle-avoidance readback, and speed settings |
+| Camera/voxel view, bottom left | Requested, supervised, transmitted, and measured velocity; stop/recovery results |
+
+**Enable gesture control** is a direct button action; no palm/fist startup pose
+is required. Fresh hand-tracking frames, robot state, and video are still needed.
+Movement waits for fresh post-enable frames and the gesture consistency hold.
+
+**Jump once** pauses gesture navigation and requests one forward jump. **Bound
+gait** selects a gait, then requires explicit gesture enabling for navigation.
+These are Unitree's onboard behaviors. Availability and recovery depend on the
+assigned firmware; a successful request is not proof of completed motion.
+See [behavior controls and recovery](webrtc/clemson/CONTROL_EXTENSIONS.md).
+
+**Stationary Look Around is removed and disabled in production.** Its firmware
+and mode-transition investigation is on the [roadmap TODO](docs/ROADMAP.md#optional-application-improvements).
+The recorded demos above predate the new battery and behavior controls.
 
 ## System design
 
@@ -187,6 +209,8 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\webrtc\start-ui.ps1 -E
 
 Open **http://127.0.0.1:5174/** in Chrome. Test the extracted hand view with robot
 control disabled. Close other webcam programs; only one process should own it.
+Keep both terminals open. Clemson startup applies tracked UI updates automatically
+and prints a build ID, also shown below the camera-view title after connecting.
 
 ### 4. Connect to the assigned robot
 
@@ -203,6 +227,73 @@ at a time. A transmitted stop request is not proof of a physical stop.
 The dashboard has an obstacle-avoidance switch with readback. An `Unknown` value
 is not an enabled state; confirm the reported setting on your robot. Do
 not infer obstacle protection from the visible voxels.
+
+### 5. Enable and finish a session
+
+Click **Enable gesture control**, then use the [default gestures](#default-gestures).
+Check the displayed reason if enabling is blocked; do not change speeds to force
+motion. Use **Stop** to end control and verify the robot has stopped. If recovery
+cannot be confirmed, restore normal standing with the paired remote before using
+the dashboard's explicit remote-recovery acknowledgement.
+
+When finished, choose **Disconnect**, then press **Ctrl+C** in both terminals.
+See the [student orientation](webrtc/STUDENT_ORIENTATION.md) for screen messages.
+
+## Update and restart
+
+Disconnect the robot and stop the running UI server with **Ctrl+C** before updating.
+From your existing checkout's root in **PowerShell**:
+
+```powershell
+git pull --ff-only
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\webrtc\start-ui.ps1 -Edition clemson
+```
+
+Reopen **http://127.0.0.1:5174/** and press **Ctrl+Shift+R**. After connecting, the
+**Navigation | UI build ID** should match the ID printed in PowerShell. This
+confirms which UI code loaded. Restart the Python terminal too when its code or
+dependencies changed; otherwise the existing gesture service can keep running.
+Routine UI updates do not require reinstalling the full setup.
+
+The Clemson services are **UI: 5174** and **gesture preview: 8766**. Basic uses
+**5173**. Clemson does not need the optional Bluetooth backend on **5051**.
+
+## Repository layout
+
+```text
+README.md                     Project overview, system design, and daily startup
+webrtc/
+  gesture_preview/            Python perception, gesture mapping, and supervisor
+  clemson/
+    overlay/                  Tracked Clemson UI and robot adapter source
+    tests/                    Offline browser-side logic/transport tests
+    assets/                   Gesture illustrations and their generator
+    CONTROL_EXTENSIONS.md     Current Jump/Bound controls and recovery details
+  examples/                   Small examples without a robot connection
+  setup-ui.ps1                First-time runtime/UI installation
+  start-ui.ps1                Daily launcher; applies Clemson updates on startup
+  apply-clemson-overlay.ps1   Rebuilds generated UI source from tracked overlays
+  ui-source.json             Pinned upstream revision, Node version, and ports
+docs/                        Roadmap, demo provenance, teaching, and access notes
+ros/                         Separate SSH/ROS workflow; optional for this app
+```
+
+Edit Python in `webrtc/gesture_preview/` and UI code in
+`webrtc/clemson/overlay/`. The generated folders
+`webrtc/clemson/unitree_ui/`, `webrtc/upstream/unitree_ui/`, and `.tools/` are
+ignored local dependencies/builds. Changes made only inside the generated UI
+can be overwritten when the launcher reapplies overlays. Preserve local changes
+before updating. Keep recordings and credentials outside Git.
+
+| Task | Guide |
+| --- | --- |
+| First-time dependencies or environment problems | [Dependencies](webrtc/DEPENDENCIES.md) |
+| Operate the Clemson dashboard | [Dashboard guide](webrtc/clemson/README.md) |
+| Understand the first hardware session | [Student orientation](webrtc/STUDENT_ORIENTATION.md) |
+| Replace the gesture classifier | [Integration guide](webrtc/STUDENT_INTEGRATION.md) |
+| Use the upstream Basic UI | [Basic/Clemson setup](webrtc/UI_SETUP.md) |
+| Run checks or contribute | [Contributing](CONTRIBUTING.md) |
+| Track deferred features | [Roadmap](docs/ROADMAP.md) |
 
 ## Learn the code without moving a robot
 
@@ -223,6 +314,7 @@ they do not connect to the robot. Start with the small modules:
 | [safety.py](webrtc/gesture_preview/safety.py) | Consistency hold, input freshness, and zero requests |
 | [server.py](webrtc/gesture_preview/server.py) | Local landmark/intent service for the browser |
 | [gesture-robot.ts](webrtc/clemson/overlay/gesture-robot.ts) | Explicit enable, robot feedback checks, and WebRTC command routing |
+| [scene-controls.ts](webrtc/clemson/overlay/scene-controls.ts) | Camera-view battery, Jump/Bound buttons, and recovery status |
 
 Follow [the integration guide](webrtc/STUDENT_INTEGRATION.md) to substitute your
 classifier. Keep the existing timestamps, limits, supervisor, and robot checks.

@@ -148,9 +148,9 @@ route through the running UI proxy. The short webcam check returned NO_HAND;
 that initial check did not include operator gesture recognition. The existing
 Go2 setup has since been hardware-validated, as confirmed by the maintainer. The later extraction-only
 update removes JPEG/video fields from the API and clears landmarks on stale input.
-Automated browser
-inspection was unavailable; layout and simultaneous live Go2 video/voxels need
-hands-on verification in Chrome.
+Automated browser inspection was unavailable. These historical environment checks
+are separate from the maintainer's later baseline hardware validation; optional
+controls still need their own checks on the assigned firmware.
 
 Offline checks:
 

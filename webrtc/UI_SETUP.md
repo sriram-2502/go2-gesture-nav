@@ -75,8 +75,10 @@ Do not start autonomous navigation or patrol as part of the first stationary che
 This unchanged upstream UI does not inherit the Python velocity script's limits
 or its guarded StopMove/BalanceStand sequence. Keep the remote ready for motion tests.
 
-The upstream UI also polls the optional BLE backend. Connection-refused messages
+The **Basic edition** also polls the optional BLE backend. Connection-refused messages
 for `127.0.0.1:5051` are expected without BLE and are separate from robot WebRTC errors.
+Clemson disables this backend and its proxy; recurring 5051 errors there indicate
+an older server/tab is still running. Use the [update/restart workflow](../README.md#update-and-restart).
 The development server and its robot proxy are required; a static production
 preview alone is not the supported robot-connection workflow here.
 
@@ -94,10 +96,12 @@ after successful authentication it opens the upstream camera/voxel view directly
 The IP can be changed if needed. Other upstream menus are not exposed in Clemson;
 use Basic for mapping, account, Bluetooth, or other administrative features.
 The side panel displays extracted MediaPipe hands rather than webcam video.
-See the
-[Clemson integration plan](clemson/README.md) for the next milestones.
+The top-right camera-view controls show battery, Jump once, and Bound gait;
+stationary look-around is deferred. Startup applies tracked overlays and prints
+the same UI build ID shown in the camera-view title. See the
+[Clemson dashboard guide](clemson/README.md) for current controls and recovery.
 
-## Verification from this setup session
+## Original setup checks — October 28, 2026
 
 On 2026-10-28, the Basic source installed and passed TypeScript and Vite production
 builds. Its development server returned HTTP 200 on `127.0.0.1:5173`.
@@ -107,3 +111,6 @@ voxels, SLAM, or safe motion. No motion command was sent during setup.
 Browser automation was unavailable; visual verification must be completed in Chrome.
 The Clemson starter also passed TypeScript/Vite builds and HTTP page/entry-module
 checks on `127.0.0.1:5174`. Both PowerShell launch/setup scripts passed syntax checks.
+
+These are historical installation checks. For the current navigation baseline
+and behavior status, see the [Clemson guide](clemson/README.md#creative-inquiry-workflow-and-extension-ideas).
