@@ -97,7 +97,8 @@ export class GestureRobot {
 
   constructor(private now = () => performance.now(),
               private sleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms)),
-              timers = true) {
+              timers = true,
+              private experimentalStationaryGestures = false) {
     if (timers) {
       setInterval(() => void this.tick(), 50);
       document.addEventListener('visibilitychange', () => {
@@ -529,6 +530,10 @@ export class GestureRobot {
 
   async selectBehavior(behavior: Exclude<RobotBehavior, 'none'>): Promise<void> {
     if (!['jump', 'bound', 'pose'].includes(behavior)) return;
+    if (behavior === 'pose' && !this.experimentalStationaryGestures) {
+      this.actionMessage = 'Stationary control is deferred; see the project roadmap';
+      return;
+    }
     if (this.actionBusy || this.busy || this.enabling || this.stopping || this.avoidanceBusy) return;
     if (this.recoveryRequired) { this.actionMessage = 'Restore standing with the remote, then confirm remote recovery'; return; }
     if (this.behavior === 'jump') { this.actionMessage = 'Jump requested; press Stop to confirm recovery first'; return; }

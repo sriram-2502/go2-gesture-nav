@@ -93,10 +93,7 @@ device is busy. A different webcam can be selected when launching the service:
   seconds old readings show **Battery unavailable / —%**; a valid zero shows **0%**.
   This is telemetry only, not an automatic battery cutoff or a laptop/remote
   battery reading. Verify the live value against the assigned robot before lab use.
-- **Jump once**, **Bound gait**, and **Stationary look around** buttons below the
-  battery. Look-around reuses hand gestures: forward sets pitch, sideways sets
-  roll, and turn gestures set body yaw. Stop, unknown, missing, or stale hand
-  input centers the pose. The scene displays requested roll/pitch/yaw in radians.
+- **Jump once** and **Bound gait** buttons below the battery.
   These use the shared robot connection and pause gesture navigation when selected.
   A failed stop reports its recovery stage and provides an explicit remote-recovery
   acknowledgement; it never silently re-enables motion. See [recovery instructions](CONTROL_EXTENSIONS.md#stop-and-recovery).
@@ -106,7 +103,9 @@ device is busy. A different webcam can be selected when launching the service:
 - **Direct gesture enabling:** click Enable gesture control without a palm/fist
   startup pose. Fresh perception and robot/video feedback are still required;
   a preheld gesture cannot move the robot until new post-enable frames arrive.
-- A small **Gesture pose | UI build ID** below the camera-view title confirms
+- Stationary look-around is **deferred and removed from the student UI**. The
+  production adapter rejects stationary entry. See the [TODO in the roadmap](../../docs/ROADMAP.md#optional-application-improvements).
+- A small **Navigation | UI build ID** below the camera-view title confirms
   which UI code is loaded. Startup prints the same build ID; if it differs, close
   the old tab and reopen the displayed local URL after restarting the UI server.
 - Separate generated source copy based on the pinned upstream revision.

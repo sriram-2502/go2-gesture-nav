@@ -58,9 +58,6 @@ html[data-theme="light"] .clemson-lab-guide { color: #522d80; }
 .clemson-behavior-status { font-size: 11px; line-height: 1.4; color: #c4b6cf; margin: 0; overflow-wrap: anywhere; }
 .clemson-recovery[hidden] { display: none; }
 .clemson-webview-header .clemson-recovery { font-size: 11px; line-height: 1.4; border-color: #ffcd5f; color: #ffcd5f; text-align: left; }
-.clemson-gesture-pose[hidden] { display: none; }
-.clemson-gesture-pose p { font-size: 11px; color: #c4b6cf; line-height: 1.5; margin: 0 0 6px; }
-.clemson-pose-values { font: 11px Consolas, monospace; color: #71e4c6; }
 /* Preserve the original FPV pixels; no full-width tint or image filtering. */
 #app.control-screen .clemson-webview-header { background: none !important; }
 #app.control-screen .pip-camera video,

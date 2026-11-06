@@ -161,11 +161,9 @@ async function poll(): Promise<void> {
     status.textContent = cameraStartup.error || value.error || (value.fresh
       ? `Tracking live · ${value.fps.toFixed(0)} FPS · ${value.landmarks.length} hand(s) · frame age ${value.age_ms ?? '—'} ms`
       : 'Retrying hand tracking automatically…');
-    const pose = gestureRobot.status().poseReady;
-    const velocities = value.fresh && !pose ? value.proposed_velocity : [0, 0, 0];
+    const velocities = value.fresh ? value.proposed_velocity : [0, 0, 0];
     output.textContent = format(velocities);
-    approved.textContent = pose ? `${format([0,0,0])} · Stationary pose`
-      : `${format(value.supervised_velocity)} · ${value.navigation_status}`;
+    approved.textContent = `${format(value.supervised_velocity)} · ${value.navigation_status}`;
   } catch {
     showHands([]);
     label.textContent = 'Preview offline';
@@ -211,8 +209,6 @@ toggle.addEventListener('click', () => setOpen(true));
 setInterval(() => void poll(), 150);
 setInterval(() => {
   const state = gestureRobot.status();
-  panel.querySelector('h2')!.textContent = state.poseReady ? 'Stationary gestures' : 'Gesture control';
-  panel.querySelector('.clemson-enable')!.textContent = state.poseReady ? 'Stationary gesture mode active' : 'Enable gesture control';
   sessionRecorder.recordControl(state);
   avoidanceSwitch.checked = state.avoidanceFresh && state.avoidance === true;
   avoidanceSwitch.indeterminate = !state.avoidanceFresh;

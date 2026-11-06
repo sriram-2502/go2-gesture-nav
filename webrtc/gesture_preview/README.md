@@ -109,7 +109,7 @@ Recognition testing and enabling control are
 separate steps; the paired remote and a supervising operator remain required.
 
 Only `normal` and `mcf` motion services are accepted. The adapter does not stand
-the robot up. The separate scene buttons select Bound or stationary Pose modes;
+the robot up. The separate scene controls provide Jump once and Bound gait;
 see the [camera-view controls](../clemson/CONTROL_EXTENSIONS.md). MCF Move is sent without acknowledgement, while
 normal-mode Move requires an API success reply. A sent command is never labelled
 executed. The camera/state/gesture watchdogs run in the browser and cannot guarantee

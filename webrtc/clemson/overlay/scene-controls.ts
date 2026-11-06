@@ -18,12 +18,6 @@ export function mountSceneControls(parent: HTMLElement): void {
     <div class="clemson-behavior-buttons">
       <button type="button" data-behavior="jump" title="Request one forward jump; pauses gesture navigation"><span aria-hidden="true">↗</span> Jump once</button>
       <button type="button" data-behavior="bound" aria-pressed="false"><span aria-hidden="true">⇢</span> Bound gait</button>
-      <button type="button" data-behavior="pose" aria-pressed="false"><span aria-hidden="true">◎</span> Stationary look around</button>
-    </div>
-    <div class="clemson-gesture-pose" hidden>
-      <p>Use your hand gestures</p>
-      <p>Forward → pitch<br>Sideways left / right → roll<br>Turn left / right → body yaw<br>Stop / no hand → center</p>
-      <output class="clemson-pose-values" aria-label="Requested roll pitch yaw">0.00 / 0.00 / 0.00 rad</output>
     </div>
     <p class="clemson-action-status clemson-behavior-status" role="status">Select a behavior</p>
     <button type="button" class="clemson-recovery" hidden title="First restore normal standing with the paired remote and check all four feet on the ground. This checks telemetry and clears the local lock; it sends no motion command.">I restored standing with the remote</button>`;
@@ -31,7 +25,7 @@ export function mountSceneControls(parent: HTMLElement): void {
   controls.querySelector('.clemson-recovery')!.addEventListener('click', () => void gestureRobot.confirmRemoteRecovery());
   for (const button of controls.querySelectorAll<HTMLButtonElement>('[data-behavior]')) {
     button.addEventListener('click', () => {
-      void gestureRobot.selectBehavior(button.dataset.behavior as 'jump' | 'bound' | 'pose');
+      void gestureRobot.selectBehavior(button.dataset.behavior as 'jump' | 'bound');
     });
   }
 
@@ -51,8 +45,6 @@ export function mountSceneControls(parent: HTMLElement): void {
       button.disabled = locked || !state.actionReady;
       if (button.dataset.behavior !== 'jump') button.setAttribute('aria-pressed', String(state.behaviorConfirmed && state.behavior === button.dataset.behavior));
     }
-    controls.querySelector<HTMLElement>('.clemson-gesture-pose')!.hidden = !state.poseReady || locked;
-    controls.querySelector('.clemson-pose-values')!.textContent = `${state.poseTarget.map(v => v.toFixed(2)).join(' / ')} rad`;
     controls.querySelector('.clemson-action-status')!.textContent = state.stopping ? state.stopResult : state.actionMessage;
     const recovery = controls.querySelector<HTMLButtonElement>('.clemson-recovery')!;
     recovery.hidden = !state.recoveryRequired;

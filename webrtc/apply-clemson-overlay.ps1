@@ -57,7 +57,7 @@ $control = @'
     heading.textContent = 'Clemson Go2 / Camera + Voxels';
     const buildLabel = document.createElement('small');
     buildLabel.className = 'clemson-ui-build';
-    buildLabel.textContent = 'Gesture pose | UI __CLEMSON_BUILD__';
+    buildLabel.textContent = 'Navigation | UI __CLEMSON_BUILD__';
     heading.appendChild(buildLabel);
     const disconnect = document.createElement('button');
     disconnect.textContent = 'Disconnect';
@@ -153,6 +153,6 @@ if (-not $text.Contains("'/gesture-api'")) {
 $text = [regex]::Replace($text, "(?ms)^      '/ble-api/ws': \{.*?^      \},\r?\n", '')
 [IO.File]::WriteAllText($config, $text, $utf8)
 & (Join-Path $PSScriptRoot 'apply-voxel-replay.ps1') -TargetPath $appPath
-$buildManifest = @{ui_build=$buildId; gesture_pose=$true; camera_tint=$false} | ConvertTo-Json -Compress
+$buildManifest = @{ui_build=$buildId; gesture_pose=$false; camera_tint=$false} | ConvertTo-Json -Compress
 [IO.File]::WriteAllText((Join-Path $appPath 'public/clemson-build.json'), $buildManifest, $utf8)
-Write-Host "Clemson UI build $buildId applied. Stationary pose uses hand gestures. Control starts disabled."
+Write-Host "Clemson UI build $buildId applied. Stationary control deferred. Control starts disabled."

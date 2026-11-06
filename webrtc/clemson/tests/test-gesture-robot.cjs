@@ -23,12 +23,13 @@ const {GestureRobot, validVelocity, gestureToPose} = load(path.resolve(__dirname
 });
 const {RTC_TOPIC: T, SPORT_CMD: A, DATA_CHANNEL_TYPE: D} = topics;
 
-function fixture(mode = 'mcf', rejectStop = false, avoidanceOptions = {}) {
+function fixture(mode = 'mcf', rejectStop = false, avoidanceOptions = {}, experimentalStationaryGestures = true) {
   let clock = 10000, frame = 1, height = .3;
   let avoidance = false;
   let behavior = 'none';
   const messages = [];
-  const robot = new GestureRobot(() => clock, async ms => { clock += ms; feedback(); robot.noteVideoFrame(); }, false);
+  // Existing stationary experiments remain testable, but production defaults off.
+  const robot = new GestureRobot(() => clock, async ms => { clock += ms; feedback(); robot.noteVideoFrame(); }, false, experimentalStationaryGestures);
   function feedback() { robot.receive({type: D.MSG, topic: T.LF_SPORT_MOD_STATE,
     data: {velocity: [0,0,0], yaw_speed: 0, body_height: height,
       mode: avoidanceOptions.missingMode ? undefined : behavior === 'pose' ? 2 : behavior === 'bound' ? 15 : behavior === 'stand' ? 1 : 0,
@@ -60,6 +61,17 @@ function fixture(mode = 'mcf', rejectStop = false, avoidanceOptions = {}) {
     advance: ms => {clock += ms;}, now: () => clock};
 }
 function apiMessages(f, api) { return f.messages.filter(x => x.message.data.header.identity.api_id === api); }
+
+test('production rejects deferred stationary control before sending any robot request', async () => {
+  let requests = 0;
+  const robot = new GestureRobot(() => 10000, async () => {}, false);
+  robot.bind(() => { requests++; }, () => true);
+  await robot.selectBehavior('pose');
+  assert.equal(requests, 0);
+  assert.equal(robot.status().behavior, 'none');
+  assert.equal(robot.status().poseReady, false);
+  assert.match(robot.status().actionMessage, /deferred/);
+});
 
 test('transport rejects mixed axes and speeds outside the agreed contract', () => {
   for (const v of [[.5,0,0], [1,0,0], [0,-.5,0], [0,0,-.8], [0,0,0]]) assert.equal(validVelocity(v), true);

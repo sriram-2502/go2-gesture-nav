@@ -36,6 +36,7 @@ maintainer. See [KEY_ACCESS.md](KEY_ACCESS.md).
 
 ## Optional application improvements
 
+- [ ] Revisit stationary gesture-based body pose control. **Deferred and removed from the student UI** after unreliable mode transitions and stop/upright confirmation on the lab robot. Identify the supported firmware/motion service and Pose/BalanceStand/Euler or joystick interface; validate roll/pitch/yaw response, centering, timeout behavior, and return to normal navigation before re-enabling it. Experimental code and offline tests remain, but the production adapter rejects stationary entry.
 - [ ] Evaluate maintaining the dashboard directly in an upstream fork instead of the current reproducible overlay.
 - [ ] Add further operator recognition diagnostics or configurable gesture experiments while preserving command supervision.
 - [ ] Qualify optional onboard mapping/SLAM features if a future navigation experiment needs them.
