@@ -36,52 +36,21 @@ robot locomotion → robot feedback**. The laptop handles gesture perception and
 high-level motion commands; Unitree's onboard controllers handle walking.
 
 ```mermaid
-flowchart TB
-    human["Operator<br/>Hand gestures · Enable / Stop"]
-    vision["Hand perception · target 30 Hz<br/>Windows webcam → MediaPipe → gesture rules"]
+flowchart LR
+    input["Hand gestures<br/>Webcam + MediaPipe"]
+    motion["Motion planning<br/>Velocity mapping + safety checks"]
+    control["Unitree controllers<br/>Locomotion"]
+    robot["Go2<br/>Body motion"]
 
-    subgraph planning["Motion planning / command supervision · Windows laptop"]
-        direction TB
-        mapping["1 · Intent-to-velocity mapping<br/>Gesture label + speed settings → requested vx, vy, wz"]
-        supervisor["2 · Python supervisor · nominal 6.7 Hz<br/>300 ms gesture hold · 400 ms input freshness<br/>Stop / unknown / missing hand → zero request"]
-        gate["3 · Robot command gate · nominal 20 Hz<br/>Explicit enable · valid bounded command · fresh input<br/>Connection · upright state · fresh robot state and video"]
-        mapping --> supervisor --> gate
-    end
-
-    safe["Safe velocity · body frame<br/>vx, vy [m/s] · wz [rad/s]<br/>Passed command checks; otherwise stop / disable"]
-    unitree["Unitree onboard locomotion controllers<br/>High-level Move / StopMove → walking control<br/>Internal controller rates: not measured here"]
-    robot["Go2 + physical environment<br/>Body motion"]
-    feedback["Robot feedback · asynchronous WebRTC<br/>Measured velocity · body height · camera freshness"]
-    dashboard["Operator dashboard<br/>Robot camera + available voxels<br/>Requested / supervised / transmitted / measured velocity"]
-
-    human --> vision
-    vision -->|"Gesture label + acquisition timestamp"| mapping
-    human -->|"Speed settings"| mapping
-    human -->|"Enable / Stop"| gate
-    gate --> safe
-    safe -->|"Wi-Fi / WebRTC · high-level commands"| unitree
-    unitree --> robot
-    robot --> feedback
-    feedback -->|"State + video freshness checks"| gate
-    feedback --> dashboard
-    robot -. "Available voxel stream" .-> dashboard
-    dashboard -->|"Visual feedback → next gesture / Stop"| human
-
-    classDef input fill:#eef2ff,stroke:#6366f1,color:#172554
-    classDef motion fill:#ecfdf5,stroke:#059669,color:#064e3b
-    classDef hardware fill:#fff7ed,stroke:#ea580c,color:#7c2d12
-    classDef observe fill:#f8fafc,stroke:#64748b,color:#0f172a
-    class human,vision input
-    class mapping,supervisor,gate,safe motion
-    class unitree,robot hardware
-    class feedback,dashboard observe
+    input -->|"Intent"| motion
+    motion -->|"Safe velocity"| control
+    control --> robot
+    robot -->|"State feedback"| motion
+    robot -. "Camera → operator" .-> input
 ```
 
-*Framework view: gesture intent enters the motion block; supervised velocity
-leaves it for Unitree locomotion. Robot state feeds command checks, while camera
-and voxel views help the operator choose the next gesture.* The system-design
-presentation takes inspiration from
-[Katie Hughes' Quadruped Crowd Navigation](https://katie-hughes.github.io/crowdnav/#system-design).
+*Gesture intent becomes a supervised body velocity. Robot state feeds the motion
+checks, and the camera view helps the operator choose the next gesture.*
 
 ### Inside the motion block
 
