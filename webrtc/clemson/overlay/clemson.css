@@ -39,6 +39,10 @@ html[data-theme="light"] .clemson-lab-guide { color: #522d80; }
 .clemson-webview-header button { background: #352444; color: #fff; border: 1px solid #76518f; padding: 9px 14px; border-radius: 7px; cursor: pointer; }
 .clemson-webview-header { align-items: flex-start; }
 .clemson-webview-header > strong { padding-top: 8px; }
+.clemson-header-status { display: grid; gap: 5px; padding-top: 8px; min-width: 0; }
+.clemson-webview-header { gap: 12px; }
+.clemson-battery { color: #c4b6cf; font-size: 12px; }
+.clemson-battery-fresh { color: #71e4c6; }
 .clemson-header-actions { display: flex; flex-direction: column; gap: 8px; min-width: 100px; }
 .clemson-camera-placeholder { text-align: center; padding: 25px; color: #aa9ab7; }
 .clemson-gesture-label { font-size: 23px; font-weight: 700; color: #ffb37d; }

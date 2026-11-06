@@ -208,6 +208,13 @@ setInterval(() => void poll(), 150);
 setInterval(() => {
   const state = gestureRobot.status();
   sessionRecorder.recordControl(state);
+  const battery = app.querySelector<HTMLOutputElement>('.clemson-battery');
+  if (battery) {
+    battery.textContent = state.batteryFresh ? `Battery: ${Math.round(state.batteryPercent!)}%` : 'Battery: unavailable';
+    battery.classList.toggle('clemson-battery-fresh', state.batteryFresh);
+    battery.title = state.batteryFresh ? 'Go2 battery state of charge reported by the robot'
+      : 'No valid Go2 battery reading received within the last 5 seconds';
+  }
   avoidanceSwitch.checked = state.avoidanceFresh && state.avoidance === true;
   avoidanceSwitch.indeterminate = !state.avoidanceFresh;
   avoidanceSwitch.disabled = !state.connected || !state.avoidanceFresh || state.avoidanceBusy || state.stopping || state.enabling;

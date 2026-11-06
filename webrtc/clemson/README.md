@@ -86,6 +86,12 @@ device is busy. A different webcam can be selected when launching the service:
 
 ## Available now
 
+- **Go2 battery percentage** in the camera/voxel header, including when the hand
+  panel is hidden. It uses the existing WebRTC lowstate stream and refreshes with
+  the 10 Hz status display. Missing, invalid, disconnected, or more than five
+  seconds old readings show **Battery: unavailable**; a valid zero shows **0%**.
+  This is telemetry only, not an automatic battery cutoff or a laptop/remote
+  battery reading. Verify the live value against the assigned robot before lab use.
 - Separate generated source copy based on the pinned upstream revision.
 - One IP/AES connection form, defaulting to **`192.168.12.1`** (Go2 Wi-Fi hotspot).
   The IP is editable. Enter the key and click **Connect and open web view**.
@@ -183,6 +189,10 @@ capture chooser and live recording performance still need hands-on verification.
 Maze scoring is **not implemented yet**.
 Keep gait selection, stair mode, and custom
 SLAM development outside the first classroom integration.
+
+For the next development phase, see [pose, jump, and gait extension findings](CONTROL_EXTENSIONS.md).
+That guide distinguishes upstream command availability from hardware-verified
+student controls and outlines a stationary look-around mode as the next extension.
 
 ## Credentials
 

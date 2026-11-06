@@ -39,6 +39,8 @@ export class GestureRobot {
   private connected: () => boolean = () => false;
   private state: SportState | null = null;
   private stateAt = -Infinity;
+  private batteryPercent: number | null = null;
+  private batteryAt = -Infinity;
   private videoAt = -Infinity;
   private video: HTMLVideoElement | null = null;
   private mode = '';
@@ -95,6 +97,8 @@ export class GestureRobot {
     this.connected = () => false;
     this.state = null;
     this.stateAt = -Infinity;
+    this.batteryPercent = null;
+    this.batteryAt = -Infinity;
     this.mode = '';
     this.videoAt = -Infinity;
     this.moving = false;
@@ -182,6 +186,15 @@ export class GestureRobot {
     sessionRecorder.robotMessage('received',message);
     try {
       const data = unpack(message.data);
+      // Go2 battery SOC is already carried by the shared lowstate subscription.
+      // Display only: this does not send commands or change motion eligibility.
+      if (message.topic === RTC_TOPIC.LOW_STATE && message.type !== DATA_CHANNEL_TYPE.RESPONSE) {
+        const soc = data?.bms_state?.soc;
+        if (typeof soc === 'number' && Number.isFinite(soc) && soc >= 0 && soc <= 100) {
+          this.batteryPercent = soc;
+          this.batteryAt = this.now();
+        }
+      }
       if (message.type === DATA_CHANNEL_TYPE.RESPONSE) {
         const id = data?.header?.identity?.id;
         const request = this.pending.get(id);
@@ -358,7 +371,11 @@ export class GestureRobot {
   }
 
   status() {
+    const batteryAge = this.now() - this.batteryAt;
+    const batteryFresh = this.connected() && this.batteryPercent !== null
+      && batteryAge >= 0 && batteryAge <= 5000;
     return {connected: this.connected(), enabled: this.enabled, enabling: this.enabling,
+      batteryPercent: batteryFresh ? this.batteryPercent : null, batteryFresh,
       stopping: !!this.stopping, reason: this.reason, stopResult: this.stopResult,
       sent: this.sent, measured: this.state ? [...this.state.velocity.slice(0, 2), this.state.yaw_speed] : null,
       feedbackFresh: this.now() - this.stateAt <= 1000,

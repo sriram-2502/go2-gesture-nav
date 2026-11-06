@@ -145,3 +145,47 @@ test('disconnect clears the displayed avoidance state', async () => {
   const f = fixture(); await f.robot.setObstacleAvoidance(true); f.robot.detach();
   assert.equal(f.robot.status().avoidance, null); assert.equal(f.robot.status().avoidanceFresh, false);
 });
+
+function battery(f, soc, json = false) {
+  const data = {bms_state: {soc}};
+  f.robot.receive({type: D.MSG, topic: T.LOW_STATE, data: json ? JSON.stringify(data) : data});
+}
+
+test('battery accepts object and JSON lowstate telemetry, including zero, without robot requests', () => {
+  const f = fixture();
+  assert.equal(f.robot.status().batteryPercent, null);
+  assert.equal(f.robot.status().batteryFresh, false);
+  for (const [soc, json] of [[82, false], [45, true], [0, false], [100, true]]) {
+    battery(f, soc, json);
+    assert.equal(f.robot.status().batteryPercent, soc);
+    assert.equal(f.robot.status().batteryFresh, true);
+  }
+  assert.equal(f.messages.length, 0);
+});
+
+test('invalid or unrelated packets cannot refresh battery freshness', () => {
+  const f = fixture(); battery(f, 73);
+  f.advance(4900);
+  for (const soc of [-1, 101, NaN, Infinity, '90', null, undefined, true]) battery(f, soc);
+  f.robot.receive({type: D.MSG, topic: T.LOW_STATE, data: '{bad json'});
+  f.robot.receive({type: D.MSG, topic: T.LF_SPORT_MOD_STATE, data: {bms_state: {soc: 90}}});
+  f.robot.receive({type: D.RESPONSE, topic: T.LOW_STATE, data: {bms_state: {soc: 90}}});
+  assert.equal(f.robot.status().batteryPercent, 73);
+  f.advance(101); f.feedback();
+  assert.equal(f.robot.status().batteryFresh, false);
+  assert.equal(f.robot.status().batteryPercent, null);
+  battery(f, 72);
+  assert.equal(f.robot.status().batteryPercent, 72);
+});
+
+test('battery is unavailable when transport disconnects and is cleared on a new session', () => {
+  const f = fixture(); battery(f, 80);
+  f.robot.connected = () => false;
+  assert.equal(f.robot.status().batteryPercent, null);
+  f.robot.bind(() => {}, () => true);
+  assert.equal(f.robot.status().batteryPercent, null);
+  assert.equal(f.robot.status().batteryFresh, false);
+  battery(f, 60);
+  f.robot.detach();
+  assert.equal(f.robot.status().batteryPercent, null);
+});
