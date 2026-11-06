@@ -7,7 +7,8 @@ view. This project combines a focused Unitree UI dashboard, extracted hand
 landmarks, supervised velocity commands, and local recording/replay. The Windows
 webcam observes your hand; the robot camera shows where the robot is going.
 
-[Quick start](#quick-start-on-windows-11) · [Gesture guide](#default-gestures) ·
+[System design](#system-design) · [Quick start](#quick-start-on-windows-11) ·
+[Gesture guide](#default-gestures) ·
 [Dashboard guide](webrtc/clemson/README.md) · [Record and replay](webrtc/RECORDING.md) ·
 [Customize your gestures](webrtc/STUDENT_INTEGRATION.md)
 
@@ -28,23 +29,111 @@ This is high-level navigation through the Go2's existing walking controller.
 It does not replace locomotion control, deploy an RL policy, or implement
 joint/torque-level MPC. Mapping and voxel availability depend on robot firmware.
 
-## How it fits together
+## System design
 
-```text
-Windows webcam → MediaPipe → gesture label → velocity mapping → freshness/hold checks
-                                                                      ↓
-Go2 camera + voxels → local browser dashboard ← explicit enable + robot checks
-                                          ↕
-                                    Wi-Fi / WebRTC
-                                          ↕
-                              Go2 onboard walking controller
+The system closes the loop from **human intent → supervised body velocity →
+robot locomotion → robot feedback**. The laptop handles gesture perception and
+high-level motion commands; Unitree's onboard controllers handle walking.
 
-Dashboard video + structured logs → local recording ZIP → offline replay
+```mermaid
+flowchart TB
+    human["Operator<br/>Hand gestures · Enable / Stop"]
+    vision["Hand perception · target 30 Hz<br/>Windows webcam → MediaPipe → gesture rules"]
+
+    subgraph planning["Motion planning / command supervision · Windows laptop"]
+        direction TB
+        mapping["1 · Intent-to-velocity mapping<br/>Gesture label + speed settings → requested vx, vy, wz"]
+        supervisor["2 · Python supervisor · nominal 6.7 Hz<br/>300 ms gesture hold · 400 ms input freshness<br/>Stop / unknown / missing hand → zero request"]
+        gate["3 · Robot command gate · nominal 20 Hz<br/>Explicit enable · valid bounded command · fresh input<br/>Connection · upright state · fresh robot state and video"]
+        mapping --> supervisor --> gate
+    end
+
+    safe["Safe velocity · body frame<br/>vx, vy [m/s] · wz [rad/s]<br/>Passed command checks; otherwise stop / disable"]
+    unitree["Unitree onboard locomotion controllers<br/>High-level Move / StopMove → walking control<br/>Internal controller rates: not measured here"]
+    robot["Go2 + physical environment<br/>Body motion"]
+    feedback["Robot feedback · asynchronous WebRTC<br/>Measured velocity · body height · camera freshness"]
+    dashboard["Operator dashboard<br/>Robot camera + available voxels<br/>Requested / supervised / transmitted / measured velocity"]
+
+    human --> vision
+    vision -->|"Gesture label + acquisition timestamp"| mapping
+    human -->|"Speed settings"| mapping
+    human -->|"Enable / Stop"| gate
+    gate --> safe
+    safe -->|"Wi-Fi / WebRTC · high-level commands"| unitree
+    unitree --> robot
+    robot --> feedback
+    feedback -->|"State + video freshness checks"| gate
+    feedback --> dashboard
+    robot -. "Available voxel stream" .-> dashboard
+    dashboard -->|"Visual feedback → next gesture / Stop"| human
+
+    classDef input fill:#eef2ff,stroke:#6366f1,color:#172554
+    classDef motion fill:#ecfdf5,stroke:#059669,color:#064e3b
+    classDef hardware fill:#fff7ed,stroke:#ea580c,color:#7c2d12
+    classDef observe fill:#f8fafc,stroke:#64748b,color:#0f172a
+    class human,vision input
+    class mapping,supervisor,gate,safe motion
+    class unitree,robot hardware
+    class feedback,dashboard observe
 ```
+
+*Framework view: gesture intent enters the motion block; supervised velocity
+leaves it for Unitree locomotion. Robot state feeds command checks, while camera
+and voxel views help the operator choose the next gesture.* The system-design
+presentation takes inspiration from
+[Katie Hughes' Quadruped Crowd Navigation](https://katie-hughes.github.io/crowdnav/#system-design).
+
+### Inside the motion block
+
+| Stage | Inputs | Output / decision |
+| --- | --- | --- |
+| **Map intent** | Recognized gesture and configured forward/turn speeds | Requested body velocity `u_req = (vx, vy, wz)`; one motion axis at a time |
+| **Supervise intent** | Gesture label, acquisition timestamp, speed limits, and gesture history | `supervised_velocity`; movement waits for a 300 ms hold, and stale or stop input produces zero |
+| **Gate robot commands** | Supervised velocity, label/frame validity, enable state, connection, body height, robot-state age, and camera-frame age | Eligible velocity is routed to `Move`; failed checks disable control and request stopping if moving |
+| **Execute locomotion** | High-level velocity or stop request over WebRTC | Unitree's onboard controllers produce the robot's walking motion |
+
+Here **safe velocity** means a bounded command that passed the implemented
+supervision and robot checks. This motion block implements gesture-to-velocity
+selection and command gating; collision-free trajectory planning is not
+implemented. Voxels are displayed for the operator and are not an input to a
+local obstacle planner. The robot's obstacle-avoidance setting has separate
+readback in the dashboard.
+
+The feedback loop supports command eligibility and stop confirmation. Measured
+velocity is displayed and used during stopping; it is not used by a laptop-side
+velocity-error controller. Unitree handles locomotion tracking onboard.
+
+### Module rates and timing
+
+These are **configured rates and thresholds from the code**, not measured
+end-to-end performance. Camera hardware, inference time, browser scheduling,
+Wi-Fi, and robot responses can reduce the achieved rates.
+
+| Module | Configured cadence | Timing / behavior |
+| --- | --- | --- |
+| [Webcam + MediaPipe + gesture rules](webrtc/gesture_preview/vision.py) | **30 Hz target** (~33 ms/frame) | Capture requests 640 × 480 at 30 FPS; processing is paced to at most 30 fresh frames/s. The panel reports achieved FPS. |
+| [Gesture snapshot + Python supervision](webrtc/clemson/overlay/clemson-preview.ts) | **~6.7 Hz nominal** (150 ms polling timer) | Each successful snapshot request runs the [supervisor](webrtc/gesture_preview/server.py). Overlapping polls are skipped; the browser receives the latest extracted landmarks and intent. |
+| [Robot command gate / Move dispatch](webrtc/clemson/overlay/gesture-robot.ts) | **20 Hz nominal** (50 ms timer) | Runs while enabled; busy ticks are skipped. Normal-mode Move waits for acknowledgement; MCF Move does not. Dispatch can be slower than 20 Hz. |
+| Robot state + camera / voxels | **Stream-driven; rates not measured here** | State and camera frames must each be no older than **1 s** for motion eligibility. Voxel data is for visualization. |
+| [Dashboard control / velocity readout](webrtc/clemson/overlay/clemson-preview.ts) | **10 Hz** (100 ms timer) | Refreshes control status and transmitted/measured velocity; hand drawings update with gesture snapshots. |
+| Unitree locomotion controllers | **Onboard; internal rates not measured here** | Receive high-level commands; the browser's 20 Hz timer is not the robot's internal control frequency. |
+
+A new motion gesture needs **300 ms of consistent fresh predictions**. Gesture
+input expires after **400 ms**, including input age and elapsed time in the
+browser; repeatedly reading one frame cannot satisfy the hold. These thresholds
+are separate from module frequencies and do not specify physical stop latency.
+
+During stopping, the adapter requests zero velocity and `StopMove`, then looks
+for fresh low-speed upright feedback spanning **300 ms** before requesting
+`BalanceStand`. The dashboard keeps **requested → supervised → transmitted →
+measured** velocity distinct so a sent command can be compared with robot motion.
+See the [robot adapter](webrtc/clemson/overlay/gesture-robot.ts) for the full checks.
 
 Python handles webcam extraction and gesture intent. The browser uses one
 authenticated robot connection for video, state, and high-level commands.
 Preview recognition with motion disabled before enabling the robot adapter.
+Dashboard video and structured logs can also be saved as a local recording ZIP
+for [offline replay](webrtc/RECORDING.md).
 
 ### A second segment
 
