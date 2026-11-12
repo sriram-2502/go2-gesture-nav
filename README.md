@@ -10,7 +10,7 @@ webcam observes your hand; the robot camera shows where the robot is going.
 [System design](#system-design) · [Quick start](#quick-start-on-windows-11) ·
 [Gesture guide](#default-gestures) · [Repository layout](#repository-layout) ·
 [Dashboard guide](webrtc/clemson/README.md) · [Record and replay](webrtc/RECORDING.md) ·
-[Customize your gestures](webrtc/STUDENT_INTEGRATION.md)
+[Customize your gestures](webrtc/STUDENT_INTEGRATION.md) · [Future projects](#future-projects)
 
 ![Eight-second dashboard demonstration showing the Go2 camera and voxels, extracted MediaPipe hand landmarks, gesture labels, and velocity feedback.](docs/assets/go2-gesture-dashboard-demo.gif)
 
@@ -58,21 +58,42 @@ robot locomotion → robot feedback**. The laptop handles gesture perception and
 high-level motion commands; Unitree's onboard controllers handle walking.
 
 ```mermaid
-flowchart LR
-    input["Hand gestures<br/>Webcam + MediaPipe"]
-    motion["Motion planning<br/>Velocity mapping + safety checks"]
-    control["Unitree controllers<br/>Locomotion"]
-    robot["Go2<br/>Body motion"]
-
-    input -->|"Intent"| motion
-    motion -->|"Safe velocity"| control
-    control --> robot
-    robot -->|"State feedback"| motion
-    robot -. "Camera → operator" .-> input
+flowchart TB
+    subgraph host["Windows 11: current application"]
+        input["Hand gestures<br/>Webcam + MediaPipe"]
+        motion["Motion planning interface<br/>Gesture-to-velocity mapping + supervision"]
+        input -->|"Intent"| motion
+    end
+    service["Go2 high-level motion service<br/>Existing Unitree walking controller"]
+    subgraph hierarchy["Robot-side hierarchy: conceptual detail"]
+        locomotion["Locomotion / whole-body controller<br/>Model-based controller or learned RL policy"]
+        joint["Joint control<br/>Position, velocity or torque targets"]
+        actuator["Actuator feedback loops<br/>PD / PID or torque-current control"]
+        robot["Go2 joints and body motion"]
+        locomotion --> joint --> actuator --> robot
+    end
+    feedback["Robot state and camera"]
+    motion -->|"Bounded body velocity over WebRTC"| service
+    service -.-> locomotion
+    robot --> feedback
+    feedback -->|"State feedback"| motion
+    feedback -.->|"Camera to operator"| input
+    classDef conceptual stroke-dasharray: 5 5;
+    class locomotion,joint,actuator conceptual;
 ```
 
-*Gesture intent becomes a supervised body velocity. Robot state feeds the motion
-checks, and the camera view helps the operator choose the next gesture.*
+*The current application supplies supervised body velocities through WebRTC.
+The lower layers explain a general hierarchical robot-control stack. RL,
+model-based control, and PD/PID are possible approaches at different layers;
+the diagram does not identify Unitree's proprietary implementation or expose
+a joint-control interface through this dashboard.*
+
+Modeling provides a foundation for understanding these layers: coordinate
+frames, leg kinematics, Jacobians, rigid-body dynamics, and ground contacts.
+Undergraduate projects can work at the motion-planning interface while using
+the existing onboard walking controller. Training RL locomotion policies and
+deploying new low-level controllers are advanced extensions beyond the current
+undergraduate research scope. See [Future projects](#future-projects).
 
 ### Inside the motion block
 
@@ -331,6 +352,41 @@ robot. See [RECORDING.md](webrtc/RECORDING.md) for streams, timing, and limits.
 Keep complete ZIPs, videos, and telemetry outside Git. Webcam pixels are not part of the landmark service;
 robot video and hand landmarks are still experiment data. Clear cached keys from
 the local UI on shared computers. See [private access](docs/KEY_ACCESS.md).
+
+## Future projects
+
+The proposed research framework starts with robot modeling, then uses the
+motion-planning blocks above the existing locomotion controller. These projects
+are future work; the current gesture dashboard remains the starting platform.
+
+| Area | Example project / first milestone |
+| --- | --- |
+| Kinematics and dynamics | Define body/leg frames, forward and inverse kinematics, Jacobians, floating-base dynamics, and contact assumptions; compare a simulation model with available measurements |
+| State logging and ROS integration | Qualify actual camera, LiDAR, IMU, pose, and joint fields/rates; bridge suitable ROS topics to the Windows interface and retain reproducible recordings |
+| Localization and SLAM | Evaluate visual odometry, VIO, or LiDAR-based SLAM using calibrated sensors and verified timestamps |
+| Elevation mapping and perceptive off-road navigation | Build a local terrain-height map, estimate traversability, and use it to choose body-motion requests |
+| Motion planning | Compare A*, Dijkstra, RRT/RRT*, path tracking, and local obstacle avoidance under the same maps and trials |
+| Multiagent systems | Study shared localization, density-based coordination, and obstacle avoidance; begin with simulation and then one Go2 with simulated peers |
+| Advanced locomotion research | Train RL controllers in simulation and investigate transfer to hardware; beyond the current undergraduate scope and not a prerequisite for planning projects |
+
+A proposed ROS extension would run sensor processing, mapping, and planning on
+a compatible Linux host or onboard companion computer, with Windows 11 retaining
+the operator dashboard. WebRTC can remain part of the transport architecture,
+but arbitrary ROS topics and elevation maps need an explicit bridge into the UI.
+Concurrent camera/LiDAR operation, connection ownership, package versions, and
+network performance still need qualification on the assigned robot.
+
+Current voxel recordings are processed occupancy data, not raw LiDAR scans.
+VIO needs calibrated, suitably timed images and inertial measurements; visible
+video and telemetry alone do not establish those requirements. A terrain map
+also needs consistent sensor transforms and pose estimates. Planning produces
+high-level motion requests here; it does not automatically provide foothold
+control or a replacement walking policy.
+
+See the [research milestones and data inventory](docs/ROADMAP.md#future-projects-and-research-milestones)
+for prerequisites, evaluation criteria, the current CSV/JSONL coverage, and
+candidate packages. The roadmap keeps proposed extensions separate from the
+validated gesture-navigation application.
 
 ## Status and attribution
 
