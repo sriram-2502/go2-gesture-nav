@@ -58,35 +58,21 @@ robot locomotion → robot feedback**. The laptop handles gesture perception and
 high-level motion commands; Unitree's onboard controllers handle walking.
 
 ```mermaid
-flowchart TB
-    subgraph host["Windows 11: current application"]
-        input["Hand gestures<br/>Webcam + MediaPipe"]
-        motion["Motion planning interface<br/>Gesture-to-velocity mapping + supervision"]
-        input -->|"Intent"| motion
-    end
-    service["Go2 high-level motion service<br/>Existing Unitree walking controller"]
-    subgraph hierarchy["Robot-side hierarchy: conceptual detail"]
-        locomotion["Locomotion / whole-body controller<br/>Model-based controller or learned RL policy"]
-        joint["Joint control<br/>Position, velocity or torque targets"]
-        actuator["Actuator feedback loops<br/>PD / PID or torque-current control"]
-        robot["Go2 joints and body motion"]
-        locomotion --> joint --> actuator --> robot
-    end
-    feedback["Robot state and camera"]
-    motion -->|"Bounded body velocity over WebRTC"| service
-    service -.-> locomotion
-    robot --> feedback
-    feedback -->|"State feedback"| motion
-    feedback -.->|"Camera to operator"| input
-    classDef conceptual stroke-dasharray: 5 5;
-    class locomotion,joint,actuator conceptual;
+flowchart LR
+    input["Hand gestures<br/>Webcam + MediaPipe"]
+    motion["Motion planning<br/>Velocity mapping + safety checks"]
+    control["Unitree controllers<br/>Locomotion"]
+    robot["Go2<br/>Body motion"]
+
+    input -->|"Intent"| motion
+    motion -->|"Safe velocity"| control
+    control --> robot
+    robot -->|"State feedback"| motion
+    robot -. "Camera → operator" .-> input
 ```
 
-*The current application supplies supervised body velocities through WebRTC.
-The lower layers explain a general hierarchical robot-control stack. RL,
-model-based control, and PD/PID are possible approaches at different layers;
-the diagram does not identify Unitree's proprietary implementation or expose
-a joint-control interface through this dashboard.*
+*Gesture intent becomes a supervised body velocity. Robot state feeds the motion
+checks, and the camera view helps the operator choose the next gesture.*
 
 Modeling provides a foundation for understanding these layers: coordinate
 frames, leg kinematics, Jacobians, rigid-body dynamics, and ground contacts.
