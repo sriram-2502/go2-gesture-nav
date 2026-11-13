@@ -9,7 +9,7 @@ and behavior status are independent of the webcam service.
 Disconnect the robot and stop the previous UI server with Ctrl+C. Then run:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\webrtc\start-ui.ps1 -Edition clemson
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\start-ui.ps1 -Edition clemson
 ```
 
 Startup applies tracked overlays before launching Vite. Open
@@ -75,7 +75,7 @@ and offline tests remain for future development, without a student-facing switch
 
 The lab robot showed unreliable mode transitions and stopped/upright confirmation.
 A Joy-Con conflict has not been established. The
-[roadmap TODO](../../docs/ROADMAP.md#optional-application-improvements) tracks
+[roadmap TODO](../docs/ROADMAP.md#optional-application-improvements) tracks
 firmware/interface identification, gesture-to-angle mapping, centering, timeout,
 mode-exit, and return-to-navigation validation before this feature is restored.
 

@@ -12,7 +12,7 @@ JAX, and PySide6 are not required for this setup.
 | Git for Windows | Download the pinned `unitree_ui` source | Install Git for Windows if absent |
 | Miniconda / Conda, Python 3.11 | Python scripts and webcam service | Create `go2wifi` below |
 | `unitree_webrtc_connect` | Standalone Python connection/velocity diagnostics | `requirements.txt` |
-| MediaPipe | The same Hand Landmarker extraction used by the Go1 scaffold | `requirements-gestures.txt` |
+| MediaPipe | The same Hand Landmarker extraction used by the Go1 scaffold | `requirements.txt` |
 | OpenCV | Windows webcam capture and color conversion | Python requirements |
 | NumPy | Webcam frame arrays | Python requirements |
 | PyAV (`av`) | Optional local WebM-to-MP4 export from a saved run | Installed with the Go2 WebRTC driver / aiortc |
@@ -33,8 +33,8 @@ In **Anaconda Prompt / Miniconda Prompt**:
 conda create -n go2wifi python=3.11 pip -y
 conda activate go2wifi
 python -m pip install --upgrade pip
-python -m pip install -r webrtc\requirements.txt -r webrtc\requirements-gestures.txt
-python -m webrtc.gesture_preview.download_model
+python -m pip install -r requirements.txt
+python -m gesture_preview.download_model
 python -m pip check
 ```
 
@@ -42,8 +42,8 @@ If `go2wifi` already has the working Go2 driver, just add the preview dependenci
 
 ```bat
 conda activate go2wifi
-python -m pip install -r webrtc\requirements-gestures.txt
-python -m webrtc.gesture_preview.download_model
+python -m pip install -r requirements.txt
+python -m gesture_preview.download_model
 python -m pip check
 ```
 
@@ -62,15 +62,15 @@ these packages without rechecking both the preview and driver.
 In **PowerShell**, from the repository root:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\webrtc\setup-ui.ps1 -Edition all
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\setup-ui.ps1
 ```
 
-This installs both Basic and Clemson source copies. Stop running dashboard servers
-before rerunning setup. To update only the tracked Clemson overlay on an existing
+This installs the gesture dashboard and its pinned upstream source. Stop running
+dashboard servers before rerunning setup. To update only the tracked overlay on an existing
 copy, without reinstalling dependencies:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\webrtc\apply-clemson-overlay.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\apply-clemson-overlay.ps1
 ```
 
 Applying the overlay to a running development server can reload its browser tab;
@@ -82,19 +82,19 @@ disconnect the robot before doing so.
 
 ```bat
 conda activate go2wifi
-python -m webrtc.gesture_preview.server
+python -m gesture_preview.server
 ```
 
 **Terminal 2 — PowerShell:**
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\webrtc\start-ui.ps1 -Edition clemson
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\start-ui.ps1
 ```
 
 Open <http://127.0.0.1:5174/> in Chrome. Hand tracking starts automatically when
 the right panel opens and works without a robot connection. Close the Go1
 dashboard or another application using the webcam first. For a different device,
-start the Python service with `python -m webrtc.gesture_preview.server --camera 1`.
+start the Python service with `python -m gesture_preview.server --camera 1`.
 
 The upstream Go2 camera and voxels remain in the main web view. Join Go2 Wi-Fi,
 leave **Robot IP address** at **`192.168.12.1`**, enter the robot AES key, and click
@@ -116,7 +116,7 @@ the robot and click **Enable gesture control**; no startup hand pose is required
 is 0.5–1.0 m/s; turn speed is 0.5–1.0 rad/s (default 0.8); sideways is fixed at
 ±0.5 m/s. The existing Go2 hardware setup has been validated, as confirmed by the maintainer. Integrated recording is
 available through [recording and replay](RECORDING.md). Read the
-[student walkthrough](gesture_preview/README.md) before enabling.
+[student walkthrough](../gesture_preview/README.md) before enabling.
 
 Hiding the panel requests a stop and releases the webcam;
 if viewer requests cease for eight seconds, the service releases the camera.
@@ -126,7 +126,7 @@ service by this adapter.
 ## Basic UI option
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\webrtc\start-ui.ps1 -Edition basic
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\start-ui.ps1 -Edition basic
 ```
 
 Open <http://127.0.0.1:5173/>. This is the unchanged upstream edition and does not
@@ -138,7 +138,7 @@ On 2026-10-28: Windows 11, Python 3.11.16, MediaPipe 1.0.1, OpenCV 5.0.0
 (package versions `5.0.0.93`), NumPy 2.4.6, and workspace-local Node 22.23.4.
 Python requirements pin the main perception packages; they are not a complete
 transitive lockfile. Upstream UI source revision and Node version are recorded in
-[ui-source.json](ui-source.json), and upstream's npm lockfile pins UI dependencies.
+[ui-source.json](../ui-source.json), and upstream's npm lockfile pins UI dependencies.
 
 Verified: package imports and `pip check`; five offline preview lifecycle/HTTP
 tests; real webcam capture and MediaPipe inference in `go2wifi`; landmark-only
@@ -155,8 +155,8 @@ controls still need their own checks on the assigned firmware.
 Offline checks:
 
 ```bat
-python -m unittest webrtc.gesture_preview.test_navigation webrtc.gesture_preview.test_preview -v
+python -m unittest gesture_preview.test_navigation gesture_preview.test_preview -v
 ```
 
 Reference: [MediaPipe Hand Landmarker](https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker/python).
-Adapted course code and its license are documented in [NOTICE.md](gesture_preview/NOTICE.md).
+Adapted course code and its license are documented in [NOTICE.md](../gesture_preview/NOTICE.md).

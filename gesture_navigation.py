@@ -1,12 +1,12 @@
 """Print gesture velocity commands as JSON. Never connects to a robot.
 
-From repo root: python -m webrtc.gesture_navigation
-Without camera: python -m webrtc.gesture_navigation --demo
+From repo root: python -m gesture_navigation
+Without camera: python -m gesture_navigation --demo
 """
 import argparse
 import json
 import time
-from .gesture_preview.safety import Limits, Prediction, Supervisor
+from gesture_preview.safety import Limits, Prediction, Supervisor
 
 
 def print_command(supervisor, prediction, now):
@@ -35,7 +35,7 @@ def main():
                 timestamp += .1
             supervisor.reset()
         return
-    from .gesture_preview.vision import Webcam
+    from gesture_preview.vision import Webcam
     worker = Webcam(args.camera)
     worker.start()
     try:

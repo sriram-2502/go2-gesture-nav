@@ -36,11 +36,6 @@ venv/
 /docs/assets/*-original.jpg
 *.log
 
-# ROS build output
-build/
-install/
-log/
-
 # Editor and OS files
 .vscode/
 .idea/
@@ -49,6 +44,9 @@ Thumbs.db
 
 # Downloaded runtime, pinned upstream checkout, generated Clemson checkout
 /.tools/
+/upstream/unitree_ui/
+/dashboard/unitree_ui/
+# Ignore generated checkouts left by pre-refactor installations.
 /webrtc/upstream/unitree_ui/
 /webrtc/clemson/unitree_ui/
 node_modules/

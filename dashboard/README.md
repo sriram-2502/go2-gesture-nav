@@ -1,18 +1,18 @@
 # Clemson Go2 UI
 
-New to the hardware session? Start with the [student visual orientation](../STUDENT_ORIENTATION.md)
+New to the hardware session? Start with the [student visual orientation](../docs/STUDENT_ORIENTATION.md)
 for the camera/voxel reference, default hand poses, expected velocities, and common messages.
 
 This is the lab extension path for Creative Inquiry and undergraduate projects.
-Use the [Basic edition first](../UI_SETUP.md), then launch the Clemson edition:
+Use the [root quick start](../README.md#1-install-once), then launch the dashboard:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\webrtc\start-ui.ps1 -Edition clemson
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\start-ui.ps1
 ```
 
 Open <http://127.0.0.1:5174/>. Run the command from the repository root, after
 `setup-ui.ps1 -Edition clemson` (or `-Edition all`) completes. Run the Python
-gesture service in a separate terminal as shown in the [root quick start](../../README.md#quick-start-on-windows-11).
+gesture service in a separate terminal as shown in the [root quick start](../README.md#1-install-once).
 Only one dashboard or Python robot client should
 connect to the robot at a time.
 
@@ -56,7 +56,7 @@ for resizing or printing. To regenerate both images after changing a gesture:
 
 ```bat
 conda activate go2wifi
-python -m webrtc.clemson.assets.generate_gesture_guide
+python -m dashboard.assets.generate_gesture_guide
 ```
 
 ## If FORWARD shows UNKNOWN
@@ -84,7 +84,7 @@ If tracking stops after a service idle timeout, the panel automatically starts i
 again. Failed starts display the actual error and retry after five seconds rather
 than leaving “Webcam off” indefinitely. Close other webcam applications if the
 device is busy. A different webcam can be selected when launching the service:
-`python -m webrtc.gesture_preview.server --camera 1`.
+`python -m gesture_preview.server --camera 1`.
 
 ## Available now
 
@@ -106,7 +106,7 @@ device is busy. A different webcam can be selected when launching the service:
   startup pose. Fresh perception and robot/video feedback are still required;
   a preheld gesture cannot move the robot until new post-enable frames arrive.
 - Stationary look-around is **deferred and removed from the student UI**. The
-  production adapter rejects stationary entry. See the [TODO in the roadmap](../../docs/ROADMAP.md#optional-application-improvements).
+  production adapter rejects stationary entry. See the [TODO in the roadmap](../docs/ROADMAP.md#optional-application-improvements).
 - A small **Navigation | UI build ID** below the camera-view title confirms
   which UI code is loaded. Startup prints the same build ID; if it differs, close
   the old tab and reopen the displayed local URL after restarting the UI server.
@@ -130,7 +130,7 @@ device is busy. A different webcam can be selected when launching the service:
   and guarded stopping. Starts disabled; the existing Go2 setup has been hardware-validated, as confirmed by the maintainer.
 - An **Obstacle avoidance** ON/OFF switch with robot state readback.
 - One overall **Recording ON/OFF** switch, dashboard and available Go2 video, structured logs,
-  and a separate offline replay page. See [recording and replay](../RECORDING.md).
+  and a separate offline replay page. See [recording and replay](../docs/RECORDING.md).
 
 ### Record and replay
 
@@ -142,7 +142,7 @@ without connecting to the robot. Try the synthetic demo at
 
 Replay supports video, seeking, playback speed, extracted hands, telemetry, and
 interactive recorded voxels when available. MP4 is preferred; WebM fallback and
-local MP4 conversion are supported. See the [guide](../RECORDING.md) for limits,
+local MP4 conversion are supported. See the [guide](../docs/RECORDING.md) for limits,
 timestamp alignment, and the short manual Chrome check still required.
 
 ### Obstacle avoidance switch
@@ -163,7 +163,7 @@ Rejected requests and mismatched readback are shown instead of claiming success.
 Confirm the state reported by the assigned robot; ON is not a guarantee that
 every obstacle will be detected or avoided.
 
-Follow [dependencies and startup](../DEPENDENCIES.md) to run the service and UI.
+Follow [dependencies and startup](../docs/DEPENDENCIES.md) to run the service and UI.
 Hand tracking starts automatically when the panel opens. Hiding the panel stops
 tracking and releases the webcam. Test the panel without a robot first.
 Only normalized landmark coordinates and gesture metadata leave the Python worker;
@@ -243,12 +243,12 @@ can interfere. Do not disable security controls to work around connection issues
 Full run ZIPs, telemetry, and videos belong in local experiment storage with a
 backup. Export only selected small, sanitized evidence into student submissions.
 
-For a fresh checkout, follow the [quick start](../../README.md#quick-start-on-windows-11).
-For an existing checkout, use [update and restart](../../README.md#update-and-restart).
+For a fresh checkout, follow the [quick start](../README.md#1-install-once).
+For an existing checkout, use [update and restart](../README.md#update-and-restart).
 
 ## Bring your course classifier
 
 You can reuse your recognition functions from earlier weeks. See the
-[student integration guide](../STUDENT_INTEGRATION.md) for the actual Python
+[student integration guide](../docs/STUDENT_INTEGRATION.md) for the actual Python
 integration point, explicit label mapping, and preview-first checkout. Keep the
 instructor supervision and robot connection components.

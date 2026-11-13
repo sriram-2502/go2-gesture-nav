@@ -1,8 +1,8 @@
 # Contributing
 
 Keep each setup guide usable by a student starting from a fresh terminal.
-Label commands by where they run: Windows PowerShell, Anaconda Prompt, or Jetson
-SSH. Keep file paths consistent with this repository layout.
+Label commands by where they run: Windows PowerShell or Anaconda Prompt.
+Keep file paths consistent with this repository layout.
 
 For documentation changes, check relative links and command paths. For Python
 changes, check syntax and argument handling without connecting to the robot first.
@@ -12,24 +12,24 @@ distinguish simulated checks from robot tests.
 
 ## Source layout and offline checks
 
-The [repository map](README.md#repository-layout) identifies tracked source.
-Edit `webrtc/clemson/overlay/` for Clemson UI changes, not the ignored generated
-`webrtc/clemson/unitree_ui/` checkout. Apply/rebuild only after disconnecting the
+The [repository map](README.md#project-layout) identifies tracked source.
+Edit `dashboard/overlay/` for Clemson UI changes, not the ignored generated
+`dashboard/unitree_ui/` checkout. Apply/rebuild only after disconnecting the
 robot and stopping the UI server. Keep the pinned upstream Basic source separate.
 
 From the repository root in **Anaconda Prompt**, with `go2wifi` active:
 
 ```bat
-python -m unittest webrtc.gesture_preview.test_navigation webrtc.gesture_preview.test_preview -v
+python -m unittest gesture_preview.test_navigation gesture_preview.test_preview -v
 ```
 
 For UI changes, in **PowerShell**, after first-time setup:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\webrtc\apply-clemson-overlay.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\apply-clemson-overlay.ps1
 $env:PATH = (Join-Path (Get-Location) '.tools/node-v22.23.4-win-x64') + ';' + $env:PATH
-node --test webrtc/clemson/tests/test-gesture-robot.cjs webrtc/clemson/tests/test-camera-start.cjs webrtc/clemson/tests/test-recording.cjs
-npm.cmd run build --prefix webrtc/clemson/unitree_ui
+node --test dashboard/tests/test-gesture-robot.cjs dashboard/tests/test-camera-start.cjs dashboard/tests/test-recording.cjs
+npm.cmd run build --prefix dashboard/unitree_ui
 ```
 
 These checks do not connect to the robot. Stationary control is disabled in

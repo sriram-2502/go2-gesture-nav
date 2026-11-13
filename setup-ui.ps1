@@ -1,11 +1,12 @@
-param([ValidateSet('basic', 'clemson', 'all')][string]$Edition = 'all')
+param([ValidateSet('basic', 'clemson', 'all')][string]$Edition = 'clemson')
 $ErrorActionPreference = 'Stop'
-$repoRoot = Split-Path -Parent $PSScriptRoot
+$ProgressPreference = 'SilentlyContinue'
+$repoRoot = $PSScriptRoot
 $source = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'ui-source.json') -Raw | ConvertFrom-Json
 $toolsPath = Join-Path $repoRoot '.tools'
 $nodeFolder = Join-Path $toolsPath "node-v$($source.nodeVersion)-win-x64"
 $basicPath = Join-Path $PSScriptRoot 'upstream/unitree_ui'
-$clemsonPath = Join-Path $PSScriptRoot 'clemson/unitree_ui'
+$clemsonPath = Join-Path $PSScriptRoot 'dashboard/unitree_ui'
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 
 # npm ci replaces dependencies; Windows locks esbuild while a server is running.
@@ -71,10 +72,10 @@ if ($Edition -in @('clemson', 'all')) {
         [IO.File]::WriteAllText($appPath, $app.Replace($needle, "title.textContent = 'Clemson Go2 Lab';"), $utf8)
         $htmlPath = Join-Path $clemsonPath 'index.html'
         [IO.File]::WriteAllText($htmlPath, ([IO.File]::ReadAllText($htmlPath)).Replace('<title>Unitree UI</title>', '<title>Clemson Go2 Lab</title>'), $utf8)
-        Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'clemson/overlay/clemson.css') -Destination (Join-Path $clemsonPath 'src/ui/clemson.css')
+        Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'dashboard/overlay/clemson.css') -Destination (Join-Path $clemsonPath 'src/ui/clemson.css')
         $mainPath = Join-Path $clemsonPath 'src/main.ts'
         [IO.File]::WriteAllText($mainPath, ([IO.File]::ReadAllText($mainPath)) + "`nimport './ui/clemson.css';`n", $utf8)
-        Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'clemson/overlay/lab-guide.html') -Destination (Join-Path $clemsonPath 'public/lab-guide.html')
+        Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'dashboard/overlay/lab-guide.html') -Destination (Join-Path $clemsonPath 'public/lab-guide.html')
         # Add the lab guide to the landing page; the robot-control code stays upstream.
         $app = [IO.File]::ReadAllText($appPath)
         $guide = @"
@@ -102,5 +103,5 @@ foreach ($target in $targets) {
     & $npm ci --prefix $target --cache (Join-Path $toolsPath 'npm-cache') --no-audit --no-fund
     if ($LASTEXITCODE -ne 0) { throw "Dependency installation failed: $target" }
 }
-Write-Host "Setup complete. Start with: .\webrtc\start-ui.ps1 -Edition basic"
-Write-Host "Clemson starter: .\webrtc\start-ui.ps1 -Edition clemson"
+Write-Host "Setup complete. Start the gesture service: python -m gesture_preview.server"
+Write-Host "In a second terminal, run: .\start-ui.ps1"

@@ -1,6 +1,6 @@
 """Draw the documented poses with the same 21-node skeleton as the UI.
 
-Run from repo root: python -m webrtc.clemson.assets.generate_gesture_guide
+Run from repo root: python -m dashboard.assets.generate_gesture_guide
 These are illustrative poses, not captured operator recognition results.
 """
 from math import cos, sin, pi
@@ -8,8 +8,8 @@ from pathlib import Path
 from xml.sax.saxutils import escape
 
 from PIL import Image, ImageDraw, ImageFont
-from webrtc.gesture_preview.gestures import classify
-from webrtc.gesture_preview.velocity import gesture_to_velocity
+from gesture_preview.gestures import classify
+from gesture_preview.velocity import gesture_to_velocity
 
 FOLDER = Path(__file__).parent
 EDGES = [(0,1),(1,2),(2,3),(3,4),(0,5),(5,6),(6,7),(7,8),

@@ -1,17 +1,17 @@
-param([ValidateSet('basic', 'clemson')][string]$Edition = 'basic')
+param([ValidateSet('basic', 'clemson')][string]$Edition = 'clemson')
 $ErrorActionPreference = 'Stop'
-$repoRoot = Split-Path -Parent $PSScriptRoot
+$repoRoot = $PSScriptRoot
 $source = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'ui-source.json') -Raw | ConvertFrom-Json
 $nodeFolder = Join-Path $repoRoot ".tools/node-v$($source.nodeVersion)-win-x64"
 if ($Edition -eq 'basic') {
     $appPath = Join-Path $PSScriptRoot 'upstream/unitree_ui'
     $port = $source.basicPort
 } else {
-    $appPath = Join-Path $PSScriptRoot 'clemson/unitree_ui'
+    $appPath = Join-Path $PSScriptRoot 'dashboard/unitree_ui'
     $port = $source.clemsonPort
 }
 if (-not (Test-Path -LiteralPath (Join-Path $nodeFolder 'npm.cmd')) -or -not (Test-Path -LiteralPath (Join-Path $appPath 'node_modules/vite'))) {
-    throw "Run .\webrtc\setup-ui.ps1 -Edition $Edition with internet access first."
+    throw "Run .\setup-ui.ps1 -Edition $Edition with internet access first."
 }
 $env:PATH = "$nodeFolder;$env:PATH"
 if ($Edition -eq 'clemson') {

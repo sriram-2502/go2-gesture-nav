@@ -1,8 +1,8 @@
 """First student example: no webcam, dashboard, AES key, or robot required.
 
-Run: python -m webrtc.examples.gesture_mapping
+Run: python -m examples.gesture_mapping
 """
-from webrtc.gesture_preview.velocity import Speeds, gesture_to_velocity
+from gesture_preview.velocity import Speeds, gesture_to_velocity
 
 
 speeds = Speeds(forward=0.5, turn=0.8)

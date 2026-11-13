@@ -55,7 +55,7 @@ These are proposed projects, not delivered features. Start with modeling and
 measured data coverage, then choose a planning or perception project. RL
 training is a separate advanced branch, not a dependency for undergraduate
 motion-planning research. Retain the existing high-level walking interface
-while studying the upper layers of the [control stack](../README.md#system-design).
+while studying the upper layers of the [control stack](../README.md#what-you-will-build).
 
 ### 1. Robot kinematics and dynamics
 
@@ -69,9 +69,9 @@ kinematic checks, and clearly stated dynamic-model limits.
 
 ### 2. State logging and sensor qualification
 
-The current [recorder](../webrtc/clemson/overlay/session-recorder.ts) retains
+The current [recorder](../dashboard/overlay/session-recorder.ts) retains
 received sport state, low state, robot pose, and compressed voxel messages in
-JSONL. The [CSV exporter](../webrtc/clemson/overlay/session-format.ts) flattens a
+JSONL. The [CSV exporter](../dashboard/overlay/session-format.ts) flattens a
 smaller selection. An allowlisted message type is not proof of subscription,
 arrival, complete hardware state, or measurement accuracy.
 
@@ -115,11 +115,11 @@ or suitability for estimation.
 - [ ] Evaluate ROS bag recording for sensor-processing experiments while retaining CSV for selected analysis signals.
 
 First result: a documented data inventory and a repeatable dataset sufficient
-for the chosen estimator or mapping package. See [recording limits](../webrtc/RECORDING.md#timing-coverage-and-limits).
+for the chosen estimator or mapping package. See [recording limits](RECORDING.md#timing-coverage-and-limits).
 
 ### 3. ROS integration with the Windows dashboard
 
-- [ ] Inventory the actual Go2 variant/firmware, Jetson OS/ROS environment, network interfaces, and candidate package requirements. The existing [ROS guide](../ros/README.md) documents Foxy; new packages may require another supported environment.
+- [ ] Inventory the actual Go2 variant/firmware, companion-computer environment, network interfaces, and candidate package requirements. Any future ROS extension belongs to a separately qualified workflow such as [DyCo-AI/go2-ros](https://github.com/DyCo-AI/go2-ros); this gesture project does not install or contain ROS packages.
 - [ ] Compare onboard DDS/ROS sensor access with a WebRTC-to-ROS adapter such as [go2_ros2_sdk](https://github.com/abizovnuralem/go2_ros2_sdk). Its supported features do not verify coexistence with this dashboard.
 - [ ] Choose a single owner for each robot WebRTC session; qualify whether concurrent clients are supported before adding another one.
 - [ ] Publish suitable camera/image, point-cloud, IMU, pose, and transform topics on a compatible Linux host. Confirm whether point data is raw, downsampled, or occupancy-derived.

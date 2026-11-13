@@ -2,7 +2,7 @@
 param([string]$TargetPath = '')
 $ErrorActionPreference = 'Stop'
 $basic = Join-Path $PSScriptRoot 'upstream/unitree_ui'
-$clemson = if ($TargetPath) { [IO.Path]::GetFullPath($TargetPath) } else { Join-Path $PSScriptRoot 'clemson/unitree_ui' }
+$clemson = if ($TargetPath) { [IO.Path]::GetFullPath($TargetPath) } else { Join-Path $PSScriptRoot 'dashboard/unitree_ui' }
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 $map = [IO.File]::ReadAllText((Join-Path $basic 'src/ui/scene/voxel-map.ts'))
 $map = $map.Replace('  private pendingData: unknown = null;', "  private pendingData: unknown = null;`n  private workerReady = false;`n  private replayRevision = 0;")

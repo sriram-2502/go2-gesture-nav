@@ -1,9 +1,9 @@
 # Apply tracked UI extensions without reinstalling dependencies or changing Basic.
 param([string]$TargetPath = '')
 $ErrorActionPreference = 'Stop'
-$appPath = if ($TargetPath) { [IO.Path]::GetFullPath($TargetPath) } else { Join-Path $PSScriptRoot 'clemson/unitree_ui' }
+$appPath = if ($TargetPath) { [IO.Path]::GetFullPath($TargetPath) } else { Join-Path $PSScriptRoot 'dashboard/unitree_ui' }
 $utf8 = New-Object System.Text.UTF8Encoding($false)
-$overlayFiles = Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'clemson/overlay') -File | Sort-Object Name
+$overlayFiles = Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'dashboard/overlay') -File | Sort-Object Name
 $buildMaterial = ($overlayFiles | ForEach-Object { $_.Name + ':' + (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash }) -join "`n"
 $buildMaterial += "`napply-overlay:" + (Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash
 $buildHasher = [Security.Cryptography.SHA256]::Create()
@@ -13,11 +13,12 @@ if (-not (Test-Path -LiteralPath (Join-Path $appPath '.clemson-base-revision')))
     throw 'Create the Clemson starter with setup-ui.ps1 first.'
 }
 foreach ($name in @('clemson.css', 'clemson-preview.ts', 'camera-start.ts', 'gesture-robot.ts', 'scene-controls.ts', 'session-format.ts', 'session-recorder.ts', 'recording-ui.ts', 'replay.ts', 'replay.css')) {
-    Copy-Item -LiteralPath (Join-Path $PSScriptRoot "clemson/overlay/$name") -Destination (Join-Path $appPath "src/ui/$name") -Force
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot "dashboard/overlay/$name") -Destination (Join-Path $appPath "src/ui/$name") -Force
 }
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'clemson/overlay/replay.html') -Destination (Join-Path $appPath 'replay.html') -Force
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'clemson/overlay/connection-panel.ts') -Destination (Join-Path $appPath 'src/ui/connection-panel.ts') -Force
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'clemson/overlay/bt-backend.ts') -Destination (Join-Path $appPath 'src/api/bt-backend.ts') -Force
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'dashboard/overlay/replay.html') -Destination (Join-Path $appPath 'replay.html') -Force
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'dashboard/overlay/lab-guide.html') -Destination (Join-Path $appPath 'public/lab-guide.html') -Force
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'dashboard/overlay/connection-panel.ts') -Destination (Join-Path $appPath 'src/ui/connection-panel.ts') -Force
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'dashboard/overlay/bt-backend.ts') -Destination (Join-Path $appPath 'src/api/bt-backend.ts') -Force
 
 # Restrict Clemson navigation at the rendering layer, rather than merely hiding menus.
 $appFile = Join-Path $appPath 'src/ui/app.ts'
@@ -127,7 +128,7 @@ $connectorFile = Join-Path $appPath 'src/connection/local-connector.ts'
 $connectorText = [IO.File]::ReadAllText($connectorFile)
 $connectorText = $connectorText.Replace(', key=${aesHex}', '').Replace('cached for next time', 'session only').Replace('cached for SN', 'session key for SN')
 [IO.File]::WriteAllText($connectorFile, $connectorText, $utf8)
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'clemson/overlay/lab-guide.html') -Destination (Join-Path $appPath 'public/lab-guide.html') -Force
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'dashboard/overlay/lab-guide.html') -Destination (Join-Path $appPath 'public/lab-guide.html') -Force
 $main = Join-Path $appPath 'src/main.ts'
 $text = [IO.File]::ReadAllText($main)
 if (-not $text.Contains("import './ui/clemson-preview';")) {

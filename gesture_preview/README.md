@@ -4,14 +4,14 @@ This example turns hand landmarks into velocity commands for the Clemson Go2 UI.
 Start with the Python examples without a robot, then test the extracted hand view.
 Robot movement is enabled separately in the dashboard.
 
-For a visual reference, see the [illustrated gesture guide](../clemson/README.md#gesture-guide-what-your-hand-commands).
+For a visual reference, see the [illustrated gesture guide](../dashboard/README.md#gesture-guide-what-your-hand-commands).
 
 ## 1. Read the velocity table first
 
 Open [velocity.py](velocity.py). Its main function is just a dictionary:
 
 ```python
-from webrtc.gesture_preview.velocity import Speeds, gesture_to_velocity
+from gesture_preview.velocity import Speeds, gesture_to_velocity
 
 speeds = Speeds(forward=0.5, turn=0.8)
 vx, vy, wz = gesture_to_velocity('STRAFE_LEFT', speeds)
@@ -44,8 +44,8 @@ In **Anaconda Prompt**, from this repository's root folder:
 
 ```bat
 conda activate go2wifi
-python -m webrtc.examples.gesture_mapping
-python -m webrtc.gesture_navigation --demo
+python -m examples.gesture_mapping
+python -m gesture_navigation --demo
 ```
 
 The first command prints the mapping table. The second simulates fresh observations
@@ -55,7 +55,7 @@ the gesture, and status. Neither opens a webcam nor connects to a robot.
 ## 3. Try your own hand, without robot movement
 
 ```bat
-python -m webrtc.gesture_navigation --forward-speed 0.5 --turn-speed 0.8
+python -m gesture_navigation --forward-speed 0.5 --turn-speed 0.8
 ```
 
 This standalone program owns the webcam and prints supervised velocities. Ctrl+C
@@ -81,12 +81,12 @@ synthetic geometry tests does not establish recognition reliability.
 | [server.py](server.py) | Share extracted hands and supervised velocity with the browser | Inspect `/gesture-api/snapshot` with motion disabled |
 
 Robot-specific WebRTC code lives separately in
-[gesture-robot.ts](../clemson/overlay/gesture-robot.ts). Students can work through
+[gesture-robot.ts](../dashboard/overlay/gesture-robot.ts). Students can work through
 the Python modules without changing the network adapter.
 
 ## 5. Use it in the Clemson dashboard
 
-Follow [DEPENDENCIES.md](../DEPENDENCIES.md) for installation and the two terminals.
+Follow [DEPENDENCIES.md](../docs/DEPENDENCIES.md) for installation and the two terminals.
 Open <http://127.0.0.1:5174/>; tracking starts when the hand panel opens. You can test it
 before connecting a robot; it shows only extracted skeletons, never webcam video.
 
@@ -110,7 +110,7 @@ separate steps; the paired remote and a supervising operator remain required.
 
 Only `normal` and `mcf` motion services are accepted. The adapter does not stand
 the robot up. The separate scene controls provide Jump once and Bound gait;
-see the [camera-view controls](../clemson/CONTROL_EXTENSIONS.md). MCF Move is sent without acknowledgement, while
+see the [camera-view controls](../dashboard/CONTROL_EXTENSIONS.md). MCF Move is sent without acknowledgement, while
 normal-mode Move requires an API success reply. A sent command is never labelled
 executed. The camera/state/gesture watchdogs run in the browser and cannot guarantee
 a stop if the browser freezes, the computer loses power, or communication fails.
@@ -126,7 +126,7 @@ No damping command is issued by the gesture navigation Stop button.
 ## 6. Run the offline checks
 
 ```bat
-python -m unittest webrtc.gesture_preview.test_navigation webrtc.gesture_preview.test_preview -v
+python -m unittest gesture_preview.test_navigation gesture_preview.test_preview -v
 ```
 
 The test hands are artificial coordinates. They verify rules and command
@@ -134,15 +134,15 @@ supervision, not operator accuracy or physical robot stopping. Adapter tests use
 an in-memory fake transport and never connect to a Go2:
 
 ```powershell
-.\.tools\node-v22.23.4-win-x64\node.exe --test .\webrtc\clemson\tests\test-gesture-robot.cjs
+.\.tools\node-v22.23.4-win-x64\node.exe --test .\dashboard\tests\test-gesture-robot.cjs
 ```
 
 Integrated CSV/video recording and offline replay are available in the UI:
-see [recording and replay](../RECORDING.md). Maze scoring remains future work.
+see [recording and replay](../docs/RECORDING.md). Maze scoring remains future work.
 
 ## Bring your course classifier
 
 You can reuse your recognition functions from earlier weeks. See the
-[student integration guide](../STUDENT_INTEGRATION.md) for the actual Python
+[student integration guide](../docs/STUDENT_INTEGRATION.md) for the actual Python
 integration point, explicit label mapping, and preview-first checkout. Keep the
 instructor supervision and robot connection components.

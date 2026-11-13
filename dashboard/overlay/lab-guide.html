@@ -25,7 +25,8 @@ Keep the paired remote ready before any supervised motion test.</li>
 <p>Run the local Python preview service in the go2wifi environment, then open
 the dashboard side panel. Tracking starts automatically. It shows extracted hand skeletons,
 gesture label, and velocity intent, without webcam video. Robot control starts disabled.
-After a supervised setup check, show a stop gesture and explicitly enable gesture control.</p>
+After a supervised setup check, click Enable gesture control directly. No startup
+pose is required; fresh frames and the consistency hold still gate movement.</p>
 <h2>Creative Inquiry: next milestones</h2>
 <p>The gesture command interface is implemented with offline tests. Recognition
 with the operator and physical motion/stop behavior still need verification.
@@ -34,11 +35,10 @@ Try the synthetic demo on the replay page. Maze scoring remains future work.</p>
 <p><a href="/replay.html">Open offline replay</a></p>
 <p>Students will gesture toward the Windows webcam and navigate using the robot's
 camera view. All processing is planned locally on Windows, without ROS.</p>
-<p>The Basic and Clemson editions use different ports and separate browser storage.
-Connect only one edition to the robot at a time. Clemson keeps new AES entries in
-page memory; Basic retains upstream browser caching behavior.</p>
+<p>Use this dashboard on port 5174 with the Python gesture service on 8766.
+Connect only one robot client at a time. New AES entries are held in page memory.</p>
 <p><a href="/">Open Clemson dashboard</a> ·
-<a href="http://127.0.0.1:5173/">Open Basic dashboard (if running)</a> ·
+<a href="https://github.com/sriram-2502/go2-gesture-nav">Project setup and gestures</a> ·
 <a href="https://github.com/legion1581/unitree_ui">Upstream project / MIT license</a></p>
 </main>
 </html>

@@ -2,7 +2,7 @@
 
 For the gesture-navigation application, start with
 [Windows dependencies and launch instructions](DEPENDENCIES.md) and the
-[dashboard guide](clemson/README.md). This page documents the underlying Go2
+[dashboard guide](../dashboard/README.md). This page documents the underlying Go2
 WebRTC connection and velocity utilities included in this project.
 
 ## Choose your interface
@@ -10,21 +10,22 @@ WebRTC connection and velocity utilities included in this project.
 | Option | Start here | Status |
 | --- | --- | --- |
 | Basic `unitree_ui` | [Windows dashboard setup](UI_SETUP.md) | Pinned upstream UI: camera, controls, voxels, onboard SLAM interface |
-| Clemson UI | [Clemson edition](clemson/README.md) | Current gesture dashboard: camera/voxels, battery, supervised navigation, Jump/Bound buttons, recording/replay; stationary control deferred |
+| Clemson UI | [Clemson edition](../dashboard/README.md) | Current gesture dashboard: camera/voxels, battery, supervised navigation, Jump/Bound buttons, recording/replay; stationary control deferred |
 | Standalone Python scripts | Continue below | Connection and bounded velocity diagnostics |
 
-Use the **Basic dashboard first**. All three options run on Windows 11 without
-ROS. Connect only one robot client at a time; close or disconnect another edition
-or standalone script before connecting.
+Use the **default gesture dashboard** in the root quick start. The Basic edition
+is only an optional upstream diagnostic. Connect only one robot client at a time;
+disconnect the dashboard before a standalone Python connection/motion test.
 
 See [DEPENDENCIES.md](DEPENDENCIES.md) for all Windows, Node, Python, and model
 dependencies, including installation into `go2wifi` and webcam-panel startup.
-For beginner-friendly Python examples, see the [gesture navigation walkthrough](gesture_preview/README.md).
+For beginner-friendly Python examples, see the [gesture navigation walkthrough](../gesture_preview/README.md).
 For dashboard video, CSV/data logs, and offline playback, see [recording and replay](RECORDING.md).
 
 For Creative Inquiry and undergraduate projects: connect a Windows laptop to the
 Go2 Wi-Fi hotspot and run the Python client on the laptop. ROS and Jetson SSH are
-not required for this path. For research recordings, use the [ROS path](../ros/README.md).
+not required for this project. Separate ROS research workflows live in
+[DyCo-AI/go2-ros](https://github.com/DyCo-AI/go2-ros).
 
 The original lab notes record successful key retrieval on **2026-10-28**, using
 Windows 11, Python 3.11 in Conda, Go2 EDU software v1.1.15, and a North America
@@ -41,7 +42,7 @@ Open **Anaconda Prompt** or **Miniconda Prompt** on Windows:
 conda create -n go2wifi python=3.11 pip -y
 conda activate go2wifi
 python -m pip install --upgrade pip
-python -m pip install -r webrtc\requirements.txt
+python -m pip install -r requirements.txt
 python -c "from unitree_webrtc_connect import UnitreeWebRTCConnection, WebRTCConnectionMethod; print('Go2 WebRTC import OK')"
 ```
 
@@ -54,7 +55,7 @@ key-retrieval notes; transitive dependencies are not locked.
 ## 2. Obtain the private robot key
 
 Ask the lab maintainer for access through the lab's approved private resource.
-See [the key access plan](../docs/KEY_ACCESS.md). Students do not need the lab's
+See [the key access plan](KEY_ACCESS.md). Students do not need the lab's
 Unitree account password to use an already supplied robot AES key.
 
 Both scripts read `UNITREE_AES_128_KEY` if set, otherwise they prompt for the key
@@ -85,7 +86,7 @@ In **Anaconda Prompt**, from the repository root:
 
 ```bat
 conda activate go2wifi
-python webrtc\go2_wifi_connect_test.py
+python go2_wifi_connect_test.py
 ```
 
 Enter the private key when prompted. The script attempts a connection, holds it
@@ -99,14 +100,14 @@ remote ready. The script does not stand the robot up. Run one controller at a ti
 Review supported arguments without connecting:
 
 ```bat
-python webrtc\go2_wifi_velocity_test.py --help
+python go2_wifi_velocity_test.py --help
 ```
 
 After the connection-only test succeeds and the lab supervisor approves the
 physical setup, a short test is:
 
 ```bat
-python webrtc\go2_wifi_velocity_test.py --vel 0.5 --time 1
+python go2_wifi_velocity_test.py --vel 0.5 --time 1
 ```
 
 The script checks fresh state and upright height, counts down three seconds, and
@@ -118,7 +119,7 @@ Visually confirm stopping and all four feet on the floor.
 Ctrl+C requests cleanup. A separate stop-only invocation is:
 
 ```bat
-python webrtc\go2_wifi_velocity_test.py --stop
+python go2_wifi_velocity_test.py --stop
 ```
 
 This needs its own working connection and key; keep the remote available for
@@ -136,7 +137,7 @@ MCF Move commands have no acknowledgement; fresh state is still required.
 
 These are script limits, not recommended classroom operating speeds. This path
 does not record ROS bags. The current camera dashboard and recording/replay
-workflow are documented in the [Clemson guide](clemson/README.md).
+workflow are documented in the [Clemson guide](../dashboard/README.md).
 
 ## Maintainer: retrieve a key if needed
 

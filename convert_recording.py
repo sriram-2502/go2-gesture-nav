@@ -1,6 +1,6 @@
 """Extract dashboard/camera video from a run ZIP, converting WebM to MP4 locally.
 
-Example: python -m webrtc.convert_recording run.zip --output dashboard.mp4
+Example: python -m convert_recording run.zip --output dashboard.mp4
 PyAV is already installed with the standalone Go2 WebRTC driver. No robot I/O.
 """
 import argparse

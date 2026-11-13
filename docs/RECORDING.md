@@ -78,7 +78,7 @@ replay page. To get MP4 from a saved ZIP, run in Anaconda Prompt from the repo r
 
 ```bat
 conda activate go2wifi
-python -m webrtc.convert_recording "PATH_TO_RUN.zip" --output "dashboard.mp4"
+python -m convert_recording "PATH_TO_RUN.zip" --output "dashboard.mp4"
 ```
 
 For the separate robot-camera clip, add `--stream robot_camera`. Existing output

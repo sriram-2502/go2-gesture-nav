@@ -6,7 +6,7 @@ from pathlib import Path
 
 from . import gestures, safety
 
-MODEL_PATH = Path(__file__).resolve().parents[2] / ".tools/models/hand_landmarker.task"
+MODEL_PATH = Path(__file__).resolve().parents[1] / ".tools/models/hand_landmarker.task"
 CONNECTIONS = (
     (0, 1), (1, 2), (2, 3), (3, 4), (0, 5), (5, 6), (6, 7), (7, 8),
     (5, 9), (9, 10), (10, 11), (11, 12), (9, 13), (13, 14), (14, 15),
@@ -47,7 +47,7 @@ class Webcam(threading.Thread):
       import mediapipe as mp
 
       if not MODEL_PATH.exists():
-        raise FileNotFoundError("Run python -m webrtc.gesture_preview.download_model first")
+        raise FileNotFoundError("Run python -m gesture_preview.download_model first")
       options = mp.tasks.vision.HandLandmarkerOptions(
           base_options=mp.tasks.BaseOptions(model_asset_path=str(MODEL_PATH)),
           running_mode=mp.tasks.vision.RunningMode.VIDEO,

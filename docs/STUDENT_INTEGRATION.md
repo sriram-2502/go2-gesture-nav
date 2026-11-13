@@ -17,7 +17,7 @@ your gesture experiment local under the existing README-only submission policy.
 
 | Earlier work | How it fits here |
 | --- | --- |
-| Hand landmark geometry or classifier | Copy only the pure recognition function and its helpers into `webrtc/gesture_preview/student_gestures.py` in your local checkout |
+| Hand landmark geometry or classifier | Copy only the pure recognition function and its helpers into `gesture_preview/student_gestures.py` in your local checkout |
 | Recognition experiments and tuning | Reuse your test cases and compare performance across operators/lighting |
 | Webcam/MediaPipe pipeline | Start with the provided worker; adapt extraction only if needed, preserving its timestamps and snapshot contract |
 | Simulation runtime, MuJoCo policy, Qt UI | Keep these in the simulation repo; do not import them into the Go2 application |
@@ -31,8 +31,8 @@ the robot connection.
 ## Connect your recognition function
 
 The current integration point is
-[`gestures.diagnose(landmarks, handedness)`](gesture_preview/gestures.py).
-[`vision.Webcam`](gesture_preview/vision.py) calls it for exactly one tracked hand,
+[`gestures.diagnose(landmarks, handedness)`](../gesture_preview/gestures.py).
+[`vision.Webcam`](../gesture_preview/vision.py) calls it for exactly one tracked hand,
 then creates a timestamped prediction. **Changing only `classify()` elsewhere
 does not automatically load a student classifier.** There is no plugin selector
 or automatic import of the playground in this version.
@@ -84,8 +84,8 @@ and turn magnitude 0.5–1.0 rad/s (default 0.8), rather than simulation limits.
 ## Check it before robot motion
 
 1. Run your classifier tests on saved/synthetic landmarks and compare the label table. Keep the instructor baseline tests available as a reference; custom poses may need different recognition assertions.
-2. Run `python -m webrtc.gesture_navigation` from the repository root to inspect supervised JSON velocities. This uses the webcam but never connects to the robot.
-3. Close that program, then run `python -m webrtc.gesture_preview.server` and open the Clemson UI. Leave robot control disabled while checking skeletons, labels, requested velocities, and supervised velocities.
+2. Run `python -m gesture_navigation` from the repository root to inspect supervised JSON velocities. This uses the webcam but never connects to the robot.
+3. Close that program, then run `python -m gesture_preview.server` and open the Clemson UI. Leave robot control disabled while checking skeletons, labels, requested velocities, and supervised velocities.
 4. Check stop, ambiguous input, two hands, hand loss, stale input, and transitions between gestures. Record incorrect recognitions as well as successful ones.
 5. Ask the instructor to review the mapping and approve brief supervised hardware checks before maze trials. Retain the paired remote and normal intervention procedure.
 

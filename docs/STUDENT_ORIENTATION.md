@@ -10,12 +10,12 @@ This page shows what to recognize on screen; the hardware guide has the terminal
 - **Windows webcam:** observes your hand. The Clemson panel displays extracted skeletons and labels, not the full webcam image.
 - **Go2 camera:** observes the maze. Navigate from this robot view; the instructor retains direct sight and the paired remote.
 
-![Recorded project dashboard with Go2 camera and voxels, extracted hand landmarks, gesture label, recording control, and velocity overlay.](../docs/assets/go2-gesture-dashboard.png)
+![Recorded project dashboard with Go2 camera and voxels, extracted hand landmarks, gesture label, recording control, and velocity overlay.](assets/go2-gesture-dashboard.png)
 
 *Project dashboard capture from the October 30, 2026 recording. The main view
 builds on [Unitree UI](https://github.com/legion1581/unitree_ui), with its
-[MIT notice](clemson/UPSTREAM_LICENSE) retained. See the
-[eight-second demo and export details](../docs/DEMO.md).*
+[MIT notice](../dashboard/UPSTREAM_LICENSE) retained. See the
+[eight-second demo and export details](DEMO.md).*
 
 This capture predates the battery and behavior-button additions; use the table
 below for the current layout.
@@ -37,13 +37,13 @@ below for the current layout.
 
 You can preview hand recognition before connecting the robot. Motion requires
 the instructor-approved connection and checkout, followed by explicit enabling.
-Stationary Look Around is removed and tracked as a [TODO](../docs/ROADMAP.md#optional-application-improvements).
+Stationary Look Around is removed and tracked as a [TODO](ROADMAP.md#optional-application-improvements).
 
 ## Default instructor gestures
 
 Match the **mirrored hand panel**, not another person's view of your hand.
 
-![MediaPipe-style diagrams of the programmed forward, sideways, turning, and stop poses.](clemson/assets/gesture-guide.png)
+![MediaPipe-style diagrams of the programmed forward, sideways, turning, and stop poses.](../dashboard/assets/gesture-guide.png)
 
 | Hand pose | Label | Default `(vx, vy, wz)` |
 | --- | --- | --- |

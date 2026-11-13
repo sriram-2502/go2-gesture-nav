@@ -8,7 +8,7 @@ from zipfile import ZipFile
 
 import av
 import numpy as np
-from .convert_recording import export_mp4
+from convert_recording import export_mp4
 
 
 class ConversionTests(unittest.TestCase):

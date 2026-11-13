@@ -16,7 +16,7 @@ adding collaborators does not make selected files or branches private.
    plaintext secrets out of Git history. Keep account passwords and cloud tokens
    out of student onboarding material.
 5. Students obtain their assigned robot key and enter it into the local terminal
-   as described in [the WebRTC guide](../webrtc/README.md). Neither public Python
+   as described in [the WebRTC guide](CONNECTION.md). Neither public Python
    script contains the key.
 
 Git clones retain committed keys in their history, even in a private repository.
