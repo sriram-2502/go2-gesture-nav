@@ -389,6 +389,20 @@ work and outstanding checks.
 This project also serves as reference code for the **Clemson Creative Inquiry
 course I offered in Fall 2026**, [Mission Control: From Human Gestures to
 Intelligent Robot Motion](https://dyco-ai.github.io/go1_gesture_tracking/).
+The course uses the following sequence:
+
+| Stage | Setup |
+| --- | --- |
+| Week 7, stationary Basic checkout | [Clemson DyCo-AI/go2-webRTC](https://github.com/DyCo-AI/go2-webRTC), root-level scripts and port 5173 |
+| Weeks 8–9 onward, gesture navigation | **This personal repo**, `webrtc\` scripts with `-Edition clemson`, Python gesture service, and port 5174 |
+| Optional behavior experiments | **This repo's existing Jump once / Bound gait buttons**, with separate instructor approval and the [recovery guide](webrtc/clemson/CONTROL_EXTENSIONS.md) |
+
+The Basic starter does not contain the Clemson hand panel or this guarded
+Jump/Bound workflow. Disconnect one client before opening the other. Updating
+the playground's `creative-inquiry-dev` branch does not update this UI: use
+[this repo's update/restart procedure](#update-and-restart) and match the
+Navigation UI build ID to the launcher. The `ros/` folder is not needed for CI.
+
 The [companion simulation code and weekly labs](https://github.com/sriram-2502/go1-mujoco-playground)
 introduce Python, MediaPipe, and gesture navigation before Go2 hardware work.
 Students are encouraged to build their own GitHub projects and bring their
