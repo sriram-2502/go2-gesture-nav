@@ -95,7 +95,9 @@ device is busy. A different webcam can be selected when launching the service:
   seconds old readings show **Battery unavailable / —%**; a valid zero shows **0%**.
   This is telemetry only, not an automatic battery cutoff or a laptop/remote
   battery reading. Verify the live value against the assigned robot before lab use.
-- **Jump once** and **Bound gait** buttons below the battery.
+- **Jump once**, **Backflip once** (below Jump), and **Bound gait** buttons below the battery.
+  Backflip includes a visible clear-area warning; it is an optional, separately
+  qualified one-shot action with grounded-recovery locking.
   These use the shared robot connection and pause gesture navigation when selected.
   A failed stop reports its recovery stage and provides an explicit remote-recovery
   acknowledgement; it never silently re-enables motion. See [recovery instructions](CONTROL_EXTENSIONS.md#stop-and-recovery).

@@ -226,7 +226,7 @@ test('Enable accepts missing-hand input and a preheld movement requires new post
 });
 
 test('stale state or camera prevents scene actions independently of hand recognition', async () => {
-  for (const behavior of ['jump', 'bound', 'pose']) {
+  for (const behavior of ['jump', 'backflip', 'bound', 'pose']) {
     const f = fixture(); f.advance(1100);
     await f.robot.selectBehavior(behavior);
     assert.equal(f.messages.length, 0);
@@ -312,6 +312,58 @@ test('missing foot-contact telemetry cannot qualify jump recovery as landed', as
   assert.equal(apiMessages(f, A.BalanceStand).length, 0);
   assert.equal(f.robot.status().behavior, 'jump');
   assert.match(f.robot.status().stopResult, /not confirmed/);
+});
+
+test('Backflip sends one SDK request and blocks other actions until grounded recovery', async () => {
+  for (const mode of ['normal', 'mcf']) {
+    const f = fixture(mode);
+    await f.robot.selectBehavior('backflip');
+    assert.equal(A.BackFlip, 2043);
+    assert.equal(apiMessages(f, A.BackFlip).length, 1);
+    assert.deepEqual(JSON.parse(apiMessages(f, A.BackFlip)[0].message.data.parameter), {});
+    assert.equal(f.robot.status().behavior, 'backflip');
+    const requested = f.now();
+    await f.robot.selectBehavior('backflip');
+    await f.robot.selectBehavior('jump');
+    await f.robot.selectBehavior('bound');
+    await f.robot.enable();
+    assert.equal(apiMessages(f, A.BackFlip).length, 1);
+    assert.equal(apiMessages(f, A.FrontJump).length, 0);
+    assert.equal(apiMessages(f, A.FreeBound).length, 0);
+    assert.equal(f.robot.status().enabled, false);
+    await f.robot.disable();
+    assert.ok(apiMessages(f, A.BalanceStand)[0].time - requested >= 3300);
+    assert.equal(f.robot.status().behavior, 'none');
+    assert.equal(f.robot.status().enabled, false);
+  }
+});
+
+test('Backflip requires fresh stationary feedback and never treats missing contacts as landing', async () => {
+  const stale = fixture(); stale.advance(1100);
+  await stale.robot.selectBehavior('backflip');
+  assert.equal(apiMessages(stale, A.BackFlip).length, 0);
+  const low = fixture(); low.setHeight(.1);
+  await low.robot.selectBehavior('backflip');
+  assert.equal(apiMessages(low, A.BackFlip).length, 0);
+  const f = fixture('mcf', false, {noFeet:true});
+  await f.robot.selectBehavior('backflip');
+  await f.robot.disable();
+  assert.equal(apiMessages(f, A.BalanceStand).length, 0);
+  assert.equal(f.robot.status().behavior, 'backflip');
+  assert.equal(f.robot.status().recoveryRequired, true);
+  assert.match(f.robot.status().stopResult, /foot-contact telemetry unavailable/);
+});
+
+test('rejected Backflip stays disarmed and cannot be retried automatically', async () => {
+  const f = fixture('mcf', false, {rejectApi:A.BackFlip});
+  await f.robot.selectBehavior('backflip');
+  assert.equal(f.robot.status().behaviorConfirmed, false);
+  assert.equal(f.robot.status().enabled, false);
+  assert.match(f.robot.status().actionMessage, /rejected/);
+  await f.robot.selectBehavior('backflip');
+  await f.robot.enable();
+  assert.equal(apiMessages(f, A.BackFlip).length, 1);
+  assert.equal(f.robot.status().enabled, false);
 });
 
 test('external mode change during Pose stops posture streaming', async () => {

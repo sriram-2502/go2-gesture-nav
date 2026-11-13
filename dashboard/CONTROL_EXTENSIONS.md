@@ -1,6 +1,6 @@
 # Clemson camera-view controls
 
-The top-right control stack is **Disconnect → Stop → battery → Jump / Bound**.
+The top-right control stack is **Disconnect → Stop → battery → Jump / Backflip / Bound**.
 It stays on the camera/voxel view, separate from the hand sidebar. Battery refresh
 and behavior status are independent of the webcam service.
 
@@ -59,7 +59,16 @@ existing authenticated connection.
 | Button | Command / behavior | How to use |
 | --- | --- | --- |
 | **Jump once** | `FrontJump` 1031, one request | Requests one forward jump. Further behavior selections and gesture enabling stay locked until Stop completes recovery. This is distinct from the upstream persistent FreeJump mode. |
+| **Backflip once** | `BackFlip` 2043, one request with `{}` per the Go2 Python SDK | Directly below Jump once. Pauses gesture navigation and locks repeat actions/gesture enabling until grounded recovery. This is a one-shot action, not a gait. |
 | **Bound gait** | `FreeBound` 2046 with `{data:true}` | Requires a successful API reply and new mode feedback. Then click Enable gesture control to navigate. Click Bound again or Stop to leave it. A stop/zero gesture while moving in Bound ends that gait and disarms navigation. |
+
+**Backflip warning shown beside the control:** Clear the surrounding area and
+keep people away. Use a level, non-slip surface and keep the paired remote ready
+before Backflip. The button is not a claim of support on every firmware; this
+addition is offline-tested and needs separate supervised hardware qualification.
+The official Python SDK uses an empty one-shot payload; the pinned Basic UI's
+`{data:true}` variant is not retried as a fallback. A missing reply may still mean
+the robot received the action, so the local lock remains until recovery.
 
 Only one behavior owns the command path at a time. Bound is highlighted only
 after new robot feedback reports that mode. Rejection,
@@ -87,12 +96,12 @@ separate firmware Pose mode, Stop also requests `Pose(false)`. The guarded stop 
 uses fresh low-speed upright feedback before BalanceStand. Persistent-mode exit
 also requires feedback outside the selected mode.
 
-After a jump, BalanceStand is withheld until at least three seconds have elapsed
+After a jump or backflip, BalanceStand is withheld until at least three seconds have elapsed
 and new low-speed upright feedback with four positive foot-force readings spans
 300 ms. Missing foot-contact telemetry or failure to recover leaves the behavior
 locked and reports a remote-intervention message. These are conservative software
 checks, not a guarantee of landing or an airborne emergency-stop mechanism. A
-jump API acknowledgement confirms a request, not successful execution.
+jump/backflip API acknowledgement confirms a request, not successful execution.
 
 If foot-contact telemetry is absent, recovery reports that limitation immediately
 instead of remaining on a generic "Requesting stop" message. Stop still sends

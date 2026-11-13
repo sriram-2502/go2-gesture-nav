@@ -17,6 +17,8 @@ export function mountSceneControls(parent: HTMLElement): void {
     <p class="clemson-stream-status clemson-behavior-status">Checking video and robot feedback…</p>
     <div class="clemson-behavior-buttons">
       <button type="button" data-behavior="jump" title="Request one forward jump; pauses gesture navigation"><span aria-hidden="true">↗</span> Jump once</button>
+      <button type="button" data-behavior="backflip" aria-describedby="clemson-backflip-warning" title="Request one backflip; clear the area first"><span aria-hidden="true">↶</span> Backflip once</button>
+      <p id="clemson-backflip-warning" class="clemson-action-warning" role="note">Warning: Clear the surrounding area and keep people away. Use a level, non-slip surface and keep the paired remote ready before Backflip.</p>
       <button type="button" data-behavior="bound" aria-pressed="false"><span aria-hidden="true">⇢</span> Bound gait</button>
     </div>
     <p class="clemson-action-status clemson-behavior-status" role="status">Select a behavior</p>
@@ -25,7 +27,7 @@ export function mountSceneControls(parent: HTMLElement): void {
   controls.querySelector('.clemson-recovery')!.addEventListener('click', () => void gestureRobot.confirmRemoteRecovery());
   for (const button of controls.querySelectorAll<HTMLButtonElement>('[data-behavior]')) {
     button.addEventListener('click', () => {
-      void gestureRobot.selectBehavior(button.dataset.behavior as 'jump' | 'bound');
+      void gestureRobot.selectBehavior(button.dataset.behavior as 'jump' | 'backflip' | 'bound');
     });
   }
 
@@ -40,10 +42,11 @@ export function mountSceneControls(parent: HTMLElement): void {
     controls.querySelector('.clemson-battery-fill')!.setAttribute('width', String(23 * (percent ?? 0) / 100));
     battery.title = percent === null ? 'No valid battery telemetry within 5 seconds' : `Go2 battery: ${percent}%`;
     controls.querySelector('.clemson-stream-status')!.textContent = `${state.videoFresh ? 'Video live' : 'Video stale'} · ${state.feedbackFresh ? 'Robot feedback live' : 'Robot feedback stale'}`;
-    const locked = state.actionBusy || state.enabling || state.stopping || state.avoidanceBusy || state.behavior === 'jump';
+    const locked = state.actionBusy || state.enabling || state.stopping || state.avoidanceBusy
+      || state.behavior === 'jump' || state.behavior === 'backflip';
     for (const button of controls.querySelectorAll<HTMLButtonElement>('[data-behavior]')) {
       button.disabled = locked || !state.actionReady;
-      if (button.dataset.behavior !== 'jump') button.setAttribute('aria-pressed', String(state.behaviorConfirmed && state.behavior === button.dataset.behavior));
+      if (button.dataset.behavior === 'bound') button.setAttribute('aria-pressed', String(state.behaviorConfirmed && state.behavior === 'bound'));
     }
     controls.querySelector('.clemson-action-status')!.textContent = state.stopping ? state.stopResult : state.actionMessage;
     const recovery = controls.querySelector<HTMLButtonElement>('.clemson-recovery')!;

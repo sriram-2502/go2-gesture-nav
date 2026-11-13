@@ -45,7 +45,7 @@ preview is not a substitute for this connection workflow.
 
 Before movement, check preview, live robot camera, incoming state, and the
 paired-remote intervention procedure. Voxel availability depends on firmware.
-Jump once and Bound gait are optional; follow [the recovery guide](../dashboard/CONTROL_EXTENSIONS.md).
+Jump once, Backflip once, and Bound gait are optional; follow [the recovery guide](../dashboard/CONTROL_EXTENSIONS.md).
 
 ## Common problems
 

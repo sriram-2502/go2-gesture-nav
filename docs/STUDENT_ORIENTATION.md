@@ -31,7 +31,7 @@ below for the current layout.
 | Velocity overlay | Requested, supervised, transmitted, and measured velocities have separate meanings; sending a command does not prove movement |
 | Enable / Stop | Gesture control begins disabled. Click Enable directly, without a startup hand pose; Stop is there and below Disconnect |
 | Robot battery | Graphic and numeric percentage below the top-right Stop; unavailable/stale data is labeled, never assumed to be zero |
-| Jump once / Bound gait | Buttons below battery; these pause navigation on selection and have separate recovery checks |
+| Jump once / Backflip once / Bound gait | Buttons below battery; Backflip is below Jump with a clear-area warning. Selection pauses navigation; one-shot actions stay locked until grounded recovery |
 | UI build ID | Navigation title includes the same ID printed by the PowerShell launcher; use it to identify stale UI code |
 | Recording / avoidance | One overall recording toggle; record the actual avoidance state used for each trial |
 

@@ -89,7 +89,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\start-ui.ps1
 
 Open **http://127.0.0.1:5174/** in Chrome. The gesture service uses **8766**;
 the browser reaches it through the dashboard. The default is the Clemson
-gesture UI, including battery, Jump once, Bound gait, recording, and replay.
+gesture UI, including battery, Jump once, Backflip once, Bound gait, recording, and replay.
 
 ## 3. Preview, connect, then walk
 
@@ -120,17 +120,19 @@ Hold movement for **300 ms**; input older than **400 ms** is rejected.
 A sent stop request is not proof of a physical stop. See the
 [illustrated guide](dashboard/README.md#gesture-guide-what-your-hand-commands).
 
-## Optional: Jump once and Bound gait
+## Optional: Jump once, Backflip once, and Bound gait
 
 These buttons sit below the battery, use the same connection, and pause gesture
 navigation when selected. They are not default hand gestures.
 
 - **Jump once:** one forward-jump request; repeat actions stay locked until Stop/recovery is confirmed.
+- **Backflip once:** below Jump once; one backflip request with the same repeat-action and grounded-recovery lock. Clear the surrounding area, keep people away, use a level non-slip surface, and keep the paired remote ready.
 - **Bound gait:** waits for a successful reply and new mode feedback; explicitly enable gestures afterward. Stop requests exit.
 
 Ordinary walking is the baseline. Optional behaviors need separate instructor
 approval and robot/firmware checks. A reported successful jump does not qualify
-all recovery cases. Read [behavior and recovery](dashboard/CONTROL_EXTENSIONS.md)
+all recovery cases; the new Backflip control has offline tests, not a new hardware
+qualification. Read [behavior and recovery](dashboard/CONTROL_EXTENSIONS.md)
 before trying either. Stationary Look Around remains disabled.
 
 ## Record, replay, customize

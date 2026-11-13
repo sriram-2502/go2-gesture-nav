@@ -2,7 +2,7 @@
 
 This roadmap covers the Windows 11 Go2 gesture-navigation application and proposed
 research extensions from robot modeling through motion planning.
-Hardware validation of the existing setup is complete, as confirmed by the
+Hardware validation of the baseline gesture-navigation setup is complete, as confirmed by the
 maintainer.
 
 ## Delivered
@@ -36,6 +36,8 @@ Until vault migration, authorized users request credentials privately from the
 maintainer. See [KEY_ACCESS.md](KEY_ACCESS.md).
 
 ## Optional application improvements
+
+- [ ] Qualify the newly exposed Backflip once control on the assigned robot/firmware, including entry, landing telemetry, Stop/recovery, and remote intervention. The button and clear-area warning have offline tests; this is not a new hardware-validation claim.
 
 - [ ] Revisit stationary gesture-based body pose control. **Deferred and removed from the student UI** after unreliable mode transitions and stop/upright confirmation on the lab robot. Identify the supported firmware/motion service and Pose/BalanceStand/Euler or joystick interface; validate roll/pitch/yaw response, centering, timeout behavior, and return to normal navigation before re-enabling it. Experimental code and offline tests remain, but the production adapter rejects stationary entry.
 - [ ] Evaluate maintaining the dashboard directly in an upstream fork instead of the current reproducible overlay.

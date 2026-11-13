@@ -12,7 +12,10 @@ export type GestureInput = {
 };
 type SportState = {velocity: number[]; yaw_speed: number; body_height: number;
   mode?: number; error_code?: number; foot_force?: number[]};
-export type RobotBehavior = 'none' | 'jump' | 'bound' | 'pose';
+export type RobotBehavior = 'none' | 'jump' | 'backflip' | 'bound' | 'pose';
+type AerialBehavior = 'jump' | 'backflip';
+const isAerialAction = (behavior: RobotBehavior): behavior is AerialBehavior =>
+  behavior === 'jump' || behavior === 'backflip';
 type Reply = {header?: {identity?: {id?: number}; status?: {code?: number}}; data?: unknown};
 const zero = (): Velocity => [0, 0, 0];
 const nonzero = (v: number[]) => v.some(x => x !== 0);
@@ -71,7 +74,7 @@ export class GestureRobot {
   private actionGeneration = 0;
   private actionMessage = 'Select a behavior';
   private stateSerial = 0;
-  private jumpAt = -Infinity;
+  private aerialActionAt = -Infinity;
   private poseTarget: Velocity = zero();
   private poseEnabledFrame = 0;
   private poseDirty = false;
@@ -127,7 +130,7 @@ export class GestureRobot {
     this.poseTarget = zero();
     this.poseDirty = false;
     this.firmwarePose = false;
-    this.jumpAt = -Infinity;
+    this.aerialActionAt = -Infinity;
     this.recoveryRequired = false;
     this.epoch++;
     this.connectionEpoch++;
@@ -281,7 +284,7 @@ export class GestureRobot {
   async enable(): Promise<void> {
     if (this.enabled || this.enabling || this.stopping || this.avoidanceBusy || this.actionBusy) return;
     if (this.recoveryRequired) { this.reason = 'Restore standing with the remote, then confirm remote recovery'; return; }
-    if (this.behavior === 'pose' || this.behavior === 'jump') {
+    if (this.behavior === 'pose' || isAerialAction(this.behavior)) {
       this.reason = 'Press Stop to leave the current behavior before enabling gestures'; return;
     }
     if (this.behavior === 'bound' && !this.behaviorConfirmed) {
@@ -321,7 +324,7 @@ export class GestureRobot {
         this.behavior = existing;
         this.behaviorConfirmed = false;
         this.firmwarePose = externalPose;
-        if (existing === 'jump') this.jumpAt = this.now();
+        if (existing === 'jump') this.aerialActionAt = this.now();
         this.actionMessage = 'Robot reports an existing behavior · press Stop first';
       }
     }
@@ -392,7 +395,7 @@ export class GestureRobot {
       // Recheck freshness after asynchronous mode requests.
       const changed = this.problem();
       if (changed) throw new Error(changed);
-      if (this.behavior === 'pose' || this.behavior === 'jump'
+      if (this.behavior === 'pose' || isAerialAction(this.behavior)
           || (this.behavior === 'bound' && (!this.behaviorConfirmed || !this.reportedBehavior('bound'))))
         throw new Error('Robot behavior feedback changed');
       // Enabling is a button action. Require new frames after that click before moving.
@@ -466,18 +469,18 @@ export class GestureRobot {
         await this.request(RTC_TOPIC.SPORT_MOD, SPORT_CMD.FreeBound, {data: false});
       }
       let slowSince: number | null = null;
-      if (behavior === 'jump' && (!Array.isArray(this.state?.foot_force) || this.state.foot_force.length !== 4
+      if (isAerialAction(behavior) && (!Array.isArray(this.state?.foot_force) || this.state.foot_force.length !== 4
           || !this.state.foot_force.every(Number.isFinite))) {
         throw new Error('Landing not confirmed: foot-contact telemetry unavailable. Restore standing with the remote, then confirm remote recovery.');
       }
-      const deadline = Math.max(this.now() + 3000, behavior === 'jump' ? this.jumpAt + 6000 : 0);
+      const deadline = Math.max(this.now() + 3000, isAerialAction(behavior) ? this.aerialActionAt + 6000 : 0);
       while (this.now() < deadline) {
         if (connection !== this.connectionEpoch || !this.connected()) throw new Error('Connection lost during stop; USE THE REMOTE');
         // A walking stop is not proof of landing. Do not request stance while airborne.
-        const landed = behavior !== 'jump' || (this.now() - this.jumpAt >= 3000
+        const landed = !isAerialAction(behavior) || (this.now() - this.aerialActionAt >= 3000
           && this.state?.foot_force?.length === 4 && this.state.foot_force.every(f => Number.isFinite(f) && f > 0));
         const modeExited = (behavior !== 'pose' && behavior !== 'bound') || this.reportedOutside(behavior);
-        this.stopResult = behavior === 'jump' && !landed ? 'Stop acknowledged; waiting for landing / foot-contact feedback'
+        this.stopResult = isAerialAction(behavior) && !landed ? 'Stop acknowledged; waiting for landing / foot-contact feedback'
           : !modeExited ? 'Stop acknowledged; waiting for the selected mode to exit'
           : 'Stop acknowledged; verifying fresh low-speed upright feedback';
         if (this.slowUpright() && landed && modeExited) {
@@ -529,14 +532,17 @@ export class GestureRobot {
   }
 
   async selectBehavior(behavior: Exclude<RobotBehavior, 'none'>): Promise<void> {
-    if (!['jump', 'bound', 'pose'].includes(behavior)) return;
+    if (!['jump', 'backflip', 'bound', 'pose'].includes(behavior)) return;
     if (behavior === 'pose' && !this.experimentalStationaryGestures) {
       this.actionMessage = 'Stationary control is deferred; see the project roadmap';
       return;
     }
     if (this.actionBusy || this.busy || this.enabling || this.stopping || this.avoidanceBusy) return;
     if (this.recoveryRequired) { this.actionMessage = 'Restore standing with the remote, then confirm remote recovery'; return; }
-    if (this.behavior === 'jump') { this.actionMessage = 'Jump requested; press Stop to confirm recovery first'; return; }
+    if (isAerialAction(this.behavior)) {
+      this.actionMessage = `${this.behavior === 'backflip' ? 'Backflip' : 'Jump'} requested; press Stop to confirm recovery first`;
+      return;
+    }
     const toggleOff = this.behavior === behavior;
     const generation = ++this.actionGeneration;
     const connection = this.connectionEpoch;
@@ -560,11 +566,12 @@ export class GestureRobot {
       const serial = this.stateSerial;
       this.behavior = behavior; // Keep the attempted mode for cleanup if a reply is lost.
       this.firmwarePose = false;
-      if (behavior === 'jump') this.jumpAt = this.now();
+      if (isAerialAction(behavior)) this.aerialActionAt = this.now();
       await this.request(RTC_TOPIC.SPORT_MOD, behavior === 'jump' ? SPORT_CMD.FrontJump
+        : behavior === 'backflip' ? SPORT_CMD.BackFlip
         : behavior === 'bound' ? SPORT_CMD.FreeBound : SPORT_CMD.BalanceStand, behavior === 'bound' ? {data: true} : {});
       if (!current()) return;
-      if (behavior !== 'jump') {
+      if (!isAerialAction(behavior)) {
         const deadline = this.now() + 1500;
         while (this.now() < deadline && !(this.stateSerial > serial && this.reportedBehavior(behavior))) {
           await this.sleep(50);
@@ -577,12 +584,13 @@ export class GestureRobot {
       this.poseEnabledFrame = this.input?.frame_id ?? 0;
       this.behaviorConfirmed = true;
       this.actionMessage = behavior === 'jump' ? 'Jump requested; press Stop after landing'
+        : behavior === 'backflip' ? 'Backflip requested; press Stop after landing'
         : behavior === 'bound' ? 'Bound confirmed · enable gestures to navigate' : 'Stationary gestures active · show a movement gesture';
     } catch (error) {
       if (current()) {
         const message = String(error);
         this.actionMessage = this.reason = message;
-        if (this.behavior !== 'none' && this.behavior !== 'jump') {
+        if (this.behavior !== 'none' && !isAerialAction(this.behavior)) {
           // No further posture streaming after an unconfirmed entry.
           this.poseDirty = false;
           await this.stopControls(this.reason);
@@ -621,7 +629,7 @@ export class GestureRobot {
       this.recoveryRequired = false;
       this.behavior = 'none'; this.behaviorConfirmed = false;
       this.poseTarget = zero(); this.poseDirty = false; this.firmwarePose = false;
-      this.jumpAt = -Infinity; this.sent = zero(); this.stopConfirmed = false;
+      this.aerialActionAt = -Infinity; this.sent = zero(); this.stopConfirmed = false;
       this.reason = this.actionMessage = this.stopResult = 'Remote recovery acknowledged · gesture control remains disabled';
     } catch (error) {
       if (current()) this.reason = this.actionMessage = `Remote recovery not confirmed: ${String(error)}`;

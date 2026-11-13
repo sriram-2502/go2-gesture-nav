@@ -52,6 +52,7 @@ html[data-theme="light"] .clemson-lab-guide { color: #522d80; }
 .clemson-behavior-buttons { display: grid; gap: 6px; }
 .clemson-webview-header .clemson-behavior-buttons button { text-align: left; font: 12px 'Segoe UI', sans-serif; padding: 10px 8px; }
 .clemson-behavior-buttons button span { display: inline-block; width: 19px; color: #ffb37d; font-size: 17px; vertical-align: middle; }
+.clemson-action-warning { margin: 0; padding: 8px; border: 1px solid #ffcd5f70; border-radius: 6px; background: #ffcd5f12; color: #ffdc8b; font-size: 11px; line-height: 1.4; }
 .clemson-webview-header button[aria-pressed="true"] { border-color: #71e4c6; background: #235044; }
 .clemson-webview-header button:disabled { opacity: .5; cursor: default; }
 .clemson-webview-header button:focus-visible { outline: 2px solid #ffb37d; outline-offset: 2px; }
