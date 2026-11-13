@@ -195,5 +195,7 @@ experiments. [The course website](https://dyco-ai.github.io/go1_gesture_tracking
 sets expectations. [The Go1 simulation and weekly labs](https://github.com/sriram-2502/go1-mujoco-playground)
 remain a separate teaching checkout; reports follow the course policy.
 
+> **Looking for ROS?** See Clemson DyCo-AI's separate [Go2 ROS starter](https://github.com/DyCo-AI/go2-ros) for the Go2 EDU's onboard Jetson, ROS 2, and Ethernet/SSH workflow. ROS is optional research work and is not required for this Windows gesture project.
+
 Developed by [Sriram Krishnamoorthy](https://github.com/sriram-2502).
 Original code/docs: [MIT](LICENSE). [Third-party notices](NOTICE.md) · [Demo provenance](docs/DEMO.md).
