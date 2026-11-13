@@ -176,6 +176,105 @@ experiment using the existing walking controller.
 First result: a simulation benchmark and one-robot demonstration with recorded
 neighbor-state assumptions and failure cases.
 
+### 8. Human-intent inference and grounded hierarchical robot control
+
+**Research problem.** Develop a robot-control framework that decodes human intent
+from language, gestures, demonstrations, and scene observations, grounds that
+intent in the robot's environment and capabilities, and translates it into
+verifiable task goals and supervised actions. The objective is to let people
+communicate *what they want accomplished* while the control framework determines
+*which supported skills can accomplish it, where, and under what conditions*.
+
+Teaching a robot familiar commands such as "come here" or "stay" is an intuitive
+analogy. In engineering terms, this combines multimodal intent inference,
+reference resolution, task planning, skill learning, and closed-loop execution.
+A demonstration or correction becomes training/evaluation data; it does not
+automatically teach the current robot a new motor skill or update a model online.
+
+#### Proposed architecture
+
+```mermaid
+flowchart LR
+    human["Human instruction<br/>Words, gestures, demonstrations"]
+    context["Scene and robot state<br/>Objects, poses, available skills"]
+    intent["Intent interpretation<br/>Goal, target, constraints"]
+    check["Grounding and validation<br/>Supported skill and reachable target"]
+    plan["Task / motion planner"]
+    control["Existing supervised controller<br/>Go2 motion and feedback"]
+    human --> intent
+    context --> intent
+    intent --> check --> plan --> control
+    control -->|"Progress / outcome"| context
+```
+
+The model proposes a structured goal; it does not write arbitrary robot commands
+or bypass the existing command owner. Separate instruction understanding from
+geometry, planning, and locomotion. Initially use an allowlisted skill interface
+and fixed schemas rather than executing model-generated code. Stop/cancel remains
+independent of model inference and takes priority; an ambiguous, stale, infeasible,
+or unsupported request must not silently become a motion command. Do not route
+natural-language intent to the Jump/Backflip buttons in the initial experiment.
+
+| Example human instruction | Grounded task | What must be added or verified |
+| --- | --- | --- |
+| "Walk here" with a point/click | Navigate to a selected location | Resolve the indicated target, estimate a traversable world-frame goal, and plan a path; an image pixel is not a metric waypoint |
+| "Come here" | Approach the designated operator to a specified stopping distance | Identify/localize the intended person and track the target; current hand landmarks alone do not provide that person's world position |
+| "Stay" / "wait here" | Cancel travel and maintain the approved standing behavior | Use the existing stop/feedback path; distinguish a zero-velocity request from precise position holding |
+| "Go to the ball" | Locate the referenced ball and approach a reachable nearby pose | Object grounding, localization, navigation, target-loss handling, and an approach-distance rule |
+| "Pick up the ball" / "bring it back" | Navigate, grasp, transport, and release | Additional arm/gripper hardware, perception, manipulation skills, and separate qualification; pickup is not implemented by this repo's current Go2 interface |
+
+#### Candidate models and their roles
+
+- **Gemini / Gemini Robotics-ER:** investigate multimodal instruction interpretation,
+  spatial reasoning, and high-level task/skill selection. The Gemini Robotics
+  vision-language-action (VLA) family is a distinct action-generation direction;
+  access, supported embodiments, and integration requirements must be checked
+  before choosing a model. The names do not imply a plug-and-play Go2 interface.
+- **PaliGemma / PaliGemma 2:** investigate visual grounding, detection, and image-plus-text
+  understanding. These are vision-language models (VLMs), not pretrained Go2
+  locomotion policies or general conversational assistants. Pretrained checkpoints
+  need task adaptation; mix checkpoints provide some ready-to-use vision tasks,
+  but still need evaluation for this intent/grounding problem.
+- **VLA research such as pi-zero (π₀) and OpenVLA:** study how language/vision connect
+  to learned robot actions. The original π₀ extends a PaliGemma backbone with an
+  action expert and robot-data training. This is a concrete bridge from a VLM to
+  control, not evidence that loading PaliGemma teaches a Go2 to fetch. New action
+  policies and hardware transfer are an advanced research branch.
+
+#### Milestones and evaluation
+
+- [ ] Define a small instruction/skill vocabulary and structured goal format: intent, target identity, coordinate frame, constraints, timeout, and clarify/reject outcome.
+- [ ] Start with typed instructions and recorded scenes; compare a rules-based baseline with candidate Gemini/PaliGemma approaches before adding speech or live control.
+- [ ] Collect labeled instructions, paraphrases, pointing/scene examples, demonstrations, corrections, and outcomes. Separate test operators/scenes from training data.
+- [ ] Resolve references such as "here," "me," and "that ball" into observable targets. Request clarification when the target or required skill is unresolved.
+- [ ] Connect a mock executor first, then simulated navigation, then separately reviewed Go2 navigation through the existing supervisor. Demonstrate stay/cancel and target-loss handling before approach tasks.
+- [ ] Explore teaching new high-level skills from demonstrations and human feedback after the fixed-skill baseline. Keep model/skill updates offline and versioned initially; distinguish skill selection from learning a new controller.
+- [ ] Measure intent/target accuracy, ambiguity and unsupported-request handling, end-to-end task success, grounding error, latency, interventions, and stop/cancel responsiveness. Report failures as well as successful examples.
+- [ ] Document model/checkpoint, access/license, local versus hosted inference, compute/memory, and any off-device data flow. High-level inference latency must not determine the stop path.
+
+First result: a robot-free intent-to-skill prototype that interprets a small
+instruction set, shows its grounded target/plan, and asks for clarification or
+rejects unsupported tasks. A subsequent navigation experiment may use the Go2's
+existing walking controller. General fetch/manipulation, online skill learning,
+and end-to-end VLA policy deployment remain separate future milestones.
+
+#### Reading and implementation resources
+
+Primary documentation and author project pages, checked November 13, 2026.
+Start with intent-to-skill grounding, then VLM experiments; VLA training is the
+advanced step. The dates below identify the cited work, not the latest model release.
+
+| Resource | Why it is useful here |
+| --- | --- |
+| [SayCan: Grounding Language in Robotic Affordances (2022)](https://say-can.github.io/) | Connects language-level skill selection with whether available skills can succeed in the current situation; a useful starting architecture for intent-to-action mapping |
+| [Google PaliGemma documentation](https://ai.google.dev/gemma/docs/paligemma) and [prompt/task syntax](https://ai.google.dev/gemma/docs/paligemma/prompt-system-instructions) | Model/checkpoint distinctions, task adaptation, and detection/segmentation prompts for visual grounding |
+| [Introducing PaliGemma 2 (Google, December 2024)](https://developers.googleblog.com/introducing-paligemma-2-powerful-vision-language-models-simple-fine-tuning/) | An accessible primary-source article about the vision-language model and task-specific fine-tuning; it does not claim a ready-made robot intent controller |
+| [Gemini Robotics overview](https://deepmind.google/models/gemini-robotics/) and [original Robotics/ER introduction (2025)](https://deepmind.google/blog/gemini-robotics-brings-ai-into-the-physical-world/) | Distinguishes embodied reasoning from action-generation models and motivates separating high-level understanding from robot-specific execution |
+| [Gemini Robotics-ER 1.6 (Google DeepMind, April 2026)](https://deepmind.google/blog/gemini-robotics-er-1-6/) | A more recent primary-source article on spatial reasoning, pointing, task planning, and success detection; relevant to grounding "here" and checking task outcomes |
+| [π₀: A Vision-Language-Action Flow Model for General Robot Control (2024)](https://arxiv.org/abs/2410.24164) | Explains how PaliGemma is extended with robot state, an action expert, and training on embodied data |
+| [Physical Intelligence openpi](https://github.com/Physical-Intelligence/openpi) | Author-maintained implementation, model, and adaptation material for the advanced VLA direction; check supported hardware and requirements rather than assuming Windows/Go2 compatibility |
+| [OpenVLA project and paper (2024)](https://openvla.github.io/) | An open VLA training/adaptation reference; its manipulation results are not direct validation of quadruped navigation or ball pickup |
+
 ### Advanced branch: RL locomotion controllers
 
 **Beyond the current undergraduate research scope.** This branch explains
